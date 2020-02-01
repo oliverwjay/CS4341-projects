@@ -67,7 +67,7 @@ class AlphaBetaAgent(agent.Agent):
         :param brd: brd
         :param alpha: alpha
         :param beta: beta
-        :return: max_value
+        :return: a utility value (v)
         """
 
     def min_value(self, brd, alpha, beta):
