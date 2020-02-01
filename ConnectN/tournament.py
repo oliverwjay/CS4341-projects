@@ -1,7 +1,8 @@
 import random
-import game
 import agent
+import game
 import alpha_beta_agent as aba
+import time
 
 ######################
 # Play a single game #
@@ -101,12 +102,12 @@ def play_tournament(w, h, n, l, ps):
 #######################
 
 # Set random seed for reproducibility
-random.seed(1)
+# random.seed(1)
 
 # Construct list of agents in the tournament
 agents = [
     # aba.AlphaBetaAgent("aba", 4),
-    agent.RandomAgent("random1"),
+    agent.OneColumnAgent("One Column Agent"),
     agent.RandomAgent("random2"),
     agent.RandomAgent("random3"),
     agent.RandomAgent("random4")

@@ -33,6 +33,15 @@ class Agent(object):
         raise NotImplementedError("Please implement this method")
 
 
+##########################
+#  Always picks 3rd col  #
+##########################
+
+
+class OneColumnAgent(Agent):
+    def go(self, brd):
+        return brd.free_cols()[3]
+
 
 ##########################
 # Randomly playing agent #
