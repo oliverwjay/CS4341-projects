@@ -26,7 +26,7 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
-        # Your code here
+        list_pos_moves = self.get_successors(brd)
 
     # Get the successors of the given board.
     #
@@ -35,7 +35,8 @@ class AlphaBetaAgent(agent.Agent):
     #                                      along with the column where the last
     #                                      token was added in it
     def get_successors(self, brd):
-        """Returns the reachable boards from the given board brd. The return value is a tuple (new board state, column number where last token was added)."""
+        """Returns the reachable boards from the given board brd. The return value is a tuple"""
+        """"(new board state, column number where last token was added)."""
         # Get possible actions
         freecols = brd.free_cols()
         # Are there legal actions left?
@@ -52,3 +53,28 @@ class AlphaBetaAgent(agent.Agent):
             # Add board to list of successors
             succ.append((nb, col))
         return succ
+
+    def alpha_beta_pruning(self, brd):
+        """
+        Alpha Beta Pruning Function
+        :param brd: brd
+        :return: Action
+        """
+
+    def max_value(self, brd, alpha, beta):
+        """
+        Max Value Function
+        :param brd: brd
+        :param alpha: alpha
+        :param beta: beta
+        :return: max_value
+        """
+
+    def min_value(self, brd, alpha, beta):
+        """
+
+        :param brd:
+        :param alpha:
+        :param beta:
+        :return:
+        """
