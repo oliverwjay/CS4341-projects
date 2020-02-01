@@ -83,6 +83,7 @@ class Game(object):
                 outcome = 1
                 if p == 0:
                     outcome = 2
+                self.board.print_it()
                 return outcome
             # Legal move, add token there
             self.board.add_token(x)
@@ -91,5 +92,6 @@ class Game(object):
                 p = 1
             else:
                 p = 0
+        self.board.print_it()
         # Return game outcome
         return self.board.get_outcome()

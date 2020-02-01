@@ -108,7 +108,7 @@ def play_tournament(w, h, n, l, ps):
 agents = [
     # aba.AlphaBetaAgent("aba", 4),
     agent.OneColumnAgent("One Column Agent"),
-    agent.RandomAgent("random2"),
+    agent.OutsourcedAgent("Outsourced Agent"),
     agent.RandomAgent("random3"),
     agent.RandomAgent("random4")
 ]

@@ -12,7 +12,7 @@ class Board(object):
     # PARAM [int]            w:     the board width
     # PARAM [int]            h:     the board height
     # PARAM [int]            n:     the number of tokens to line up to win
-    def __init__(self, board, w, h, n):
+    def __init__(self, board, w, h, n, history=[]):
         """Class constructor"""
         # Board data
         self.board = board
@@ -24,13 +24,14 @@ class Board(object):
         self.n = n
         # Current player
         self.player = 1
+        self.history = copy.deepcopy(history)
 
     # Clone a board.
     #
     # RETURN [board.Board]: a deep copy of this object
     def copy(self):
         """Returns a copy of this board that can be independently modified"""
-        cpy = Board(copy.deepcopy(self.board), self.w, self.h, self.n)
+        cpy = Board(copy.deepcopy(self.board), self.w, self.h, self.n, copy.deepcopy(self.history))
         cpy.player = self.player
         return cpy
 
@@ -95,6 +96,7 @@ class Board(object):
             self.player = 2
         else:
             self.player = 1
+        self.history.append(x)
 
     # Returns a list of the columns with at least one free slot.
     #
