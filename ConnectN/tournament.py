@@ -3,6 +3,7 @@ import game
 import agent
 import alpha_beta_agent as aba
 
+
 ######################
 # Play a single game #
 ######################
@@ -19,8 +20,8 @@ def play_game(w, h, n, l, p1, p2):
     g = game.Game(w,  # width
                   h,  # height
                   n,  # tokens in a row to win
-                  p1, # player 1
-                  p2) # player 2
+                  p1,  # player 1
+                  p2)  # player 2
     o = g.timed_go(l)
     print("    GAME:", p1.name, "vs.", p2.name, ": ", end='')
     if o == 0:
@@ -30,6 +31,7 @@ def play_game(w, h, n, l, p1, p2):
     else:
         print(p2.name, "won!")
     return o
+
 
 ###########################################################
 # Play a match between two players                        #
@@ -66,6 +68,7 @@ def play_match(w, h, n, l, p1, p2):
         s2 = s2 - 1
     return (s1, s2)
 
+
 ####################################
 # Play tournament and print scores #
 ####################################
@@ -84,17 +87,18 @@ def play_tournament(w, h, n, l, ps):
     for p in ps:
         scores[p] = 0
     # Play
-    for i in range(0, len(ps)-1):
+    for i in range(0, len(ps) - 1):
         for j in range(i + 1, len(ps)):
             (s1, s2) = play_match(w, h, n, l, ps[i], ps[j])
             scores[ps[i]] = scores[ps[i]] + s1
             scores[ps[j]] = scores[ps[j]] + s2
     print("TOURNAMENT END")
     # Calculate and print scores
-    sscores = sorted( ((v,k.name) for k,v in scores.items()), reverse=True)
+    sscores = sorted(((v, k.name) for k, v in scores.items()), reverse=True)
     print("\nSCORES:")
-    for v,k in sscores:
-        print(v,k)
+    for v, k in sscores:
+        print(v, k)
+
 
 #######################
 # Run the tournament! #
@@ -113,8 +117,8 @@ agents = [
 ]
 
 # Run!
-play_tournament(7,      # board width
-                6,      # board height
-                4,      # tokens in a row to win
-                15,     # time limit in seconds
-                agents) # player list
+play_tournament(7,  # board width
+                6,  # board height
+                4,  # tokens in a row to win
+                15,  # time limit in seconds
+                agents)  # player list

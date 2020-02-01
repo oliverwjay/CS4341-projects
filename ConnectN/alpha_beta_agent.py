@@ -1,6 +1,7 @@
 import math
 import agent
 
+
 ###########################
 # Alpha-Beta Search Agent #
 ###########################
@@ -49,5 +50,5 @@ class AlphaBetaAgent(agent.Agent):
             # (This internally changes nb.player, check the method definition!)
             nb.add_token(col)
             # Add board to list of successors
-            succ.append((nb,col))
+            succ.append((nb, col))
         return succ
