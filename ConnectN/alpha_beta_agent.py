@@ -150,3 +150,9 @@ class AlphaBetaAgent(agent.Agent):
                 return else_case
 
     # def get_all_children_nodes(self, brd):
+    def terminal_test(self, brd):
+
+        if brd.get_outcome() is not 0:
+            return False
+        else:
+            return True
