@@ -119,6 +119,7 @@ class AlphaBetaAgent(agent.Agent):
                 return alpha
         """
 
+
     def utility_function(self, brd):
         """
         This function will determine the value of a given board configuration
