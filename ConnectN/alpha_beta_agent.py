@@ -117,3 +117,10 @@ class AlphaBetaAgent(agent.Agent):
                     return alpha
                 return alpha
         """
+
+    def terminal_test(self, brd):
+
+        if brd.get_outcome() is not 0:
+            return False
+        else:
+            return True
