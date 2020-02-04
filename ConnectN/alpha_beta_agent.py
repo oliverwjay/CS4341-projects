@@ -1,6 +1,6 @@
 import math
 import agent
-
+import board
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -99,12 +99,12 @@ class AlphaBetaAgent(agent.Agent):
                    return bestValue
         """
 
-        #Alpha Beta Prunning Psuedo code
+        # Alpha Beta Prunning Psuedo code
         """
         evaluate (node, alpha, beta)
-            if node is a leaf
-                return the utility value of node
-            if node is a minimizing node
+            if node is a leaf (NEEDS A FUNCTION)
+                return the utility value of node (IS A FUNCTION)
+            if node is a minimizing  (NEEDS A FUNCTION)
                 for each child of node
                     beta = min (beta, evaluate (child, alpha, beta))
                     if beta &lt;= alpha
@@ -117,3 +117,33 @@ class AlphaBetaAgent(agent.Agent):
                     return alpha
                 return alpha
         """
+
+    def utility_function(self, brd):
+        """
+        This function will determine the value of a given board configuration
+        :param brd: the board config
+        :return: a utility value
+        """
+
+        # NOTE: Make Self values if needed
+        win_case = 1  # Return for a win (May increase for different results)
+        loss_case = -1  # Return for a loss (May decrease for different results)
+        tie_case = 0  # Return for tie case (Adjust as needed)
+        else_case = 0  # Return when the game is still happening (Not sure if ever reached)
+
+        # Makes a Board Object with Initialized Parameters
+        board_obj = board.Board(brd, 7, 6, 4)
+
+        # Gets the outcome of the board
+        # Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner
+        ret = board_obj.get_outcome()
+
+        if ret == 1:
+            return win_case
+        elif ret == 2:
+            return loss_case
+        else:
+            if len(self.get_successors(brd)) == 0:
+                return tie_case
+            else:
+                return else_case
