@@ -6,6 +6,7 @@ import board
 # Alpha-Beta Search Agent #
 ###########################
 
+
 class AlphaBetaAgent(agent.Agent):
     """Agent that uses alpha-beta search"""
 
@@ -132,11 +133,11 @@ class AlphaBetaAgent(agent.Agent):
         else_case = 0  # Return when the game is still happening (Not sure if ever reached)
 
         # Makes a Board Object with Initialized Parameters
-        board_obj = board.Board(brd, 7, 6, 4)
+        # board_obj = board.Board(brd, 7, 6, 4)
 
         # Gets the outcome of the board
         # Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner
-        ret = board_obj.get_outcome()
+        ret = brd.get_outcome()
 
         if ret == 1:
             return win_case
@@ -147,3 +148,5 @@ class AlphaBetaAgent(agent.Agent):
                 return tie_case
             else:
                 return else_case
+
+    # def get_all_children_nodes(self, brd):
