@@ -18,6 +18,8 @@ class AlphaBetaAgent(agent.Agent):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
+        self.up_bound = 10000
+        self.down_bound = -10000
 
     # Pick a column.
     #
@@ -59,8 +61,12 @@ class AlphaBetaAgent(agent.Agent):
         """
         Alpha Beta Pruning Function
         :param brd: brd
-        :return: Action
+        :return: An Action
         """
+        # Get the max_value from our tree
+        (a, v) = self.max_value(brd, self.down_bound, self.up_bound)
+        # Return the column in which the token must be added
+        return a
 
     def max_value(self, brd, alpha, beta):
         """
@@ -103,7 +109,7 @@ class AlphaBetaAgent(agent.Agent):
         # Alpha Beta Prunning Psuedo code
         """
         evaluate (node, alpha, beta)
-            if node is a leaf (NEEDS A FUNCTION)
+            if node is a leaf (HAS A FUNCTION)
                 return the utility value of node (IS A FUNCTION)
             if node is a minimizing  (NEEDS A FUNCTION)
                 for each child of node
@@ -150,7 +156,34 @@ class AlphaBetaAgent(agent.Agent):
             else:
                 return else_case
 
-    # def get_all_children_nodes(self, brd):
+    def evaluate(self, brd):
+        """
+        Evaluates the current board state if it had no win or loss and is not a tie
+        :param brd: the board
+        :return: the value of this board
+        """
+
+        # This is temporary and will be modified at a later date
+
+        # First get the blank spaces
+        tuple_of_moves = self.get_open_spaces(brd)
+
+        # Check if these blank spaces connect to n-1 of a certain x or o
+
+    def get_open_spaces(self, brd):
+        """
+        gets the open spaces (x, y) cords
+        :param brd: the board
+        :return: tuple of open spaces
+        """
+        # Get possible actions (returns array of cols)
+        freecols = brd.free_cols()
+
+        # Get x cords of these freecols
+        # for i in freecols:
+
+
+
     def terminal_test(self, brd):
 
         if brd.get_outcome() is not 0:
