@@ -77,20 +77,27 @@ class AlphaBetaAgent(agent.Agent):
             for a in self.get_successors(brd):
                 v = max(v, self.min_value(brd.add_token(a[1]), alpha, beta))
                 if v >= beta:
-                    return (a[1],v)
-                alpha = max(alpha,v)
-                return (-1,v)
-
-
-
+                    return (a[1], v)
+                alpha = max(alpha, v)
+                return (-1, v)
 
     def min_value(self, brd, alpha, beta):
         """
-        :param brd:
-        :param alpha:
-        :param beta:
-        :return:
+        :param brd: copy of game board
+        :param alpha: alpha
+        :param beta: beta
+        :return: a utility value (v)
         """
+        v = 100
+        if self.terminal_test(brd):
+            return self.utility_function(brd)
+        else:
+            for a in self.get_successors(brd):
+                v = min(v, self.max_value(brd.add_token(a[1]), alpha, beta))
+                if v <= alpha:
+                    return (a[1], v)
+                beta = min(beta, v)
+                return (-1, v)
 
         # MiniMax pseudo code
         """function minimax(node, depth, maximizingPlayer)
