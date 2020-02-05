@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from . import board
-from scipy.signal import convolve2d
+from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
 
 
 ##############
@@ -36,6 +36,11 @@ class FastBoard(object):
                     self.board[r, c] = 1
                 if slow_board.board[r][c] == self.opponent:
                     self.board[r, c] = -1
+        # Create kernels
+        self.kernels = [np.ones((self.n, 1), dtype=np.int8),
+                   np.ones((1, self.n), dtype=np.int8),
+                   np.identity(self.n, dtype=np.int8),
+                   np.rot90(np.identity(self.n, dtype=np.int8))]
 
     # Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
     #
@@ -75,11 +80,29 @@ class FastBoard(object):
     # RETURN [int]: 1 for Player 1, 2 for Player 2, and 0 for no winner
     def get_outcome(self):
         """Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner"""
-        for x in range(self.w):
-            for y in range(self.h):
-                if (self.board[y, x] != 0) and self.is_any_line_at(x, y):
-                    return self.board[y, x]
+        for y in range(self.h):
+            for x in range(self.w):
+                if (self.board[y][x] != 0) and self.is_any_line_at(x, y):
+                    return self.board[y][x]
         return 0
+
+    def get_outcome_convolution(self):
+        """Returns the winner using a convolution"""
+        for k in self.kernels:
+            sol = convolve2d(self.board, k, 'valid')
+
+            if np.any(sol & 4):
+                return self.player
+            elif not np.any(sol & 3):
+                return self.opponent
+        # pos_wins = [np.count_nonzero(sol == self.n) for sol in solutions]
+        # neg_wins = sum([np.count_nonzero(sol == - self.n) for sol in solutions])
+        # # score = sum([np.sum(np.square(sol)) for sol in solutions])
+        # if pos_wins:
+        #     return self.player
+        # elif neg_wins:
+        #     return self.opponent
+        # Find largest and smallest
 
     # Adds a token for the current player at the given column
     #
@@ -115,7 +138,7 @@ class FastBoard(object):
                 if self.board[y, x] == 0:
                     print(" ", end='')
                 else:
-                    print(self.board[y, x], end='')
+                    print(2-self.board[y, x], end='')
             print("|")
         print("+", "-" * self.w, "+", sep='')
         print(" ", end='')

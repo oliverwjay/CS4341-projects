@@ -73,8 +73,8 @@ class Board(object):
     # RETURN [int]: 1 for Player 1, 2 for Player 2, and 0 for no winner
     def get_outcome(self):
         """Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner"""
-        for x in range(self.w):
-            for y in range(self.h):
+        for y in range(self.h):
+            for x in range(self.w):
                 if (self.board[y][x] != 0) and self.is_any_line_at(x, y):
                     return self.board[y][x]
         return 0
