@@ -25,9 +25,9 @@ class FastBoard(object):
         # How many tokens in a row to win
         self.n = slow_board.n
         # Current player
-        self.player = 1
+        self.player = slow_board.player
         # Current player
-        self.opponent = 2
+        self.opponent = ~self.player & 3
         # Board data
         self.board = np.zeros((self.h, self.w), dtype=np.int8)
         for c in range(self.w):
@@ -107,10 +107,8 @@ class FastBoard(object):
             y = y + 1
         self.board[y, x] = self.player
         # Switch player
-        if self.player == 1:
-            self.player = 2
-        else:
-            self.player = 1
+        self.player = self.opponent
+        self.opponent = self.player
 
     def remove_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
@@ -141,7 +139,7 @@ class FastBoard(object):
                 if self.board[y, x] == 0:
                     print(" ", end='')
                 else:
-                    print(2-self.board[y, x], end='')
+                    print(self.board[y, x] % 3, end='')
             print("|")
         print("+", "-" * self.w, "+", sep='')
         print(" ", end='')

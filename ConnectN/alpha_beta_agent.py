@@ -38,6 +38,9 @@ class AlphaBetaAgent(agent.Agent):
             board.add_token(move)
             move_weights.append(board.get_outcome_convolution())
             board.remove_token(move)
+        print(move_weights)
+        move_weights = [w - min(move_weights) for w in move_weights]
+        move_weights = [w/sum(move_weights) for w in move_weights]
         choice = random.choices(list_pos_moves, weights=move_weights)[0]
         print(move_weights, choice)
         return choice
