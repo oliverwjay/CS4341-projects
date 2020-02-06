@@ -2,6 +2,7 @@ import board
 import agent
 import time
 
+
 ########
 # Game #
 ########
@@ -21,7 +22,7 @@ class Game(object):
         # Create board
         self.board = board.Board([[0] * w for i in range(h)], w, h, n)
         # Players
-        self.players = [ p1, p2 ]
+        self.players = [p1, p2]
         p1.player = 1
         p2.player = 2
 
@@ -42,7 +43,7 @@ class Game(object):
                 outcome = 1
                 if p == 0:
                     outcome = 2
-                print(self.players[outcome-1].name, "won!")
+                print(self.players[outcome - 1].name, "won!")
                 return outcome
             # Legal move, add token there
             self.board.add_token(x)
@@ -58,7 +59,7 @@ class Game(object):
         if outcome == 0:
             print("It's a tie!")
         else:
-            print(self.players[outcome-1].name, "won!")
+            print(self.players[outcome - 1].name, "won!")
         return outcome
 
     # Execute a timed game.

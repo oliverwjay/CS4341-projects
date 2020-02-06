@@ -1,11 +1,14 @@
 import copy
+import numpy as np
+from . import board
+from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
 
 
 ##############
 # Game Board #
 ##############
 
-class Board(object):
+class FastBoard(object):
 
     # Class constructor.
     #
@@ -13,28 +16,31 @@ class Board(object):
     # PARAM [int]            w:     the board width
     # PARAM [int]            h:     the board height
     # PARAM [int]            n:     the number of tokens to line up to win
-    def __init__(self, board, w, h, n, history=[]):
+    def __init__(self, slow_board):
         """Class constructor"""
-        # Board data
-        self.board = board
         # Board width
-        self.w = w
+        self.w = slow_board.w
         # Board height
-        self.h = h
+        self.h = slow_board.h
         # How many tokens in a row to win
-        self.n = n
+        self.n = slow_board.n
         # Current player
         self.player = 1
-        self.history = copy.deepcopy(history)
-
-    # Clone a board.
-    #
-    # RETURN [board.Board]: a deep copy of this object
-    def copy(self):
-        """Returns a copy of this board that can be independently modified"""
-        cpy = Board(copy.deepcopy(self.board), self.w, self.h, self.n, copy.deepcopy(self.history))
-        cpy.player = self.player
-        return cpy
+        # Current player
+        self.opponent = 2
+        # Board data
+        self.board = np.zeros((self.h, self.w), dtype=np.int8)
+        for c in range(self.w):
+            for r in range(self.h):
+                if slow_board.board[r][c] == self.player:
+                    self.board[r, c] = 1
+                if slow_board.board[r][c] == self.opponent:
+                    self.board[r, c] = -1
+        # Create kernels
+        self.kernels = [np.ones((self.n, 1), dtype=np.int8),
+                   np.ones((1, self.n), dtype=np.int8),
+                   np.identity(self.n, dtype=np.int8),
+                   np.rot90(np.identity(self.n, dtype=np.int8))]
 
     # Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
     #
@@ -50,10 +56,10 @@ class Board(object):
                 (y + (self.n - 1) * dy < 0) or (y + (self.n - 1) * dy >= self.h)):
             return False
         # Get token at (x,y)
-        t = self.board[y][x]
+        t = self.board[y, x]
         # Go through elements
         for i in range(1, self.n):
-            if self.board[y + i * dy][x + i * dx] != t:
+            if self.board[y + i * dy, x + i * dx] != t:
                 return False
         return True
 
@@ -80,6 +86,14 @@ class Board(object):
                     return self.board[y][x]
         return 0
 
+    def get_outcome_convolution(self):
+        """Scores the board using convolutions"""
+        score = 0  # Default score
+        for k in self.kernels:  # Check kernel for each win shape
+            sol = convolve2d(self.board, k, 'valid')  # Check matches with convolution
+            score += np.sum(np.power(sol, 3))
+        return score
+
     # Adds a token for the current player at the given column
     #
     # PARAM [int] x: The column where the token must be added; the column is assumed not full.
@@ -89,22 +103,21 @@ class Board(object):
         """Adds a token for the current player at column x; the column is assumed not full"""
         # Find empty slot for token
         y = 0
-        while self.board[y][x] != 0:
+        while self.board[y, x] != 0:
             y = y + 1
-        self.board[y][x] = self.player
+        self.board[y, x] = self.player
         # Switch player
         if self.player == 1:
             self.player = 2
         else:
             self.player = 1
-        self.history.append(x)
 
     # Returns a list of the columns with at least one free slot.
     #
     # RETURN [list of int]: the columns with at least one free slot
     def free_cols(self):
         """Returns a list of the columns with at least one free slot"""
-        return [x for x in range(self.w) if self.board[-1][x] == 0]
+        return [x for x in range(self.w) if self.board[-1, x] == 0]
 
     # Prints the current board state.
     def print_it(self):
@@ -112,10 +125,10 @@ class Board(object):
         for y in range(self.h - 1, -1, -1):
             print("|", sep='', end='')
             for x in range(self.w):
-                if self.board[y][x] == 0:
+                if self.board[y, x] == 0:
                     print(" ", end='')
                 else:
-                    print(self.board[y][x], end='')
+                    print(2-self.board[y, x], end='')
             print("|")
         print("+", "-" * self.w, "+", sep='')
         print(" ", end='')
