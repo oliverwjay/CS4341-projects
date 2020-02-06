@@ -106,13 +106,13 @@ def play_tournament(w, h, n, l, ps):
 #######################
 
 # Set random seed for reproducibility
-# random.seed(1)
+random.seed(time.time())
 
 # Construct list of agents in the tournament
 agents = [
     # aba.AlphaBetaAgent("aba", 4),
     agent.OneColumnAgent("One Column Agent"),
-    agent.OutsourcedAgent("Outsourced Agent"),
+    agent.OutsourcedAgent("Outsourced Agent", 3),
     agent.RandomAgent("random3"),
     agent.RandomAgent("random4")
 ]

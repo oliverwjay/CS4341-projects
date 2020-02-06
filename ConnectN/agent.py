@@ -46,14 +46,27 @@ class OneColumnAgent(Agent):
 
 class OutsourcedAgent(Agent):
     """Cheats by looking up the answer"""
+    def __init__(self, name, difficulty):
+        """
+
+        :param name:
+        :param difficulty:
+        """
+        super().__init__(name)
+        self.difficulty = difficulty
+
     def go(self, brd):
         history = ''.join([str(x + 1) for x in brd.history])
         r = requests.get("http://connect4.gamesolver.org/solve", params={'pos': history}, headers={'User-Agent': 'not-python-requests'})
         scores = r.json()['score']
-        scores = [x-((x == 100) * 200) for x in scores]
-        choice = scores.index(max(scores))
-        brd.print_it()
-        print(history, scores, choice)
+        # print(scores)
+        scores = [(score - min(scores) + 1)*(score != 100) for score in scores]
+        scores = [score**self.difficulty for score in scores]
+        scores = [score / sum(scores) for score in scores]
+
+        choice = random.choices(range(7), weights=scores)[0]
+        # brd.print_it()
+        # print(history, scores, choice)
         return choice
         # return random.choice(brd.free_cols())
 
