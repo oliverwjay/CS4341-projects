@@ -1,6 +1,9 @@
 import math
+import random
+
 import agent
 import board
+import fast_board
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -27,7 +30,17 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
-        list_pos_moves = self.get_successors(brd)
+        board = fast_board.FastBoard(brd)
+        list_pos_moves = board.free_cols()
+        move_weights = []
+        board.print_it()
+        for move in list_pos_moves:
+            board.add_token(move)
+            move_weights.append(board.get_outcome_convolution())
+            board.remove_token(move)
+        choice = random.choices(list_pos_moves, weights=move_weights)[0]
+        print(move_weights, choice)
+        return choice
 
     # Get the successors of the given board.
     #

@@ -1,6 +1,6 @@
 import copy
 import numpy as np
-from . import board
+import board
 from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
 
 
@@ -106,6 +106,19 @@ class FastBoard(object):
         while self.board[y, x] != 0:
             y = y + 1
         self.board[y, x] = self.player
+        # Switch player
+        if self.player == 1:
+            self.player = 2
+        else:
+            self.player = 1
+
+    def remove_token(self, x):
+        """Adds a token for the current player at column x; the column is assumed not full"""
+        # Find empty slot for token
+        y = 0
+        while y < self.h and self.board[y, x] != 0:
+            y = y + 1
+        self.board[y - 1, x] = 0
         # Switch player
         if self.player == 1:
             self.player = 2
