@@ -111,8 +111,9 @@ random.seed(time.time())
 # Construct list of agents in the tournament
 agents = [
     aba.AlphaBetaAgent("aba", 4),
+    aba.AlphaBetaAgent("aba2", 4),
     agent.OneColumnAgent("One Column Agent"),
-    agent.OutsourcedAgent("Outsourced Agent", 3),
+    agent.OutsourcedAgent("Outsourced Agent", 1),
     agent.RandomAgent("random3"),
     agent.RandomAgent("random4")
 ]
