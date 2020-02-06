@@ -87,22 +87,12 @@ class FastBoard(object):
         return 0
 
     def get_outcome_convolution(self):
-        """Returns the winner using a convolution"""
-        for k in self.kernels:
-            sol = convolve2d(self.board, k, 'valid')
-
-            if np.any(sol & 4):
-                return self.player
-            elif not np.any(sol & 3):
-                return self.opponent
-        # pos_wins = [np.count_nonzero(sol == self.n) for sol in solutions]
-        # neg_wins = sum([np.count_nonzero(sol == - self.n) for sol in solutions])
-        # # score = sum([np.sum(np.square(sol)) for sol in solutions])
-        # if pos_wins:
-        #     return self.player
-        # elif neg_wins:
-        #     return self.opponent
-        # Find largest and smallest
+        """Scores the board using convolutions"""
+        score = 0  # Default score
+        for k in self.kernels:  # Check kernel for each win shape
+            sol = convolve2d(self.board, k, 'valid')  # Check matches with convolution
+            score += np.sum(np.power(sol, 3))
+        return score
 
     # Adds a token for the current player at the given column
     #

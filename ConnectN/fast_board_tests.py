@@ -13,7 +13,7 @@ class FastBoardTests(unittest.TestCase):
                 slow_board.add_token(move)
         fast_board = FastBoard(slow_board)
         print(f"    Nested list: {timeit.timeit(slow_board.get_outcome, number=10000)}")
-        print(f"    Array manual: {timeit.timeit(fast_board.get_outcome, number=10000)}")
+        # print(f"    Array manual: {timeit.timeit(fast_board.get_outcome, number=10000)}")
         print(f"    Array convolution: {timeit.timeit(fast_board.get_outcome_convolution, number=10000)}")
 
     def test_fast_outcome(self):
@@ -31,8 +31,14 @@ class FastBoardTests(unittest.TestCase):
         self.time_outcome(10, 8, 4)
         self.time_outcome(7, 6, 5)
         self.time_outcome(10, 8, 5)
-        print("\n- Populated -")
-        starting = [4,4,5,4,3,0,5,3,1,2,3,5,2]
+        print("\n- Semi-Populated -")
+        starting = [3, 3, 3, 3, 3, 2, 5, 6, 5, 5, 3, 2, 2]
+        self.time_outcome(7, 6, 4, starting)
+        self.time_outcome(10, 8, 4, starting)
+        self.time_outcome(7, 6, 5, starting)
+        self.time_outcome(10, 8, 5, starting)
+        print("\n- Highly Populated -")
+        starting = [3, 3, 3, 3, 3, 2, 5, 6, 5, 5, 3, 2, 2, 5, 6, 2, 2, 0,6,6,5,1,6,4,0,0,0,0,0]
         self.time_outcome(7, 6, 4, starting)
         self.time_outcome(10, 8, 4, starting)
         self.time_outcome(7, 6, 5, starting)
