@@ -66,7 +66,7 @@ class AlphaBetaAgent(agent.Agent):
         # Get the max_value from our tree
         moveVal = self.max_value(brd, self.down_bound, self.up_bound)
         # Return the column in which the token must be added
-        return moveVal[0]
+        return moveVal[1]
 
     def max_value(self, brd, alpha, beta):
         """
@@ -78,7 +78,7 @@ class AlphaBetaAgent(agent.Agent):
         """
         v = self.down_bound
         if self.terminal_test(brd):
-            return self.utility_function(brd)
+            return [-1, self.utility_function(brd)]
         else:
             for a in self.get_successors(brd):
                 v = max(v, self.min_value(brd.add_token(a[1]), alpha, beta))
@@ -98,7 +98,7 @@ class AlphaBetaAgent(agent.Agent):
         """
         v = self.up_bound
         if self.terminal_test(brd):
-            return self.utility_function(brd)
+            return [-1, self.utility_function(brd)]
         else:
             for a in self.get_successors(brd):
                 v = min(v, self.max_value(brd.add_token(a[1]), alpha, beta))
@@ -108,45 +108,6 @@ class AlphaBetaAgent(agent.Agent):
                     return [a[1], v]
                 beta = min(beta, v)
                 return [-1, v]
-
-        # MiniMax pseudo code
-        """function minimax(node, depth, maximizingPlayer)
-            if depth = 0 or node is a terminal node
-                   return the utility of the node
-
-            if maximizingPlayer
-                   bestValue := ??
-            for each child of node
-                   v := minimax(child, depth ? 1, FALSE)
-                   bestValue := max(bestValue, v)
-            return bestValue  
-
-            else (* minimizing player *)
-                   bestValue := +?
-                   for each child of node
-                          v := minimax(child, depth ? 1, TRUE)
-                          bestValue := min(bestValue, v)
-                   return bestValue
-        """
-
-        # Alpha Beta Prunning Psuedo code
-        """
-        evaluate (node, alpha, beta)
-            if node is a leaf (HAS A FUNCTION)
-                return the utility value of node (IS A FUNCTION)
-            if node is a minimizing  (NEEDS A FUNCTION)
-                for each child of node
-                    beta = min (beta, evaluate (child, alpha, beta))
-                    if beta &lt;= alpha
-                    return beta
-                return beta
-            if node is a maximizing node
-                for each child of node
-                alpha = max (alpha, evaluate (child, alpha, beta))
-                if beta &lt;= alpha
-                    return alpha
-                return alpha
-        """
 
     def utility_function(self, brd):
         """
@@ -221,7 +182,7 @@ class AlphaBetaAgent(agent.Agent):
 
     def terminal_test(self, brd):
 
-        if brd.get_outcome() is not 0:
+        if brd.get_outcome() == 0:
             return False
         else:
             return True
