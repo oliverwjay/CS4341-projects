@@ -82,13 +82,15 @@ class AlphaBetaAgent(agent.Agent):
             return [-1, self.utility_function(brd)]
         else:
             for a in self.get_successors(brd):
-                v = max(v, self.min_value(brd.add_token(a[1]), alpha, beta))
+                brd.add_token(a[1])
+                v = max(v, self.min_value(brd, alpha, beta)[1])
                 print("Beta: ")
                 print(v)
                 if v >= beta:
                     return [a[1], v]
                 alpha = max(alpha, v)
                 return [-1, v]
+            return [-1,v]
 
     def min_value(self, brd, alpha, beta):
         """
@@ -102,13 +104,15 @@ class AlphaBetaAgent(agent.Agent):
             return [-1, self.utility_function(brd)]
         else:
             for a in self.get_successors(brd):
-                v = min(v, self.max_value(brd.add_token(a[1]), alpha, beta))
+                brd.add_token(a[1])
+                v = min(v, self.max_value(brd, alpha, beta)[1])
                 print("Alpha: ")
                 print(v)
                 if v <= alpha:
                     return [a[1], v]
                 beta = min(beta, v)
                 return [-1, v]
+            return [-1,v]
 
     def utility_function(self, brd):
         """
@@ -189,10 +193,11 @@ class AlphaBetaAgent(agent.Agent):
             return True
 
 # Testing
-layout = [[0, 0, 0],
-          [0, 0, 0],
-          [0, 0, 0]
+layout = [[0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]
         ]
 ABagent = AlphaBetaAgent("TestAgent", 3)
-smallBoard = board.Board(layout, 3, 3, 2)
+smallBoard = board.Board(layout, 4, 4, 3)
 print(ABagent.alpha_beta_pruning(smallBoard))
