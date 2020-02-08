@@ -148,7 +148,6 @@ class AlphaBetaAgent(agent.Agent):
                 return alpha
         """
 
-
     def utility_function(self, brd):
         """
         This function will determine the value of a given board configuration
@@ -186,26 +185,39 @@ class AlphaBetaAgent(agent.Agent):
         :return: the value of this board
         """
 
+        us_count = 0
+        them_count = 0
         # This is temporary and will be modified at a later date
 
-        # First get the blank spaces
-        tuple_of_moves = self.get_open_spaces(brd)
+        # Get the set of all cords in the board
+        set_of_moves = self.get_open_spaces(brd)
 
         # Check if these blank spaces connect to n-1 of a certain x or o
+        for move in set_of_moves:
+            us_count = brd.is_any_line_pos(move[0], move[1], 1) + us_count
+        for move in set_of_moves:
+            them_count = brd.is_any_line_pos(move[0], move[1], 2) + them_count
+
+        return us_count - them_count
 
     def get_open_spaces(self, brd):
         """
         gets the open spaces (x, y) cords
         :param brd: the board
-        :return: tuple of open spaces
+        :return: set of open spaces
         """
         # Get possible actions (returns array of cols)
         freecols = brd.free_cols()
+        ret_set = set()
 
-        # Get x cords of these freecols
-        # for i in freecols:
+        # Get a set of the next possible moves
+        for col in freecols:
+            for row in range(0, brd.h):
+                if brd[row][col] == 0:
+                    ret_set.add((row, col))
+                    break  # This could jump out of both loops? if issue arises
 
-
+        return ret_set
 
     def terminal_test(self, brd):
 
