@@ -1,0 +1,22 @@
+import math
+import agent
+import alpha_beta_agent as aba
+import board as bd
+
+class MiniMaxTest():
+
+    def __init__(self):
+        layout = [[0, 0, 0],
+                  [0, 0, 0],
+                  [0, 0, 0]
+                  ]
+        self.ABagent = aba.AlphaBetaAgent("TestAgent", 3)
+        self.smallBoard = bd.Board(layout, 3, 3, 2)
+
+    def test_small_board(self):
+        move = self.ABagent.alpha_beta_pruning(self.smallBoard)
+        print(move)
+
+
+tester = MiniMaxTest()
+tester.test_small_board()

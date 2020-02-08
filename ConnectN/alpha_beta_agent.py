@@ -64,9 +64,9 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        (a, v) = self.max_value(brd, self.down_bound, self.up_bound)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound)
         # Return the column in which the token must be added
-        return a
+        return moveVal[0]
 
     def max_value(self, brd, alpha, beta):
         """
@@ -76,16 +76,18 @@ class AlphaBetaAgent(agent.Agent):
         :param beta: beta
         :return: a utility value (v)
         """
-        v = -100
+        v = self.down_bound
         if self.terminal_test(brd):
             return self.utility_function(brd)
         else:
             for a in self.get_successors(brd):
                 v = max(v, self.min_value(brd.add_token(a[1]), alpha, beta))
+                print("Beta: ")
+                print(v)
                 if v >= beta:
-                    return (a[1], v)
+                    return [a[1], v]
                 alpha = max(alpha, v)
-                return (-1, v)
+                return [-1, v]
 
     def min_value(self, brd, alpha, beta):
         """
@@ -94,16 +96,18 @@ class AlphaBetaAgent(agent.Agent):
         :param beta: beta
         :return: a utility value (v)
         """
-        v = 100
+        v = self.up_bound
         if self.terminal_test(brd):
             return self.utility_function(brd)
         else:
             for a in self.get_successors(brd):
                 v = min(v, self.max_value(brd.add_token(a[1]), alpha, beta))
+                print("Alpha: ")
+                print(v)
                 if v <= alpha:
-                    return (a[1], v)
+                    return [a[1], v]
                 beta = min(beta, v)
-                return (-1, v)
+                return [-1, v]
 
         # MiniMax pseudo code
         """function minimax(node, depth, maximizingPlayer)
@@ -209,3 +213,12 @@ class AlphaBetaAgent(agent.Agent):
             return False
         else:
             return True
+
+# Testing
+layout = [[0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0]
+        ]
+ABagent = AlphaBetaAgent("TestAgent", 3)
+smallBoard = board.Board(layout, 3, 3, 2)
+print(ABagent.alpha_beta_pruning(smallBoard))
