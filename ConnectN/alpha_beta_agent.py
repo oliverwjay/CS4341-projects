@@ -68,21 +68,24 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 1)
         # Return the column in which the token must be added
+        brd.print_it()
         print(moveVal)
         moves = brd.free_cols()
         for col in moves:
             brd.add_token(col)
             print(brd.get_outcome_convolution())
+            brd.remove_token(col)
             # if self.utility_function(brd) == moveVal:
             #     print(col)
             #     brd.remove_token(col)
             #     return col
         if moves.__len__() == 0:
             return -1
+        return moveVal[1]
 
-    def max_value(self, brd, alpha, beta, depth_lim = 3, score=None):
+    def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
         """
         Max Value Function
         :param brd: copy of game board
@@ -92,22 +95,22 @@ class AlphaBetaAgent(agent.Agent):
         """
         if score is None:
             score = brd.get_outcome_convolution()
-        v = self.down_bound
+        v = (self.down_bound, move)
         if abs(score) > 700:
-            return self.up_bound
+            return score, move
         elif depth_lim <= 0:
-            return score
+            return score, move
         else:
             for col in brd.free_cols():
                 brd.add_token(col)
-                v = max(v, self.min_value(brd, alpha, beta, depth_lim - 1))
+                v = max(v, self.min_value(brd, alpha, beta, depth_lim - 1, col))
                 brd.remove_token(col)
-                if v >= beta:
+                if v[0] >= beta:
                     return v
-                alpha = max(alpha, v)
+                alpha = max(alpha, v[0])
             return v
 
-    def min_value(self, brd, alpha, beta, depth_lim = 3, score=None):
+    def min_value(self, brd, alpha, beta, depth_lim=3, move=100, score=None):
         """
         :param brd: copy of game board
         :param alpha: alpha
@@ -116,19 +119,19 @@ class AlphaBetaAgent(agent.Agent):
         """
         if score is None:
             score = brd.get_outcome_convolution()
-        v = self.up_bound
+        v = (self.up_bound, move)
         if abs(score) > 700:
-            return self.down_bound
+            return score, move
         elif depth_lim <= 0:
-            return score
+            return score, move
         else:
             for col in brd.free_cols():
                 brd.add_token(col)
-                v = min(v, self.max_value(brd, alpha, beta, depth_lim - 1))
+                v = min(v, self.max_value(brd, alpha, beta, depth_lim - 1, col))
                 brd.remove_token(col)
-                if v <= alpha:
+                if v[0] <= alpha:
                     return v
-                beta = min(beta, v)
+                beta = min(beta, v[0])
             return v
 
     def utility_function(self, brd):
