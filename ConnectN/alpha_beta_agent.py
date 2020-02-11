@@ -18,6 +18,7 @@ class AlphaBetaAgent(agent.Agent):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
+        self.count = 0
         self.up_bound = 10000
         self.down_bound = -10000
 
@@ -65,6 +66,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
+        self.count = 0
         moveVal = self.max_value(brd, self.down_bound, self.up_bound)
         # Return the column in which the token must be added
         print(moveVal)
@@ -87,7 +89,8 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v)
         """
         v = self.down_bound
-        if self.terminal_test(brd):
+        self.count = self.count + 1
+        if self.terminal_test(brd) or self.count == self.max_depth:
             return self.utility_function(brd)
         else:
             for a in self.get_successors(brd):
@@ -107,7 +110,8 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v)
         """
         v = self.up_bound
-        if self.terminal_test(brd):
+        self.count = self.count + 1
+        if self.terminal_test(brd) or self.count == self.max_depth:
             return self.utility_function(brd)
         else:
             for a in self.get_successors(brd):
@@ -201,3 +205,14 @@ class AlphaBetaAgent(agent.Agent):
             return False
         else:
             return True
+
+# Testing
+layout = [[1, 2, 2, 2, 0],
+          [0, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0]
+        ]
+ABagent = AlphaBetaAgent("TestAgent", 2)
+smallBoard = board.Board(layout, 5, 5, 4)
+print(ABagent.alpha_beta_pruning(smallBoard))
