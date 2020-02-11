@@ -144,3 +144,5 @@ class FastBoard(object):
         for i in range(self.w):
             print(i, end='')
         print("")
+
+
