@@ -72,7 +72,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 1)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 3)
         # Return the column in which the token must be added
         brd.print_it()
         print(moveVal)
@@ -100,7 +100,7 @@ class AlphaBetaAgent(agent.Agent):
         if score is None:
             score = brd.get_outcome_convolution()
         v = (self.down_bound, move)
-        if abs(score) > 700:
+        if abs(score) > 7000:
             return score, move
         elif depth_lim <= 0:
             return score, move
@@ -124,7 +124,7 @@ class AlphaBetaAgent(agent.Agent):
         if score is None:
             score = brd.get_outcome_convolution()
         v = (self.up_bound, move)
-        if abs(score) > 700:
+        if abs(score) > 7000:
             return score, move
         elif depth_lim <= 0:
             return score, move
