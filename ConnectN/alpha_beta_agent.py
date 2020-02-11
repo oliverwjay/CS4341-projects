@@ -24,6 +24,10 @@ class AlphaBetaAgent(agent.Agent):
         self.up_bound = 10000
         self.down_bound = -10000
 
+        self.win_case = 100000  # Return for a win (May increase for different results)
+        self.loss_case = -1500  # Return for a loss (May decrease for different results)
+        self.tie_case = 0  # Return for tie case (Adjust as needed)
+
     # Pick a column.
     #
     # PARAM [board.Board] brd: the current board state
@@ -141,26 +145,17 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value
         """
 
-        # NOTE: Make Self values if needed
-        win_case = 10  # Return for a win (May increase for different results)
-        loss_case = -15  # Return for a loss (May decrease for different results)
-        tie_case = 0  # Return for tie case (Adjust as needed)
-        else_case = 0  # Return when the game is still happening (Not sure if ever reached)
-
-        # Makes a Board Object with Initialized Parameters
-        # board_obj = board.Board(brd, 7, 6, 4)
-
         # Gets the outcome of the board
         # Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner
         ret = brd.get_outcome()
 
         if ret == 1:
-            return win_case
+            return self.win_case
         elif ret == 2:
-            return loss_case
+            return self.loss_case
         else:
             if len(self.get_successors(brd)) == 0:
-                return tie_case
+                return self.tie_case
             else:
                 return self.evaluate(brd)
 
