@@ -29,7 +29,7 @@ class FastBoard(object):
         # Current player
         self.opponent = ~self.player & 3
         # Board data
-        self.board = np.zeros((self.h, self.w), dtype=np.int8)
+        self.board = np.zeros((self.h, self.w), dtype=np.int16)
         for c in range(self.w):
             for r in range(self.h):
                 if slow_board.board[r][c] == self.player:
@@ -91,7 +91,7 @@ class FastBoard(object):
         score = 0  # Default score
         for k in self.kernels:  # Check kernel for each win shape
             sol = convolve2d(self.board, k, 'valid')  # Check matches with convolution
-            score += np.sum(np.power(sol, 3))
+            score += np.sum(np.power(sol, 5))
         return score
 
     # Adds a token for the current player at the given column
