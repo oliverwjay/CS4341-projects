@@ -191,18 +191,13 @@ class AlphaBetaAgent(agent.Agent):
         return ret_set
 
     def terminal_test(self, brd):
-
-        if brd.get_outcome() == 0:
+        """
+        Tests if this is a final board position
+        :param brd: the board state
+        :return: returns a boolean on if it is a terminal state
+        """
+        freecols = brd.free_cols()
+        if brd.get_outcome() == 0 and len(freecols) > 0:
             return False
         else:
             return True
-
-# Testing
-layout = [[1, 2, 2, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ]
-ABagent = AlphaBetaAgent("TestAgent", 3)
-smallBoard = board.Board(layout, 4, 4, 3)
-print(ABagent.alpha_beta_pruning(smallBoard))
