@@ -32,7 +32,7 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
-        list_pos_moves = self.get_successors(brd)
+        brd = fast_board.FastBoard(brd)
         return self.alpha_beta_pruning(brd)
 
     # Get the successors of the given board.
@@ -71,17 +71,18 @@ class AlphaBetaAgent(agent.Agent):
         moveVal = self.max_value(brd, self.down_bound, self.up_bound)
         # Return the column in which the token must be added
         print(moveVal)
-        moves = self.get_successors(brd)
-        for a in moves:
-            print(self.utility_function(a[0]))
-            if self.utility_function(a[0]) == moveVal:
-                print(a[1])
-                return a[1]
+        moves = brd.free_cols()
+        for col in moves:
+            brd.add_token(col)
+            print(brd.get_outcome_convolution())
+            # if self.utility_function(brd) == moveVal:
+            #     print(col)
+            #     brd.remove_token(col)
+            #     return col
         if moves.__len__() == 0:
             return -1
 
-
-    def max_value(self, brd, alpha, beta):
+    def max_value(self, brd, alpha, beta, depth_lim = 3, score=None):
         """
         Max Value Function
         :param brd: copy of game board
@@ -89,34 +90,42 @@ class AlphaBetaAgent(agent.Agent):
         :param beta: beta
         :return: a utility value (v)
         """
+        if score is None:
+            score = brd.get_outcome_convolution()
         v = self.down_bound
-        if self.terminal_test(brd):
-            return self.utility_function(brd)
+        if abs(score) > 700:
+            return self.up_bound
+        elif depth_lim <= 0:
+            return score
         else:
-            for a in self.get_successors(brd):
-                v = max(v, self.min_value(a[0], alpha, beta))
-                # print("Beta: ")
-                # print(v)
+            for col in brd.free_cols():
+                brd.add_token(col)
+                v = max(v, self.min_value(brd, alpha, beta, depth_lim - 1))
+                brd.remove_token(col)
                 if v >= beta:
                     return v
                 alpha = max(alpha, v)
             return v
 
-    def min_value(self, brd, alpha, beta):
+    def min_value(self, brd, alpha, beta, depth_lim = 3, score=None):
         """
         :param brd: copy of game board
         :param alpha: alpha
         :param beta: beta
         :return: a utility value (v)
         """
+        if score is None:
+            score = brd.get_outcome_convolution()
         v = self.up_bound
-        if self.terminal_test(brd):
-            return self.utility_function(brd)
+        if abs(score) > 700:
+            return self.down_bound
+        elif depth_lim <= 0:
+            return score
         else:
-            for a in self.get_successors(brd):
-                v = min(v, self.max_value(a[0], alpha, beta))
-                # print("Alpha: ")
-                # print(v)
+            for col in brd.free_cols():
+                brd.add_token(col)
+                v = min(v, self.max_value(brd, alpha, beta, depth_lim - 1))
+                brd.remove_token(col)
                 if v <= alpha:
                     return v
                 beta = min(beta, v)
