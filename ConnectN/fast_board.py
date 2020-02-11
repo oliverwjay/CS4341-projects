@@ -40,9 +40,9 @@ class FastBoard(object):
                     self.board[r, c] = -1
         # Create kernels
         self.kernels = [np.ones((self.n, 1), dtype=np.int8),
-                   np.ones((1, self.n), dtype=np.int8),
-                   np.identity(self.n, dtype=np.int8),
-                   np.rot90(np.identity(self.n, dtype=np.int8))]
+                        np.ones((1, self.n), dtype=np.int8),
+                        np.identity(self.n, dtype=np.int8),
+                        np.rot90(np.identity(self.n, dtype=np.int8))]
 
     # Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
     #
@@ -144,5 +144,3 @@ class FastBoard(object):
         for i in range(self.w):
             print(i, end='')
         print("")
-
-

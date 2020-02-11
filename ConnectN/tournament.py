@@ -98,6 +98,8 @@ def play_tournament(w, h, n, l, ps):
     print("\nSCORES:")
     for v, k in sscores:
         print(v, k)
+        # if k == "aba":
+        #     return v, k
 
 
 #######################
@@ -122,3 +124,17 @@ play_tournament(7,  # board width
                 4,  # tokens in a row to win
                 15,  # time limit in seconds
                 agents)  # player list
+
+# Multiple Tournaments
+# total = 0
+# num_tor = 6
+# for i in range(0, num_tor):
+#     score = (play_tournament(7,  # board width
+#                              6,  # board height
+#                              4,  # tokens in a row to win
+#                              15,  # time limit in seconds
+#                              agents))  # player list
+#     total = total + score[0]
+#
+# # Returns the percentage of games in the total tournament that we won
+# print(total / (num_tor * 8))

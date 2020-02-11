@@ -88,7 +88,5 @@ class MyTestCase(unittest.TestCase):
         # print(ab_agent.evaluate(test_brd))
 
 
-
-
 if __name__ == '__main__':
     unittest.main()

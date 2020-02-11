@@ -5,6 +5,7 @@ import agent
 import board
 import fast_board
 
+
 ###########################
 # Alpha-Beta Search Agent #
 ###########################
@@ -72,7 +73,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 3)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
         brd.print_it()
         print(moveVal)
