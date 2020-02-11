@@ -44,6 +44,29 @@ class MyTestCase(unittest.TestCase):
         # Tests if a tie works
         self.assertEqual(ab_agent.terminal_test(tie_brd), True)
 
+    def test_get_open_spaces(self):
+        """
+        Test the get open spaces in alpha beta agent
+        :return: void
+        """
+        full_board = [[1, 2, 2, 1],
+                      [1, 2, 1, 1],
+                      [1, 2, 1, 1],
+                      [1, 2, 1, 1]
+                      ]
+
+        check_board = [[1, 2, 2, 0],
+                       [0, 2, 1, 0],
+                       [0, 2, 0, 0],
+                       [0, 0, 0, 0]
+                       ]
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestGetOpenSpaces", 3)
+
+        test_brd = board.Board(full_board, 4, 4, 3)
+        check_brd = board.Board(check_board, 4, 4, 3)
+
+        self.assertEqual(set(), ab_agent.get_open_spaces(test_brd))
+        self.assertEqual({(0, 1), (1, 3), (2, 2), (3, 0)}, ab_agent.get_open_spaces(check_brd))
 
 
 if __name__ == '__main__':
