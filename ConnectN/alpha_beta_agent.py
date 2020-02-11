@@ -185,7 +185,7 @@ class AlphaBetaAgent(agent.Agent):
         for col in freecols:
             for row in range(0, brd.h):
                 if brd.board[row][col] == 0:
-                    ret_set.add((row, col))
+                    ret_set.add((col, row))
                     break  # This could jump out of both loops? if issue arises
 
         return ret_set
