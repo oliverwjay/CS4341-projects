@@ -111,7 +111,27 @@ class FastBoard(object):
         # Switch player
         self.cur_player *= -1
 
+    def add_token2(self, x):
+        """Adds a token for the current player at column x; the column is assumed not full"""
+        # Find empty slot for token
+        y = 0
+        while self.board[y, x] != 0:
+            y = y + 1
+        self.board[y, x] = self.cur_player * -1
+        # Switch player
+        self.cur_player *= -1
+
     def remove_token(self, x):
+        """Adds a token for the current player at column x; the column is assumed not full"""
+        # Find empty slot for token
+        y = 0
+        while y < self.h and self.board[y, x] != 0:
+            y = y + 1
+        self.board[y - 1, x] = 0
+        # Switch player
+        self.cur_player *= -1
+
+    def remove_token2(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
         # Find empty slot for token
         y = 0
