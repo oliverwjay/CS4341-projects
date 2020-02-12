@@ -69,10 +69,8 @@ class AlphaBetaAgent(agent.Agent):
         self.count = 0
         moveVal = self.max_value(brd, self.down_bound, self.up_bound)
         # Return the column in which the token must be added
-        print(moveVal)
         moves = self.get_successors(brd)
         for a in moves:
-            print(self.utility_function(a[0]))
             if self.utility_function(a[0]) == moveVal:
                 print(a[1])
                 return a[1]
@@ -90,17 +88,16 @@ class AlphaBetaAgent(agent.Agent):
         """
         v = self.down_bound
         self.count = self.count + 1
-        if self.terminal_test(brd) or self.count == self.max_depth:
-            return self.utility_function(brd)
-        else:
-            for a in self.get_successors(brd):
-                v = max(v, self.min_value(a[0], alpha, beta))
-                # print("Beta: ")
-                # print(v)
-                if v >= beta:
-                    return v
-                alpha = max(alpha, v)
-            return v
+        if self.count < self.max_depth:
+            if self.terminal_test(brd):
+                return self.utility_function(brd)
+            else:
+                for a in self.get_successors(brd):
+                    v = max(v, self.min_value(a[0], alpha, beta))
+                    if v >= beta:
+                        return v
+                    alpha = max(alpha, v)
+                return v
 
     def min_value(self, brd, alpha, beta):
         """
@@ -111,17 +108,16 @@ class AlphaBetaAgent(agent.Agent):
         """
         v = self.up_bound
         self.count = self.count + 1
-        if self.terminal_test(brd) or self.count == self.max_depth:
-            return self.utility_function(brd)
-        else:
-            for a in self.get_successors(brd):
-                v = min(v, self.max_value(a[0], alpha, beta))
-                # print("Alpha: ")
-                # print(v)
-                if v <= alpha:
-                    return v
-                beta = min(beta, v)
-            return v
+        if self.count < self.max_depth:
+            if self.terminal_test(brd):
+                return self.utility_function(brd)
+            else:
+                for a in self.get_successors(brd):
+                    v = min(v, self.max_value(a[0], alpha, beta))
+                    if v <= alpha:
+                        return v
+                    beta = min(beta, v)
+                return v
 
     def utility_function(self, brd):
         """
