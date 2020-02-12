@@ -111,7 +111,7 @@ def play_tournament(w, h, n, l, ps):
 
 # Construct list of agents in the tournament
 agents = [
-    aba.AlphaBetaAgent("aba", 4),
+    aba.AlphaBetaAgent("aba", 3),
     agent.RandomAgent("random1"),
     agent.RandomAgent("random2"),
     agent.RandomAgent("random3"),

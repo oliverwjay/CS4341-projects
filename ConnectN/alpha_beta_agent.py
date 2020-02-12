@@ -72,7 +72,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        # moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
         brd.print_it()
         poss_moves = brd.free_cols()
@@ -106,7 +106,10 @@ class AlphaBetaAgent(agent.Agent):
         print(loss_heuristic)
         print("====================")
         print(full_heuristic)
-        return col  # moveVal[1]
+        if best_move < moveVal[0]:
+            return moveVal[1]
+        else:
+            return col  # moveVal[1]
 
     def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
         """
@@ -117,7 +120,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v)
         """
         if score is None:
-            score = brd.get_outcome_convolution()
+            score = self.utility_function(brd)
         v = (self.down_bound, move)
         if abs(score) > 7000:
             return score, move
@@ -141,7 +144,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v)
         """
         if score is None:
-            score = brd.get_outcome_convolution()
+            score = self.utility_function(brd)
         v = (self.up_bound, move)
         if abs(score) > 7000:
             return score, move
@@ -170,13 +173,13 @@ class AlphaBetaAgent(agent.Agent):
 
         if ret == 1:
             return self.win_case
-        elif ret == 2:
+        elif ret == -1:
             return self.loss_case
         else:
-            if len(self.get_successors(brd)) == 0:
+            if len(brd.free_cols()) == 0:
                 return self.tie_case
             else:
-                return self.evaluate(brd)
+                return brd.get_outcome_convolution() - brd.loss_heuristic2()
 
     def evaluate(self, brd):
         """

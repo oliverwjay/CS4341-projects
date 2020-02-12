@@ -182,6 +182,13 @@ class FastBoard(object):
                 self.remove_token2(a)
             else:
                 res.append(0)
-        print("THIS IS LOSS H")
-        print(res)
+        # print("THIS IS LOSS H")
+        # print(res)
         return res
+
+    def loss_heuristic2(self):
+        total = 0
+        loss_heuristic = self.loss_heuristic()
+        for i in loss_heuristic:
+            total += i
+        return total
