@@ -78,11 +78,16 @@ class AlphaBetaAgent(agent.Agent):
         brd.print_it()
         print(moveVal)
         moves = brd.free_cols()
+        best = 0
+        high = 0
         for col in moves:
             brd.add_token(col)
             outcome = brd.get_outcome_convolution()
+            if outcome > high:
+                high = outcome
+                best = col
             print(outcome)
-            print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
+            # print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
             brd.remove_token(col)
             # if self.utility_function(brd) == moveVal:
             #     print(col)
@@ -90,7 +95,7 @@ class AlphaBetaAgent(agent.Agent):
             #     return col
         if moves.__len__() == 0:
             return -1
-        return moveVal[1]
+        return best  # moveVal[1]
 
     def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
         """
