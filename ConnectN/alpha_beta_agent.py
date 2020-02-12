@@ -50,14 +50,7 @@ class AlphaBetaAgent(agent.Agent):
         # Get the max_value from our tree
         moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
-        print(moveVal)
-        moves = brd.free_cols()
-        for col in moves:
-            brd.add_token(col)
-            print(brd.get_outcome_convolution())
-            brd.remove_token(col)
-        if moves.__len__() == 0:
-            return -1
+        print(moveVal, self.get_sorted_options(brd))
         return moveVal[1]
 
     def get_sorted_options(self, brd):
