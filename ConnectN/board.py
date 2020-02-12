@@ -57,6 +57,18 @@ class Board(object):
                 return False
         return True
 
+    def is_line_poss(self, x, y, dx, dy, t):
+        """Return True if a line of identical tokens exists starting at (x,y) in direction (dx,dy)"""
+        # Avoid out-of-bounds errors
+        if ((x + (self.n - 1) * dx >= self.w) or
+                (y + (self.n - 1) * dy < 0) or (y + (self.n - 1) * dy >= self.h)):
+            return False
+        # Go through elements
+        for i in range(1, self.n):
+            if self.board[y + i * dy][x + i * dx] != t:
+                return False
+        return True
+
     # Check if a line of identical tokens exists starting at (x,y) in any direction
     #
     # PARAM [int] x:  the x coordinate of the starting cell
@@ -68,6 +80,20 @@ class Board(object):
                 self.is_line_at(x, y, 0, 1) or  # Vertical
                 self.is_line_at(x, y, 1, 1) or  # Diagonal up
                 self.is_line_at(x, y, 1, -1))  # Diagonal down
+
+    def is_any_line_poss(self, x, y, t):
+        """Return True if a line of identical tokens exists starting at (x,y) in any direction"""
+        count = 0
+        if self.is_line_poss(x, y, 1, 0, t):  # Horizontal
+            count = count + 1
+        if self.is_line_poss(x, y, 0, 1, t):  # Vertical
+            count = count + 1
+        if self.is_line_poss(x, y, 1, 1, t):  # Diagonal up
+            count = count + 1
+        if self.is_line_poss(x, y, 1, -1, t):  # Diagonal down
+            count = count + 1
+
+        return count
 
     # Calculate the game outcome.
     #

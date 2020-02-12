@@ -6,6 +6,14 @@ import timeit
 
 class FastBoardTests(unittest.TestCase):
     def time_outcome(self, w, h, n, moves=None):
+        """
+        Times how long it takes to evaluate a given board 10000 times and prints the results
+        :param w: Board width
+        :param h: Board height
+        :param n: Number in a row needed to win
+        :param moves: List of moves for sample board
+        :return: None
+        """
         print(f"\nSize: {(w, h)} n: {n}")
         slow_board = Board([[0] * w for i in range(h)], w, h, n)
         if moves is not None:
@@ -17,14 +25,22 @@ class FastBoardTests(unittest.TestCase):
         print(f"    Array convolution: {timeit.timeit(fast_board.get_outcome_convolution, number=10000)}")
 
     def test_fast_outcome(self):
+        """
+        Checks fast_board will evaluate the winner
+        :return:
+        """
         w = 7
         h = 6
         n = 4
         slow_board = Board([[0] * w for i in range(h)], w, h, n)
+        moves = [3, 2, 3, 2, 3, 1, 3, 2, 5, 6, 5, 5, 1, 3, 2, 2]
+        for move in moves:
+            slow_board.add_token(move)
+
         fast_board = FastBoard(slow_board)
-        for i in range(10000):
-            sol = fast_board.get_outcome_convolution()
-        self.assertEqual(sol, None)
+        sol = fast_board.get_outcome_convolution()
+        print(sol)
+        self.assertTrue(sol > 60)
 
     def test_outcome_time(self):
         self.time_outcome(7, 6, 4)

@@ -24,12 +24,14 @@ class FastBoard(object):
         self.h = slow_board.h
         # How many tokens in a row to win
         self.n = slow_board.n
-        # Current player
+        # Me
         self.player = slow_board.player
-        # Current player
+        # Opponent
         self.opponent = ~self.player & 3
+        # Current placer
+        self.cur_player = 1
         # Board data
-        self.board = np.zeros((self.h, self.w), dtype=np.int8)
+        self.board = np.zeros((self.h, self.w), dtype=np.int16)
         for c in range(self.w):
             for r in range(self.h):
                 if slow_board.board[r][c] == self.player:
@@ -91,7 +93,14 @@ class FastBoard(object):
         score = 0  # Default score
         for k in self.kernels:  # Check kernel for each win shape
             sol = convolve2d(self.board, k, 'valid')  # Check matches with convolution
-            score += np.sum(np.power(sol, 3))
+            k_score = np.sum(np.power(sol, 5))
+            score += k_score
+            if k_score > (self.n ** 5) // 2:
+                if np.any(sol == self.n):
+                    return 32767
+            elif k_score < - (self.n ** 5) // 2:
+                if np.any(sol == - self.n):
+                    return -32767
         return score
 
     # Adds a token for the current player at the given column
@@ -105,10 +114,9 @@ class FastBoard(object):
         y = 0
         while self.board[y, x] != 0:
             y = y + 1
-        self.board[y, x] = self.player
+        self.board[y, x] = self.cur_player
         # Switch player
-        self.player = self.opponent
-        self.opponent = self.player
+        self.cur_player *= -1
 
     def remove_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
@@ -118,10 +126,7 @@ class FastBoard(object):
             y = y + 1
         self.board[y - 1, x] = 0
         # Switch player
-        if self.player == 1:
-            self.player = 2
-        else:
-            self.player = 1
+        self.cur_player *= -1
 
     # Returns a list of the columns with at least one free slot.
     #
