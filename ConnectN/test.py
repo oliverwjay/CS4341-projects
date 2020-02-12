@@ -2,6 +2,9 @@ import unittest
 import agent
 import alpha_beta_agent
 import board
+import timeit
+import time
+import fast_board
 
 
 class MyTestCase(unittest.TestCase):
@@ -105,6 +108,149 @@ class MyTestCase(unittest.TestCase):
         move = ab_agent.go(test_brd)
 
         self.assertEqual(1, move)
+
+    def test_move_speed(self):
+        test_board = [[1, 2, 2, 2, 0],
+                      [1, 1, 1, 2, 0],
+                      [0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0]
+                      ]
+
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", 3)
+
+        test_brd = board.Board(test_board, 5, 5, 4)
+
+        st = time.time()
+        ab_agent.go(test_brd)
+        et = time.time() - st
+
+        print(et)
+
+    def time_outcome(self, brd, w, h, n, aba):
+        """
+        Times how long it takes to evaluate a given board 10000 times and prints the results
+        :param w: Board width
+        :param h: Board height
+        :param n: Number in a row needed to win
+        :param brd: the board
+        :param aba: the alpha beta agent
+        :return: None
+        """
+        print(f"\nSize: {(w, h)} n: {n}")
+        # fast_brd = fast_board.FastBoard(brd)
+        start = time.time()
+        aba.go(brd)
+        total = time.time() - start
+        print(total)
+        return total
+
+    def test_outcome_time(self):
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", 6)
+        blank_board_6x7 = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0]
+                           ]
+
+        semi_board_6x7 = [[1, 0, 2, 1, 1, 2, 0],
+                          [2, 0, 1, 0, 2, 1, 0],
+                          [1, 0, 1, 0, 1, 0, 0],
+                          [0, 0, 2, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0]
+                          ]
+
+        filled_board_6x7 = [[1, 1, 2, 1, 1, 2, 1],
+                            [2, 2, 1, 2, 2, 1, 2],
+                            [1, 2, 1, 1, 1, 2, 1],
+                            [1, 1, 2, 2, 2, 1, 2],
+                            [2, 0, 2, 1, 1, 2, 1],
+                            [1, 0, 2, 2, 2, 1, 2]
+                            ]
+
+        blank_board_10x8 = [[0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0]
+                            ]
+
+        semi_board_10x8 = [[1, 1, 2, 1, 1, 0, 2, 1],
+                           [2, 1, 1, 2, 2, 0, 1, 2],
+                           [1, 2, 0, 2, 1, 0, 2, 1],
+                           [0, 2, 0, 2, 2, 0, 2, 1],
+                           [0, 1, 0, 1, 2, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0, 0]
+                           ]
+
+        filled_board_10x8 = [[1, 1, 2, 1, 1, 2, 2, 1],
+                             [2, 1, 1, 1, 2, 2, 1, 2],
+                             [1, 2, 2, 2, 1, 2, 1, 1],
+                             [2, 2, 1, 2, 2, 1, 2, 1],
+                             [1, 1, 2, 1, 2, 2, 2, 1],
+                             [2, 2, 1, 2, 2, 1, 1, 2],
+                             [1, 1, 2, 1, 1, 2, 2, 1],
+                             [2, 1, 1, 1, 2, 1, 1, 2],
+                             [1, 2, 2, 2, 1, 2, 1, 0],
+                             [1, 2, 1, 2, 1, 1, 2, 0],
+                             ]
+
+        blank_brd_6x7_4 = board.Board(blank_board_6x7, 7, 6, 4)
+        blank_brd_6x7_5 = board.Board(blank_board_6x7, 7, 6, 5)
+
+        semi_brd_6x7_4 = board.Board(semi_board_6x7, 7, 6, 4)
+        semi_brd_6x7_5 = board.Board(semi_board_6x7, 7, 6, 5)
+
+        filled_brd_6x7_4 = board.Board(filled_board_6x7, 7, 6, 4)
+        filled_brd_6x7_5 = board.Board(filled_board_6x7, 7, 6, 5)
+
+        blank_brd_10x8_4 = board.Board(blank_board_10x8, 8, 10, 4)
+        blank_brd_10x8_5 = board.Board(blank_board_10x8, 8, 10, 5)
+
+        semi_brd_10x8_4 = board.Board(semi_board_10x8, 8, 10, 4)
+        semi_brd_10x8_5 = board.Board(semi_board_10x8, 8, 10, 5)
+
+        filled_brd_10x8_4 = board.Board(filled_board_10x8, 8, 10, 4)
+        filled_brd_10x8_5 = board.Board(filled_board_10x8, 8, 10, 5)
+
+        blank = self.time_outcome(blank_brd_6x7_4, 7, 6, 4, ab_agent)
+        blank += self.time_outcome(blank_brd_6x7_5, 7, 6, 5, ab_agent)
+        blank += self.time_outcome(blank_brd_10x8_4, 8, 10, 4, ab_agent)
+        blank += self.time_outcome(blank_brd_10x8_5, 8, 10, 5, ab_agent)
+
+        semi = self.time_outcome(semi_brd_6x7_4, 7, 6, 4, ab_agent)
+        semi += self.time_outcome(semi_brd_6x7_5, 7, 6, 5, ab_agent)
+        semi += self.time_outcome(semi_brd_10x8_4, 8, 10, 4, ab_agent)
+        semi += self.time_outcome(semi_brd_10x8_5, 8, 10, 5, ab_agent)
+
+        full = self.time_outcome(filled_brd_6x7_4, 7, 6, 4, ab_agent)
+        full += self.time_outcome(filled_brd_6x7_5, 7, 6, 5, ab_agent)
+        full += self.time_outcome(filled_brd_10x8_4, 8, 10, 4, ab_agent)
+        full += self.time_outcome(filled_brd_10x8_5, 8, 10, 5, ab_agent)
+
+        print("\n- Not-Populated Average Time-")
+        print(blank / 4)
+        print("\n- Semi-Populated Average Time -")
+        print(semi / 4)
+        print("\n- Highly Populated Average Time-")
+        print(full / 4)
+
+        # print(filled_brd_10x8_4.get_outcome())
+        # print(filled_brd_6x7_4.get_outcome())
+        # print(semi_brd_6x7_4.get_outcome())
+        # print(semi_brd_10x8_4.get_outcome())
 
 
 if __name__ == '__main__':

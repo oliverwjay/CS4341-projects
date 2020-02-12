@@ -74,7 +74,7 @@ class AlphaBetaAgent(agent.Agent):
         brd.print_it()
         print("Evaluating:")
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 4)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
         print(moveVal)
         moves = brd.free_cols()
