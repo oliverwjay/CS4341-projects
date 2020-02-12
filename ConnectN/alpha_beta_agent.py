@@ -4,6 +4,7 @@ import random
 import agent
 import board
 import fast_board
+import knapsack
 
 
 ###########################
@@ -22,12 +23,12 @@ class AlphaBetaAgent(agent.Agent):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
-        self.up_bound = 10000
-        self.down_bound = -10000
+        self.up_bound = 100000000
+        self.down_bound = -100000000
 
         self.win_case = 100000  # Return for a win (May increase for different results)
         self.loss_case = -1500  # Return for a loss (May decrease for different results)
-        self.tie_case = 0  # Return for tie case (Adjust as needed)
+        self.tie_case = -10  # Return for tie case (Adjust as needed)
 
     # Pick a column.
     #
@@ -80,7 +81,9 @@ class AlphaBetaAgent(agent.Agent):
         moves = brd.free_cols()
         for col in moves:
             brd.add_token(col)
-            print(brd.get_outcome_convolution())
+            outcome = brd.get_outcome_convolution()
+            print(outcome)
+            print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
             brd.remove_token(col)
             # if self.utility_function(brd) == moveVal:
             #     print(col)

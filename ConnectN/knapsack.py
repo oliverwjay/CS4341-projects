@@ -40,4 +40,4 @@ def knapsack(items, maxweight):
     return bestvalue(len(items), maxweight), result
 
 
-print(knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125), ], 727))
+print(knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], 1464))

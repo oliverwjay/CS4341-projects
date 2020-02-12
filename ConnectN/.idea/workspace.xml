@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7455ee79-c8e7-43e9-841d-08aaf4db5e13" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/knapsack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fast_board.py" beforeDir="false" afterPath="$PROJECT_DIR$/fast_board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alpha_beta_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/alpha_beta_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/knapsack.py" beforeDir="false" afterPath="$PROJECT_DIR$/knapsack.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,11 +38,11 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/knapsack.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/tournament.py" />
     <property name="settings.editor.selected.configurable" value="configurable.group.build" />
   </component>
   <component name="RunManager">
-    <configuration name="knapsack" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="tournament" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="ConnectN" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -54,7 +54,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/knapsack.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tournament.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -78,30 +78,30 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="223" y="68" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581391532584">
+    <state x="223" y="68" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581447200601">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="223" y="68" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1581391532584" />
-    <state x="548" y="168" key="FileChooserDialogImpl" timestamp="1581391531585">
+    <state x="223" y="68" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1581447200601" />
+    <state x="548" y="168" key="FileChooserDialogImpl" timestamp="1581447199068">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="548" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1581391531585" />
-    <state width="1515" height="210" key="GridCell.Tab.0.bottom" timestamp="1581391535512">
+    <state x="548" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1581447199068" />
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom" timestamp="1581447219700">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1581391535512" />
-    <state width="1515" height="210" key="GridCell.Tab.0.center" timestamp="1581391535512">
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1581447219700" />
+    <state width="1515" height="235" key="GridCell.Tab.0.center" timestamp="1581447219700">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1581391535512" />
-    <state width="1515" height="210" key="GridCell.Tab.0.left" timestamp="1581391535512">
+    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1581447219700" />
+    <state width="1515" height="235" key="GridCell.Tab.0.left" timestamp="1581447219699">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1581391535512" />
-    <state width="1515" height="210" key="GridCell.Tab.0.right" timestamp="1581391535512">
+    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1581447219699" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right" timestamp="1581447219700">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1581391535512" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1581447219700" />
     <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1581385186470">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
