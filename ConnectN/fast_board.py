@@ -30,13 +30,17 @@ class FastBoard(object):
         self.opponent = ~self.player & 3
         # Current placer
         self.cur_player = 1
+        # Column heights
+        self.col_heights = [-1] * self.w
         # Board data
         self.board = np.zeros((self.h, self.w), dtype=np.int16)
         for c in range(self.w):
             for r in range(self.h):
                 if slow_board.board[r][c] == self.player:
+                    self.col_heights[c] += 1
                     self.board[r, c] = 1
                 if slow_board.board[r][c] == self.opponent:
+                    self.col_heights[c] += 1
                     self.board[r, c] = -1
         # Create kernels
         self.kernels = [np.ones((self.n, 1), dtype=np.int8),
@@ -66,21 +70,19 @@ class FastBoard(object):
     # NOTE: This method switches the current player.
     def add_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while self.board[y, x] != 0:
-            y = y + 1
-        self.board[y, x] = self.cur_player
+        # Update column height
+        self.col_heights[x] += 1
+        # Add token
+        self.board[self.col_heights[x], x] = self.cur_player
         # Switch player
         self.cur_player *= -1
 
     def remove_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while y < self.h and self.board[y, x] != 0:
-            y = y + 1
-        self.board[y - 1, x] = 0
+        # Add token
+        self.board[self.col_heights[x], x] = 0
+        # Update column height
+        self.col_heights[x] -= 1
         # Switch player
         self.cur_player *= -1
 
