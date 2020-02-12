@@ -107,7 +107,7 @@ def play_tournament(w, h, n, l, ps):
 #######################
 
 # Set random seed for reproducibility
-# random.seed(1)
+random.seed(3)
 
 # Construct list of agents in the tournament
 agents = [

@@ -87,6 +87,25 @@ class MyTestCase(unittest.TestCase):
 
         # print(ab_agent.evaluate(test_brd))
 
+    def test_double_lookahead(self):
+        """
+        Tests scenario where opponent wins two moves out
+        :return:
+        """
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("Test Foresight", 3)
+
+        test_board = [[0, 0, 2, 2, 0],
+                      [0, 0, 1, 2, 0],
+                      [0, 0, 1, 0, 0],
+                      [0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0]
+                      ]
+        test_brd = board.Board(test_board, 5, 5, 4)
+
+        move = ab_agent.go(test_brd)
+
+        self.assertEqual(1, move)
+
 
 if __name__ == '__main__':
     unittest.main()

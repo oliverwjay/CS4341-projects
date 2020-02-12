@@ -5,7 +5,6 @@ import agent
 import board
 import fast_board
 
-
 ###########################
 # Alpha-Beta Search Agent #
 ###########################
@@ -22,11 +21,12 @@ class AlphaBetaAgent(agent.Agent):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
-        self.up_bound = 100000000
-        self.down_bound = -100000000
+        self.up_bound = 10000
+        self.down_bound = -10000
+
         self.win_case = 100000  # Return for a win (May increase for different results)
         self.loss_case = -1500  # Return for a loss (May decrease for different results)
-        self.tie_case = -10  # Return for tie case (Adjust as needed)
+        self.tie_case = 0  # Return for tie case (Adjust as needed)
 
     # Pick a column.
     #
@@ -71,94 +71,124 @@ class AlphaBetaAgent(agent.Agent):
         :param brd: brd
         :return: An Action
         """
-        # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
-        # Return the column in which the token must be added
         brd.print_it()
-        poss_moves = brd.free_cols()
-        moves = brd.w
-        count = 0
-        best_move = 0
-        full_heuristic = []
-        for col in range(0, moves):
-            if col in poss_moves:
-                brd.add_token(col)
-                outcome = brd.get_outcome_convolution()
-                full_heuristic.append(outcome)
-                # print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
-                brd.remove_token(col)
-                # if self.utility_function(brd) == moveVal:
-                #     print(col)
-                #     brd.remove_token(col)
-                #     return col
-            else:
-                full_heuristic.insert(col, 0)
-        loss_heuristic = brd.loss_heuristic()
-        for a in range(0, len(loss_heuristic)):
-            full_heuristic[a] += loss_heuristic[a]
-        for move in full_heuristic:
-            if move > best_move and count in poss_moves:
-                best_move = move
-                col = count
-            count += 1
-        if poss_moves.__len__() == 0:
+        print("Evaluating:")
+        # Get the max_value from our tree
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 4)
+        # Return the column in which the token must be added
+        print(moveVal)
+        moves = brd.free_cols()
+        for col in moves:
+            brd.add_token(col)
+            print(brd.get_outcome_convolution())
+            brd.remove_token(col)
+            # if self.utility_function(brd) == moveVal:
+            #     print(col)
+            #     brd.remove_token(col)
+            #     return col
+        if moves.__len__() == 0:
             return -1
-        print(loss_heuristic)
-        print("====================")
-        print(full_heuristic)
-        if best_move < moveVal[0]:
-            return moveVal[1]
-        else:
-            return col  # moveVal[1]
+        return moveVal[1]
 
-    def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
+    def get_sorted_options(self, brd):
+        """
+        Finds the options
+        :param brd: Game board
+        :return: Max sorted list of tuples in form (heuristic, move)
+        """
+        # Find options
+        opts = brd.free_cols()
+
+        # Find heuristics
+        scored_opts = []
+        for opt in opts:
+            brd.add_token(opt)
+            scored_opts.append((brd.get_outcome_convolution(), opt))
+            brd.remove_token(opt)
+
+        # Sore options by heuristic
+        scored_opts.sort()
+
+        # Return sorted list
+        return scored_opts
+
+    def max_value(self, brd, alpha, beta, depth_lim):
         """
         Max Value Function
         :param brd: copy of game board
         :param alpha: alpha
         :param beta: beta
-        :return: a utility value (v)
+        :param depth_lim: how many layers deep to try
+        :return: a utility value (v), the best move
         """
-        if score is None:
-            score = self.utility_function(brd)
-        v = (self.down_bound, move)
-        if abs(score) > 7000:
-            return score, move
-        elif depth_lim <= 0:
-            return score, move
-        else:
-            for col in brd.free_cols():
-                brd.add_token(col)
-                v = max(v, self.min_value(brd, alpha, beta, depth_lim - 1, col))
-                brd.remove_token(col)
-                if v[0] >= beta:
-                    return v
-                alpha = max(alpha, v[0])
-            return v
+        # Get options sorted by heuristic
+        scored_opts = self.get_sorted_options(brd)[::-1]
 
-    def min_value(self, brd, alpha, beta, depth_lim=3, move=100, score=None):
+        # Check for tie
+        if not scored_opts:
+            return 0, -1
+
+        # If end of recursion, pick the best heuristic
+        if depth_lim <= 0:
+            return scored_opts[0]
+
+        # Set default v
+        v = self.down_bound - 1
+        best_opt = scored_opts[0][1]
+
+        # Evaluate each
+        for score, opt in scored_opts:
+            if score > self.up_bound:
+                return self.up_bound, opt
+            brd.add_token(opt)
+            full_score = self.min_value(brd, alpha, beta, depth_lim - 1)[0]
+            brd.remove_token(opt)
+            if full_score > v:
+                v = full_score
+                best_opt = opt
+                if v >= beta:
+                    break
+            alpha = max(alpha, v)
+        return v, best_opt
+
+    def min_value(self, brd, alpha, beta, depth_lim):
         """
+        Max Value Function
         :param brd: copy of game board
         :param alpha: alpha
         :param beta: beta
-        :return: a utility value (v)
+        :param depth_lim: how many layers deep to try
+        :return: a utility value (v), the best move
         """
-        if score is None:
-            score = self.utility_function(brd)
-        v = (self.up_bound, move)
-        if abs(score) > 7000:
-            return score, move
-        elif depth_lim <= 0:
-            return score, move
-        else:
-            for col in brd.free_cols():
-                brd.add_token(col)
-                v = min(v, self.max_value(brd, alpha, beta, depth_lim - 1, col))
-                brd.remove_token(col)
-                if v[0] <= alpha:
-                    return v
-                beta = min(beta, v[0])
-            return v
+        # Get options sorted by heuristic
+        scored_opts = self.get_sorted_options(brd)
+
+        # Check for tie
+        if not scored_opts:
+            return 0, -1
+
+        # If end of recursion, pick the best heuristic
+        if depth_lim <= 0:
+            return scored_opts[0]
+
+        # Set default v
+        v = self.up_bound - 1
+        best_opt = scored_opts[0][1]
+
+        # Evaluate each
+        for score, opt in scored_opts:
+            if score < self.down_bound:
+                return self.down_bound, opt
+            brd.add_token(opt)
+            full_score = self.max_value(brd, alpha, beta, depth_lim - 1)[0]
+            brd.remove_token(opt)
+            if full_score < v:
+                v = full_score
+                best_opt = opt
+                if v <= alpha:
+                    break
+            beta = max(beta, v)
+        return v, best_opt
 
     def utility_function(self, brd):
         """
@@ -173,13 +203,13 @@ class AlphaBetaAgent(agent.Agent):
 
         if ret == 1:
             return self.win_case
-        elif ret == -1:
+        elif ret == 2:
             return self.loss_case
         else:
-            if len(brd.free_cols()) == 0:
+            if len(self.get_successors(brd)) == 0:
                 return self.tie_case
             else:
-                return brd.get_outcome_convolution() - brd.loss_heuristic2()
+                return self.evaluate(brd)
 
     def evaluate(self, brd):
         """

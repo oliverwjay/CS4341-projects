@@ -95,7 +95,14 @@ class FastBoard(object):
         score = 0  # Default score
         for k in self.kernels:  # Check kernel for each win shape
             sol = convolve2d(self.board, k, 'valid')  # Check matches with convolution
-            score += np.sum(np.power(sol, 5))
+            k_score = np.sum(np.power(sol, 5))
+            score += k_score
+            if k_score > (self.n ** 5) // 2:
+                if np.any(sol == self.n):
+                    return 32767
+            elif k_score < - (self.n ** 5) // 2:
+                if np.any(sol == - self.n):
+                    return -32767
         return score
 
     # Adds a token for the current player at the given column
