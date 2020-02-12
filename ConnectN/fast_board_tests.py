@@ -1,7 +1,7 @@
 import unittest
-from ConnectN.fast_board import FastBoard
-from ConnectN.board import Board
 import timeit
+import fast_board
+import board
 
 
 class FastBoardTests(unittest.TestCase):
@@ -15,14 +15,14 @@ class FastBoardTests(unittest.TestCase):
         :return: None
         """
         print(f"\nSize: {(w, h)} n: {n}")
-        slow_board = Board([[0] * w for i in range(h)], w, h, n)
+        slow_board = board.Board([[0] * w for i in range(h)], w, h, n)
         if moves is not None:
             for move in moves:
                 slow_board.add_token(move)
-        fast_board = FastBoard(slow_board)
+        fast_brd = fast_board.FastBoard(slow_board)
         print(f"    Nested list: {timeit.timeit(slow_board.get_outcome, number=10000)}")
         # print(f"    Array manual: {timeit.timeit(fast_board.get_outcome, number=10000)}")
-        print(f"    Array convolution: {timeit.timeit(fast_board.get_outcome_convolution, number=10000)}")
+        print(f"    Array convolution: {timeit.timeit(fast_brd.get_outcome_convolution, number=10000)}")
 
     def test_fast_outcome(self):
         """
@@ -32,13 +32,13 @@ class FastBoardTests(unittest.TestCase):
         w = 7
         h = 6
         n = 4
-        slow_board = Board([[0] * w for i in range(h)], w, h, n)
+        slow_board = board.Board([[0] * w for i in range(h)], w, h, n)
         moves = [3, 2, 3, 2, 3, 1, 3, 2, 5, 6, 5, 5, 1, 3, 2, 2]
         for move in moves:
             slow_board.add_token(move)
 
-        fast_board = FastBoard(slow_board)
-        sol = fast_board.get_outcome_convolution()
+        fast_brd = fast_board.FastBoard(slow_board)
+        sol = fast_brd.get_outcome_convolution()
         print(sol)
         self.assertTrue(sol > 60)
 
@@ -54,12 +54,11 @@ class FastBoardTests(unittest.TestCase):
         self.time_outcome(7, 6, 5, starting)
         self.time_outcome(10, 8, 5, starting)
         print("\n- Highly Populated -")
-        starting = [3, 3, 3, 3, 3, 2, 5, 6, 5, 5, 3, 2, 2, 5, 6, 2, 2, 0,6,6,5,1,6,4,0,0,0,0,0]
+        starting = [3, 3, 3, 3, 3, 2, 5, 6, 5, 5, 3, 2, 2, 5, 6, 2, 2, 0, 6, 6, 5, 1, 6, 4, 0, 0, 0, 0, 0]
         self.time_outcome(7, 6, 4, starting)
         self.time_outcome(10, 8, 4, starting)
         self.time_outcome(7, 6, 5, starting)
         self.time_outcome(10, 8, 5, starting)
-
 
 
 if __name__ == '__main__':
