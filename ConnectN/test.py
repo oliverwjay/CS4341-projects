@@ -5,6 +5,7 @@ import board
 import timeit
 import time
 import fast_board
+import matplotlib.pyplot as plt
 
 
 class MyTestCase(unittest.TestCase):
@@ -146,106 +147,122 @@ class MyTestCase(unittest.TestCase):
         return total
 
     def test_outcome_time(self):
-        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", 6)
-        blank_board_6x7 = [[0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0]
-                           ]
+        arr = []
+        for i in range(0, 8):
+            ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", i)
+            blank_board_6x7 = [[0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0]
+                               ]
 
-        semi_board_6x7 = [[1, 0, 2, 1, 1, 2, 0],
-                          [2, 0, 1, 0, 2, 1, 0],
-                          [1, 0, 1, 0, 1, 0, 0],
-                          [0, 0, 2, 0, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 0]
-                          ]
+            semi_board_6x7 = [[1, 0, 2, 1, 1, 2, 0],
+                              [2, 0, 1, 0, 2, 1, 0],
+                              [1, 0, 1, 0, 1, 0, 0],
+                              [0, 0, 2, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0, 0, 0]
+                              ]
 
-        filled_board_6x7 = [[1, 1, 2, 1, 1, 2, 1],
-                            [2, 2, 1, 2, 2, 1, 2],
-                            [1, 2, 1, 1, 1, 2, 1],
-                            [1, 1, 2, 2, 2, 1, 2],
-                            [2, 0, 2, 1, 1, 2, 1],
-                            [1, 0, 2, 2, 2, 1, 2]
-                            ]
+            filled_board_6x7 = [[1, 1, 2, 1, 1, 2, 1],
+                                [2, 2, 1, 2, 2, 1, 2],
+                                [1, 2, 1, 1, 1, 2, 1],
+                                [1, 1, 2, 2, 2, 1, 2],
+                                [2, 0, 2, 1, 1, 2, 1],
+                                [1, 0, 2, 2, 2, 1, 2]
+                                ]
 
-        blank_board_10x8 = [[0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0]
-                            ]
+            blank_board_10x8 = [[0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0]
+                                ]
 
-        semi_board_10x8 = [[1, 1, 2, 1, 1, 0, 2, 1],
-                           [2, 1, 1, 2, 2, 0, 1, 2],
-                           [1, 2, 0, 2, 1, 0, 2, 1],
-                           [0, 2, 0, 2, 2, 0, 2, 1],
-                           [0, 1, 0, 1, 2, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0]
-                           ]
+            semi_board_10x8 = [[1, 1, 2, 1, 1, 0, 2, 1],
+                               [2, 1, 1, 2, 2, 0, 1, 2],
+                               [1, 2, 0, 2, 1, 0, 2, 1],
+                               [0, 2, 0, 2, 2, 0, 2, 1],
+                               [0, 1, 0, 1, 2, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0]
+                               ]
 
-        filled_board_10x8 = [[1, 1, 2, 1, 1, 2, 2, 1],
-                             [2, 1, 1, 1, 2, 2, 1, 2],
-                             [1, 2, 2, 2, 1, 2, 1, 1],
-                             [2, 2, 1, 2, 2, 1, 2, 1],
-                             [1, 1, 2, 1, 2, 2, 2, 1],
-                             [2, 2, 1, 2, 2, 1, 1, 2],
-                             [1, 1, 2, 1, 1, 2, 2, 1],
-                             [2, 1, 1, 1, 2, 1, 1, 2],
-                             [1, 2, 2, 2, 1, 2, 1, 0],
-                             [1, 2, 1, 2, 1, 1, 2, 0],
-                             ]
+            filled_board_10x8 = [[1, 1, 2, 1, 1, 2, 2, 1],
+                                 [2, 1, 1, 1, 2, 2, 1, 2],
+                                 [1, 2, 2, 2, 1, 2, 1, 1],
+                                 [2, 2, 1, 2, 2, 1, 2, 1],
+                                 [1, 1, 2, 1, 2, 2, 2, 1],
+                                 [2, 2, 1, 2, 2, 1, 1, 2],
+                                 [1, 1, 2, 1, 1, 2, 2, 1],
+                                 [2, 1, 1, 1, 2, 1, 1, 2],
+                                 [1, 2, 2, 2, 1, 2, 2, 0],
+                                 [1, 2, 1, 2, 1, 1, 2, 0],
+                                 ]
 
-        blank_brd_6x7_4 = board.Board(blank_board_6x7, 7, 6, 4)
-        blank_brd_6x7_5 = board.Board(blank_board_6x7, 7, 6, 5)
+            blank_brd_6x7_4 = board.Board(blank_board_6x7, 7, 6, 4)
+            blank_brd_6x7_5 = board.Board(blank_board_6x7, 7, 6, 5)
 
-        semi_brd_6x7_4 = board.Board(semi_board_6x7, 7, 6, 4)
-        semi_brd_6x7_5 = board.Board(semi_board_6x7, 7, 6, 5)
+            semi_brd_6x7_4 = board.Board(semi_board_6x7, 7, 6, 4)
+            semi_brd_6x7_5 = board.Board(semi_board_6x7, 7, 6, 5)
 
-        filled_brd_6x7_4 = board.Board(filled_board_6x7, 7, 6, 4)
-        filled_brd_6x7_5 = board.Board(filled_board_6x7, 7, 6, 5)
+            filled_brd_6x7_4 = board.Board(filled_board_6x7, 7, 6, 4)
+            filled_brd_6x7_5 = board.Board(filled_board_6x7, 7, 6, 5)
 
-        blank_brd_10x8_4 = board.Board(blank_board_10x8, 8, 10, 4)
-        blank_brd_10x8_5 = board.Board(blank_board_10x8, 8, 10, 5)
+            blank_brd_10x8_4 = board.Board(blank_board_10x8, 8, 10, 4)
+            blank_brd_10x8_5 = board.Board(blank_board_10x8, 8, 10, 5)
 
-        semi_brd_10x8_4 = board.Board(semi_board_10x8, 8, 10, 4)
-        semi_brd_10x8_5 = board.Board(semi_board_10x8, 8, 10, 5)
+            semi_brd_10x8_4 = board.Board(semi_board_10x8, 8, 10, 4)
+            semi_brd_10x8_5 = board.Board(semi_board_10x8, 8, 10, 5)
 
-        filled_brd_10x8_4 = board.Board(filled_board_10x8, 8, 10, 4)
-        filled_brd_10x8_5 = board.Board(filled_board_10x8, 8, 10, 5)
+            filled_brd_10x8_4 = board.Board(filled_board_10x8, 8, 10, 4)
+            filled_brd_10x8_5 = board.Board(filled_board_10x8, 8, 10, 5)
 
-        blank = self.time_outcome(blank_brd_6x7_4, 7, 6, 4, ab_agent)
-        blank += self.time_outcome(blank_brd_6x7_5, 7, 6, 5, ab_agent)
-        blank += self.time_outcome(blank_brd_10x8_4, 8, 10, 4, ab_agent)
-        blank += self.time_outcome(blank_brd_10x8_5, 8, 10, 5, ab_agent)
+            blank = self.time_outcome(blank_brd_6x7_4, 7, 6, 4, ab_agent)
+            blank += self.time_outcome(blank_brd_6x7_5, 7, 6, 5, ab_agent)
+            blank += self.time_outcome(blank_brd_10x8_4, 8, 10, 4, ab_agent)
+            blank += self.time_outcome(blank_brd_10x8_5, 8, 10, 5, ab_agent)
 
-        semi = self.time_outcome(semi_brd_6x7_4, 7, 6, 4, ab_agent)
-        semi += self.time_outcome(semi_brd_6x7_5, 7, 6, 5, ab_agent)
-        semi += self.time_outcome(semi_brd_10x8_4, 8, 10, 4, ab_agent)
-        semi += self.time_outcome(semi_brd_10x8_5, 8, 10, 5, ab_agent)
+            semi = self.time_outcome(semi_brd_6x7_4, 7, 6, 4, ab_agent)
+            semi += self.time_outcome(semi_brd_6x7_5, 7, 6, 5, ab_agent)
+            semi += self.time_outcome(semi_brd_10x8_4, 8, 10, 4, ab_agent)
+            semi += self.time_outcome(semi_brd_10x8_5, 8, 10, 5, ab_agent)
 
-        full = self.time_outcome(filled_brd_6x7_4, 7, 6, 4, ab_agent)
-        full += self.time_outcome(filled_brd_6x7_5, 7, 6, 5, ab_agent)
-        full += self.time_outcome(filled_brd_10x8_4, 8, 10, 4, ab_agent)
-        full += self.time_outcome(filled_brd_10x8_5, 8, 10, 5, ab_agent)
+            full = self.time_outcome(filled_brd_6x7_4, 7, 6, 4, ab_agent)
+            full += self.time_outcome(filled_brd_6x7_5, 7, 6, 5, ab_agent)
+            full += self.time_outcome(filled_brd_10x8_4, 8, 10, 4, ab_agent)
+            full += self.time_outcome(filled_brd_10x8_5, 8, 10, 5, ab_agent)
 
-        print("\n- Not-Populated Average Time-")
-        print(blank / 4)
-        print("\n- Semi-Populated Average Time -")
-        print(semi / 4)
-        print("\n- Highly Populated Average Time-")
-        print(full / 4)
+            print("\n- Not-Populated Average Time-")
+            blanks = blank/4
+            print(blanks)
+            print("\n- Semi-Populated Average Time -")
+            semis = semi/4
+            print(semis)
+            print("\n- Highly Populated Average Time-")
+            fulls = full/4
+            print(fulls)
+
+            arr.append([blanks, semis, fulls])
+
+        plt.plot(arr)
+        plt.title("Time Per Move")
+        plt.legend(('Empty Board', 'Partially Filled Board', 'Nearly Filled Board'))
+        plt.ylabel("Time (seconds)")
+        plt.xlabel("Max Depth")
+        plt.show()
+
+
 
         # print(filled_brd_10x8_4.get_outcome())
         # print(filled_brd_6x7_4.get_outcome())
