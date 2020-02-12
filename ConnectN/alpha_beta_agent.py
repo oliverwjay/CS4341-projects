@@ -48,7 +48,7 @@ class AlphaBetaAgent(agent.Agent):
         brd.print_it()
         print("Evaluating:")
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 2)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, 4)
         # Return the column in which the token must be added
         print(moveVal)
         moves = brd.free_cols()
@@ -98,6 +98,10 @@ class AlphaBetaAgent(agent.Agent):
         # Get options sorted by heuristic
         scored_opts = self.get_sorted_options(brd)[::-1]
 
+        # Check for tie
+        if not scored_opts:
+            return 0, -1
+
         # If end of recursion, pick the best heuristic
         if depth_lim <= 0:
             return scored_opts[0]
@@ -132,6 +136,10 @@ class AlphaBetaAgent(agent.Agent):
         """
         # Get options sorted by heuristic
         scored_opts = self.get_sorted_options(brd)
+
+        # Check for tie
+        if not scored_opts:
+            return 0, -1
 
         # If end of recursion, pick the best heuristic
         if depth_lim <= 0:
