@@ -30,6 +30,8 @@ class FastBoard(object):
         self.opponent = ~self.player & 3
         # Current placer
         self.cur_player = 1
+        # Exponent for Loss Heuristic
+        self.lossExp = 5
         # Board data
         self.board = np.zeros((self.h, self.w), dtype=np.int16)
         for c in range(self.w):
@@ -164,3 +166,22 @@ class FastBoard(object):
         for i in range(self.w):
             print(i, end='')
         print("")
+
+    def loss_heuristic(self):
+        poss_moves = self.free_cols()
+        all_moves = self.w - 1
+        res = []
+        for a in range(0, all_moves):
+            if a in poss_moves:
+                self.add_token2(a)
+                # In case everett is wrong, switch this to not assume our AI is player 1
+                if self.get_outcome() == -1:
+                    res.append(pow(self.n, self.lossExp))
+                else:
+                    res.append(0)
+                self.remove_token2(a)
+            else:
+                res.append(0)
+        print("THIS IS LOSS H")
+        print(res)
+        return res

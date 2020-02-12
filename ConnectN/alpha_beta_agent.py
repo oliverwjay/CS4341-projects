@@ -4,7 +4,6 @@ import random
 import agent
 import board
 import fast_board
-import knapsack
 
 
 ###########################
@@ -73,29 +72,41 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
+        # moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
         brd.print_it()
-        print(moveVal)
-        moves = brd.free_cols()
-        best = 0
-        high = 0
-        for col in moves:
-            brd.add_token(col)
-            outcome = brd.get_outcome_convolution()
-            if outcome > high:
-                high = outcome
-                best = col
-            print(outcome)
-            # print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
-            brd.remove_token(col)
-            # if self.utility_function(brd) == moveVal:
-            #     print(col)
-            #     brd.remove_token(col)
-            #     return col
-        if moves.__len__() == 0:
+        poss_moves = brd.free_cols()
+        moves = brd.w
+        count = 0
+        best_move = 0
+        full_heuristic = []
+        for col in range(0, moves):
+            if col in poss_moves:
+                brd.add_token(col)
+                outcome = brd.get_outcome_convolution()
+                full_heuristic.append(outcome)
+                # print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
+                brd.remove_token(col)
+                # if self.utility_function(brd) == moveVal:
+                #     print(col)
+                #     brd.remove_token(col)
+                #     return col
+            else:
+                full_heuristic.insert(col, 0)
+        loss_heuristic = brd.loss_heuristic()
+        for a in range(0, len(loss_heuristic)):
+            full_heuristic[a] += loss_heuristic[a]
+        for move in full_heuristic:
+            if move > best_move and count in poss_moves:
+                best_move = move
+                col = count
+            count += 1
+        if poss_moves.__len__() == 0:
             return -1
-        return best  # moveVal[1]
+        print(loss_heuristic)
+        print("====================")
+        print(full_heuristic)
+        return col  # moveVal[1]
 
     def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
         """
@@ -219,14 +230,3 @@ class AlphaBetaAgent(agent.Agent):
             return False
         else:
             return True
-
-# Testing
-layout = [[1, 2, 2, 2, 0],
-          [0, 1, 1, 0, 0],
-          [0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0]
-        ]
-ABagent = AlphaBetaAgent("TestAgent", 2)
-smallBoard = board.Board(layout, 5, 5, 4)
-print(ABagent.alpha_beta_pruning(smallBoard))
