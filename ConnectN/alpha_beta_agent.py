@@ -1,6 +1,11 @@
 import math
+import random
+
 import agent
 import board
+import fast_board
+import knapsack
+
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -18,9 +23,11 @@ class AlphaBetaAgent(agent.Agent):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
-        self.count = 0
-        self.up_bound = 10000
-        self.down_bound = -10000
+        self.up_bound = 100000000
+        self.down_bound = -100000000
+        self.win_case = 100000  # Return for a win (May increase for different results)
+        self.loss_case = -1500  # Return for a loss (May decrease for different results)
+        self.tie_case = -10  # Return for tie case (Adjust as needed)
 
     # Pick a column.
     #
@@ -30,7 +37,7 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
-        list_pos_moves = self.get_successors(brd)
+        brd = fast_board.FastBoard(brd)
         return self.alpha_beta_pruning(brd)
 
     # Get the successors of the given board.
@@ -66,19 +73,26 @@ class AlphaBetaAgent(agent.Agent):
         :return: An Action
         """
         # Get the max_value from our tree
-        self.count = 0
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
         # Return the column in which the token must be added
-        moves = self.get_successors(brd)
-        for a in moves:
-            if self.utility_function(a[0]) == moveVal:
-                print(a[1])
-                return a[1]
+        brd.print_it()
+        print(moveVal)
+        moves = brd.free_cols()
+        for col in moves:
+            brd.add_token(col)
+            outcome = brd.get_outcome_convolution()
+            print(outcome)
+            print(knapsack.knapsack([(1, 1), (2, 32), (3, 243), (4, 1024), (5, 3125)], outcome))
+            brd.remove_token(col)
+            # if self.utility_function(brd) == moveVal:
+            #     print(col)
+            #     brd.remove_token(col)
+            #     return col
         if moves.__len__() == 0:
             return -1
+        return moveVal[1]
 
-
-    def max_value(self, brd, alpha, beta):
+    def max_value(self, brd, alpha, beta, depth_lim=3, move=-1, score=None):
         """
         Max Value Function
         :param brd: copy of game board
@@ -86,38 +100,46 @@ class AlphaBetaAgent(agent.Agent):
         :param beta: beta
         :return: a utility value (v)
         """
-        v = self.down_bound
-        self.count = self.count + 1
-        if self.count < self.max_depth:
-            if self.terminal_test(brd):
-                return self.utility_function(brd)
-            else:
-                for a in self.get_successors(brd):
-                    v = max(v, self.min_value(a[0], alpha, beta))
-                    if v >= beta:
-                        return v
-                    alpha = max(alpha, v)
-                return v
+        if score is None:
+            score = brd.get_outcome_convolution()
+        v = (self.down_bound, move)
+        if abs(score) > 7000:
+            return score, move
+        elif depth_lim <= 0:
+            return score, move
+        else:
+            for col in brd.free_cols():
+                brd.add_token(col)
+                v = max(v, self.min_value(brd, alpha, beta, depth_lim - 1, col))
+                brd.remove_token(col)
+                if v[0] >= beta:
+                    return v
+                alpha = max(alpha, v[0])
+            return v
 
-    def min_value(self, brd, alpha, beta):
+    def min_value(self, brd, alpha, beta, depth_lim=3, move=100, score=None):
         """
         :param brd: copy of game board
         :param alpha: alpha
         :param beta: beta
         :return: a utility value (v)
         """
-        v = self.up_bound
-        self.count = self.count + 1
-        if self.count < self.max_depth:
-            if self.terminal_test(brd):
-                return self.utility_function(brd)
-            else:
-                for a in self.get_successors(brd):
-                    v = min(v, self.max_value(a[0], alpha, beta))
-                    if v <= alpha:
-                        return v
-                    beta = min(beta, v)
-                return v
+        if score is None:
+            score = brd.get_outcome_convolution()
+        v = (self.up_bound, move)
+        if abs(score) > 7000:
+            return score, move
+        elif depth_lim <= 0:
+            return score, move
+        else:
+            for col in brd.free_cols():
+                brd.add_token(col)
+                v = min(v, self.max_value(brd, alpha, beta, depth_lim - 1, col))
+                brd.remove_token(col)
+                if v[0] <= alpha:
+                    return v
+                beta = min(beta, v[0])
+            return v
 
     def utility_function(self, brd):
         """
@@ -126,26 +148,17 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value
         """
 
-        # NOTE: Make Self values if needed
-        win_case = 10  # Return for a win (May increase for different results)
-        loss_case = -15  # Return for a loss (May decrease for different results)
-        tie_case = 0  # Return for tie case (Adjust as needed)
-        else_case = 0  # Return when the game is still happening (Not sure if ever reached)
-
-        # Makes a Board Object with Initialized Parameters
-        # board_obj = board.Board(brd, 7, 6, 4)
-
         # Gets the outcome of the board
         # Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner
         ret = brd.get_outcome()
 
         if ret == 1:
-            return win_case
+            return self.win_case
         elif ret == 2:
-            return loss_case
+            return self.loss_case
         else:
             if len(self.get_successors(brd)) == 0:
-                return tie_case
+                return self.tie_case
             else:
                 return self.evaluate(brd)
 

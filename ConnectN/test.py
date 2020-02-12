@@ -68,6 +68,25 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(set(), ab_agent.get_open_spaces(test_brd))
         self.assertEqual({(0, 1), (1, 3), (2, 2), (3, 0)}, ab_agent.get_open_spaces(check_brd))
 
+    def test_evaluate(self):
+        """
+        Tests the evaluate function in alpha beta agent
+        :return: void
+        """
+        test_board = [[1, 2, 2, 2, 0],
+                      [1, 1, 1, 2, 0],
+                      [0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0]
+                      ]
+
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", 3)
+
+        test_brd = board.Board(test_board, 5, 5, 4)
+        # test_brd.is_any_line_poss()
+
+        # print(ab_agent.evaluate(test_brd))
+
 
 if __name__ == '__main__':
     unittest.main()
