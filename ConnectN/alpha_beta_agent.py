@@ -122,7 +122,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v), the best move
         """
         # Get options sorted by heuristic
-        scored_opts = self.get_sorted_options(brd)
+        scored_opts = self.get_sorted_options(brd)[::-1]
 
         # If end of recursion, pick the best heuristic
         if depth_lim <= 0:
@@ -157,7 +157,7 @@ class AlphaBetaAgent(agent.Agent):
         :return: a utility value (v), the best move
         """
         # Get options sorted by heuristic
-        scored_opts = self.get_sorted_options(brd)[::-1]
+        scored_opts = self.get_sorted_options(brd)
 
         # If end of recursion, pick the best heuristic
         if depth_lim <= 0:
