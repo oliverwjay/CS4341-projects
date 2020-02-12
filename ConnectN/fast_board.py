@@ -44,50 +44,6 @@ class FastBoard(object):
                    np.identity(self.n, dtype=np.int8),
                    np.rot90(np.identity(self.n, dtype=np.int8))]
 
-    # Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
-    #
-    # PARAM [int] x:  the x coordinate of the starting cell
-    # PARAM [int] y:  the y coordinate of the starting cell
-    # PARAM [int] dx: the step in the x direction
-    # PARAM [int] dy: the step in the y direction
-    # RETURN [Bool]: True if n tokens of the same type have been found, False otherwise
-    def is_line_at(self, x, y, dx, dy):
-        """Return True if a line of identical tokens exists starting at (x,y) in direction (dx,dy)"""
-        # Avoid out-of-bounds errors
-        if ((x + (self.n - 1) * dx >= self.w) or
-                (y + (self.n - 1) * dy < 0) or (y + (self.n - 1) * dy >= self.h)):
-            return False
-        # Get token at (x,y)
-        t = self.board[y, x]
-        # Go through elements
-        for i in range(1, self.n):
-            if self.board[y + i * dy, x + i * dx] != t:
-                return False
-        return True
-
-    # Check if a line of identical tokens exists starting at (x,y) in any direction
-    #
-    # PARAM [int] x:  the x coordinate of the starting cell
-    # PARAM [int] y:  the y coordinate of the starting cell
-    # RETURN [Bool]: True if n tokens of the same type have been found, False otherwise
-    def is_any_line_at(self, x, y):
-        """Return True if a line of identical tokens exists starting at (x,y) in any direction"""
-        return (self.is_line_at(x, y, 1, 0) or  # Horizontal
-                self.is_line_at(x, y, 0, 1) or  # Vertical
-                self.is_line_at(x, y, 1, 1) or  # Diagonal up
-                self.is_line_at(x, y, 1, -1))  # Diagonal down
-
-    # Calculate the game outcome.
-    #
-    # RETURN [int]: 1 for Player 1, 2 for Player 2, and 0 for no winner
-    def get_outcome(self):
-        """Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner"""
-        for y in range(self.h):
-            for x in range(self.w):
-                if (self.board[y][x] != 0) and self.is_any_line_at(x, y):
-                    return self.board[y][x]
-        return 0
-
     def get_outcome_convolution(self):
         """Scores the board using convolutions"""
         score = 0  # Default score
