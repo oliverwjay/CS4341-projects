@@ -96,15 +96,15 @@ class MyTestCase(unittest.TestCase):
         Tests scenario where opponent wins two moves out
         :return:
         """
-        ab_agent = alpha_beta_agent.AlphaBetaAgent("Test Foresight", 3)
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("Test Foresight", 2)
 
-        test_board = [[0, 0, 2, 2, 0],
-                      [0, 0, 1, 2, 0],
-                      [0, 0, 1, 0, 0],
-                      [0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0]
+        test_board = [[0, 0, 2, 2, 0, 0, 0],
+                      [0, 0, 0, 1, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0]
                       ]
-        test_brd = board.Board(test_board, 5, 5, 4)
+        test_brd = board.Board(test_board, 7, 5, 4)
 
         move = ab_agent.go(test_brd)
 
