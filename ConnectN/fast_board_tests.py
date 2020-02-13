@@ -79,9 +79,10 @@ class FastBoardTests(unittest.TestCase):
         # slow_thyme = [time_result1[0], time_result2[0], time_result3[0]]
         # fast_thyme = [time_result1[1], time_result2[1], time_result3[1]]
 
-        plt.plot([time_result1, time_result2, time_result3])
+        plt.plot([0, 50, 100], [time_result1, time_result2, time_result3])
+        plt.legend(('Board (Slow Board)', 'Fast Board'))
         plt.ylabel("Time (seconds)")
-        plt.xlabel("% Complete (/50)")
+        plt.xlabel("% Complete")
         plt.title("Time vs Percent For Evaluation of Board")
         plt.show()
 
