@@ -5,6 +5,7 @@ import agent
 import board
 import fast_board
 
+
 ###########################
 # Alpha-Beta Search Agent #
 ###########################
@@ -152,4 +153,3 @@ class AlphaBetaAgent(agent.Agent):
                     break
             beta = max(beta, v)
         return v, best_opt
-

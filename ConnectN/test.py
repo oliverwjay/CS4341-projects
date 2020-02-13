@@ -244,13 +244,13 @@ class MyTestCase(unittest.TestCase):
             full += self.time_outcome(filled_brd_10x8_5, 8, 10, 5, ab_agent)
 
             print("\n- Not-Populated Average Time-")
-            blanks = blank/4
+            blanks = blank / 4
             print(blanks)
             print("\n- Semi-Populated Average Time -")
-            semis = semi/4
+            semis = semi / 4
             print(semis)
             print("\n- Highly Populated Average Time-")
-            fulls = full/4
+            fulls = full / 4
             print(fulls)
 
             arr.append([blanks, semis, fulls])
@@ -261,8 +261,6 @@ class MyTestCase(unittest.TestCase):
         plt.ylabel("Time (seconds)")
         plt.xlabel("Max Depth")
         plt.show()
-
-
 
         # print(filled_brd_10x8_4.get_outcome())
         # print(filled_brd_6x7_4.get_outcome())
