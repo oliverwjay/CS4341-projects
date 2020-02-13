@@ -78,32 +78,12 @@ class FastBoard(object):
         # Switch player
         self.cur_player *= -1
 
-    def add_token2(self, x):
-        """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while self.board[y, x] != 0:
-            y = y + 1
-        self.board[y, x] = self.cur_player * -1
-        # Switch player
-        self.cur_player *= -1
-
     def remove_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
         # Add token
         self.board[self.col_heights[x], x] = 0
         # Update column height
         self.col_heights[x] -= 1
-        # Switch player
-        self.cur_player *= -1
-
-    def remove_token2(self, x):
-        """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while y < self.h and self.board[y, x] != 0:
-            y = y + 1
-        self.board[y - 1, x] = 0
         # Switch player
         self.cur_player *= -1
 
@@ -130,29 +110,3 @@ class FastBoard(object):
         for i in range(self.w):
             print(i, end='')
         print("")
-
-    def loss_heuristic(self):
-        poss_moves = self.free_cols()
-        all_moves = self.w - 1
-        res = []
-        for a in range(0, all_moves):
-            if a in poss_moves:
-                self.add_token2(a)
-                # In case everett is wrong, switch this to not assume our AI is player 1
-                if self.get_outcome() == -1:
-                    res.append(pow(self.n, self.lossExp))
-                else:
-                    res.append(0)
-                self.remove_token2(a)
-            else:
-                res.append(0)
-        # print("THIS IS LOSS H")
-        # print(res)
-        return res
-
-    def loss_heuristic2(self):
-        total = 0
-        loss_heuristic = self.loss_heuristic()
-        for i in loss_heuristic:
-            total += i
-        return total

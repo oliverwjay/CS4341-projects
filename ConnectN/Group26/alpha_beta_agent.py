@@ -1,3 +1,5 @@
+import math
+import random
 import agent
 from . import fast_board
 
@@ -150,4 +152,7 @@ class AlphaBetaAgent(agent.Agent):
                     break
             beta = max(beta, v)
         return v, best_opt
+
+
+THE_AGENT = AlphaBetaAgent("Group26", 6)
 
