@@ -81,6 +81,8 @@ class FastBoardTests(unittest.TestCase):
 
         plt.plot([time_result1, time_result2, time_result3])
         plt.ylabel("Time (seconds)")
+        plt.xlabel("% Complete (/50)")
+        plt.title("Time vs Percent For Evaluation of Board")
         plt.show()
 
 
