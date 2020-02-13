@@ -1,6 +1,6 @@
 import unittest
 import timeit
-import fast_board
+from Group26 import fast_board
 import board
 import matplotlib.pyplot as plt
 

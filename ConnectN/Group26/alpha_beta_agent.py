@@ -1,9 +1,6 @@
-import math
-import random
-
 import agent
-import board
-import fast_board
+from . import fast_board
+
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -53,7 +50,8 @@ class AlphaBetaAgent(agent.Agent):
         print(moveVal, self.get_sorted_options(brd))
         return moveVal[1]
 
-    def get_sorted_options(self, brd):
+    @staticmethod
+    def get_sorted_options(brd):
         """
         Finds the options
         :param brd: Game board

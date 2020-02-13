@@ -1,10 +1,7 @@
 import unittest
-import agent
-import alpha_beta_agent
+from Group26 import alpha_beta_agent
 import board
-import timeit
 import time
-import fast_board
 import matplotlib.pyplot as plt
 
 
