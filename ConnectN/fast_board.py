@@ -4,6 +4,9 @@ import board
 from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
 
 
+def eval_brd(brd):
+    return brd[0].get_outcome_convolution(), brd[1]
+
 ##############
 # Game Board #
 ##############
@@ -16,7 +19,7 @@ class FastBoard(object):
     # PARAM [int]            w:     the board width
     # PARAM [int]            h:     the board height
     # PARAM [int]            n:     the number of tokens to line up to win
-    def __init__(self, slow_board):
+    def __init__(self, slow_board, duplicate=False):
         """Class constructor"""
         # Board width
         self.w = slow_board.w
@@ -28,65 +31,45 @@ class FastBoard(object):
         self.player = slow_board.player
         # Opponent
         self.opponent = ~self.player & 3
-        # Current placer
-        self.cur_player = 1
-        # Board data
-        self.board = np.zeros((self.h, self.w), dtype=np.int16)
-        for c in range(self.w):
-            for r in range(self.h):
-                if slow_board.board[r][c] == self.player:
-                    self.board[r, c] = 1
-                if slow_board.board[r][c] == self.opponent:
-                    self.board[r, c] = -1
-        # Create kernels
-        self.kernels = [np.ones((self.n, 1), dtype=np.int8),
-                   np.ones((1, self.n), dtype=np.int8),
-                   np.identity(self.n, dtype=np.int8),
-                   np.rot90(np.identity(self.n, dtype=np.int8))]
+        # Handle duplication
+        if duplicate:
+            # Current placer
+            self.cur_player = slow_board.cur_player
+            # Copy column heights
+            self.col_heights = copy.deepcopy(slow_board.col_heights)
+            # Copy board
+            self.board = slow_board.board.copy()
+            # Use same kernels
+            self.kernels = slow_board.kernels
+        else:
+            # Current placer
+            self.cur_player = 1
+            # Column heights
+            self.col_heights = [-1] * self.w
+            # Board data
+            self.board = np.zeros((self.h, self.w), dtype=np.int16)
+            for c in range(self.w):
+                for r in range(self.h):
+                    if slow_board.board[r][c] == self.player:
+                        self.col_heights[c] += 1
+                        self.board[r, c] = 1
+                    if slow_board.board[r][c] == self.opponent:
+                        self.col_heights[c] += 1
+                        self.board[r, c] = -1
+            # Create kernels
+            self.kernels = [np.ones((self.n, 1), dtype=np.int8),
+                       np.ones((1, self.n), dtype=np.int8),
+                       np.identity(self.n, dtype=np.int8),
+                       np.rot90(np.identity(self.n, dtype=np.int8))]
 
-    # Check if a line of identical tokens exists starting at (x,y) in direction (dx,dy)
-    #
-    # PARAM [int] x:  the x coordinate of the starting cell
-    # PARAM [int] y:  the y coordinate of the starting cell
-    # PARAM [int] dx: the step in the x direction
-    # PARAM [int] dy: the step in the y direction
-    # RETURN [Bool]: True if n tokens of the same type have been found, False otherwise
-    def is_line_at(self, x, y, dx, dy):
-        """Return True if a line of identical tokens exists starting at (x,y) in direction (dx,dy)"""
-        # Avoid out-of-bounds errors
-        if ((x + (self.n - 1) * dx >= self.w) or
-                (y + (self.n - 1) * dy < 0) or (y + (self.n - 1) * dy >= self.h)):
-            return False
-        # Get token at (x,y)
-        t = self.board[y, x]
-        # Go through elements
-        for i in range(1, self.n):
-            if self.board[y + i * dy, x + i * dx] != t:
-                return False
-        return True
-
-    # Check if a line of identical tokens exists starting at (x,y) in any direction
-    #
-    # PARAM [int] x:  the x coordinate of the starting cell
-    # PARAM [int] y:  the y coordinate of the starting cell
-    # RETURN [Bool]: True if n tokens of the same type have been found, False otherwise
-    def is_any_line_at(self, x, y):
-        """Return True if a line of identical tokens exists starting at (x,y) in any direction"""
-        return (self.is_line_at(x, y, 1, 0) or  # Horizontal
-                self.is_line_at(x, y, 0, 1) or  # Vertical
-                self.is_line_at(x, y, 1, 1) or  # Diagonal up
-                self.is_line_at(x, y, 1, -1))  # Diagonal down
-
-    # Calculate the game outcome.
-    #
-    # RETURN [int]: 1 for Player 1, 2 for Player 2, and 0 for no winner
-    def get_outcome(self):
-        """Returns the winner of the game: 1 for Player 1, 2 for Player 2, and 0 for no winner"""
-        for y in range(self.h):
-            for x in range(self.w):
-                if (self.board[y][x] != 0) and self.is_any_line_at(x, y):
-                    return self.board[y][x]
-        return 0
+    def get_possible_boards(self):
+        """Duplicates itself"""
+        opts = []
+        for col in self.free_cols():
+            opt = FastBoard(self, True)
+            opt.add_token(col)
+            opts.append(opt)
+        return opts
 
     def get_outcome_convolution(self):
         """Scores the board using convolutions"""
@@ -110,21 +93,19 @@ class FastBoard(object):
     # NOTE: This method switches the current player.
     def add_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while self.board[y, x] != 0:
-            y = y + 1
-        self.board[y, x] = self.cur_player
+        # Update column height
+        self.col_heights[x] += 1
+        # Add token
+        self.board[self.col_heights[x], x] = self.cur_player
         # Switch player
         self.cur_player *= -1
 
     def remove_token(self, x):
         """Adds a token for the current player at column x; the column is assumed not full"""
-        # Find empty slot for token
-        y = 0
-        while y < self.h and self.board[y, x] != 0:
-            y = y + 1
-        self.board[y - 1, x] = 0
+        # Add token
+        self.board[self.col_heights[x], x] = 0
+        # Update column height
+        self.col_heights[x] -= 1
         # Switch player
         self.cur_player *= -1
 

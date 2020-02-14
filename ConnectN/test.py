@@ -80,7 +80,7 @@ class MyTestCase(unittest.TestCase):
                       [0, 0, 0, 0, 0]
                       ]
 
-        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", 3)
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("TestEvaluate", )
 
         test_brd = board.Board(test_board, 5, 5, 4)
         # test_brd.is_any_line_poss()
@@ -92,19 +92,19 @@ class MyTestCase(unittest.TestCase):
         Tests scenario where opponent wins two moves out
         :return:
         """
-        ab_agent = alpha_beta_agent.AlphaBetaAgent("Test Foresight", 3)
+        ab_agent = alpha_beta_agent.AlphaBetaAgent("Test Foresight", 1)
 
-        test_board = [[0, 0, 2, 2, 0],
-                      [0, 0, 1, 2, 0],
-                      [0, 0, 1, 0, 0],
-                      [0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0]
+        test_board = [[0, 0, 2, 2, 0, 0, 0],
+                      [0, 0, 0, 1, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0]
                       ]
-        test_brd = board.Board(test_board, 5, 5, 4)
+        test_brd = board.Board(test_board, 7, 5, 4)
 
         move = ab_agent.go(test_brd)
 
-        self.assertEqual(1, move)
+        self.assertTrue(move == 1 or move == 4)
 
 
 

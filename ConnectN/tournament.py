@@ -1,6 +1,6 @@
 import random
-import agent
 import game
+import agent
 import alpha_beta_agent as aba
 import time
 
@@ -110,12 +110,13 @@ random.seed(time.time())
 
 # Construct list of agents in the tournament
 agents = [
-    aba.AlphaBetaAgent("aba", 4),
-    aba.AlphaBetaAgent("aba2", 4),
+    aba.AlphaBetaAgent("aba6", 6, debug=True),
+    aba.AlphaBetaAgent("aba4", 4, debug=True),
+    aba.AlphaBetaAgent("aba5", 5, debug=True),
+    aba.AlphaBetaAgent("aba7", 7, debug=True),
+    agent.RandomAgent("random1"),
     agent.OneColumnAgent("One Column Agent"),
-    agent.OutsourcedAgent("Outsourced Agent", 1),
-    agent.RandomAgent("random3"),
-    agent.RandomAgent("random4")
+    agent.OutsourcedAgent("Outsourced Agent", 1)
 ]
 
 # Run!
