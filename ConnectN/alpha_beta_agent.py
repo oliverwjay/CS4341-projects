@@ -4,6 +4,7 @@ import time
 import agent
 import board
 import fast_board
+from multiprocessing import Pool
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -17,7 +18,7 @@ class AlphaBetaAgent(agent.Agent):
     #
     # PARAM [string] name:      the name of this player
     # PARAM [int]    max_depth: the maximum search depth
-    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False):
+    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False, threads=1):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
@@ -36,6 +37,9 @@ class AlphaBetaAgent(agent.Agent):
         self.start_time = time.time()  # Time of evaluation start
 
         self.debug = debug  # Whether to print output
+        self.threads = threads  # Whether to use multithreading
+        if threads > 1:  # Create thread pool
+            self.pool = Pool(threads)
 
     # Pick a column.
     #
@@ -62,7 +66,7 @@ class AlphaBetaAgent(agent.Agent):
 
         # Print results
         if self.debug:
-            print(f"Evaluated {self.nodes_visited} in {self.get_time(False)}")
+            print(f"Evaluated {self.nodes_visited} in {self.get_time(False)} with {self.threads} threads")
 
         return move
 
@@ -102,15 +106,23 @@ class AlphaBetaAgent(agent.Agent):
         # Increment node visit count
         self.nodes_visited += 1
 
-        # Find options
-        opts = brd.free_cols()
+        if self.threads == 1:
+            # Find options
+            opts = brd.free_cols()
 
-        # Find heuristics
-        scored_opts = []
-        for opt in opts:
-            brd.add_token(opt)
-            scored_opts.append((brd.get_outcome_convolution(), opt))
-            brd.remove_token(opt)
+            # Find heuristics
+            scored_opts = []
+            for opt in opts:
+                brd.add_token(opt)
+                scored_opts.append((brd.get_outcome_convolution(), opt))
+                brd.remove_token(opt)
+        else:
+            opts = []
+            for col in brd.free_cols():
+                opt = fast_board.FastBoard(brd, True)
+                opt.add_token(col)
+                opts.append((opt, col))
+            scored_opts = self.pool.map(fast_board.eval_brd, opts)
 
         # Sore options by heuristic
         scored_opts.sort()
@@ -193,5 +205,5 @@ class AlphaBetaAgent(agent.Agent):
                 best_opt = opt
                 if v <= alpha:
                     break
-            beta = max(beta, v)
+            beta = min(beta, v)
         return v, best_opt

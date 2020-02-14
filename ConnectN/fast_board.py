@@ -4,6 +4,9 @@ import board
 from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
 
 
+def eval_brd(brd):
+    return brd[0].get_outcome_convolution(), brd[1]
+
 ##############
 # Game Board #
 ##############
@@ -16,7 +19,7 @@ class FastBoard(object):
     # PARAM [int]            w:     the board width
     # PARAM [int]            h:     the board height
     # PARAM [int]            n:     the number of tokens to line up to win
-    def __init__(self, slow_board):
+    def __init__(self, slow_board, duplicate=False):
         """Class constructor"""
         # Board width
         self.w = slow_board.w
@@ -28,25 +31,45 @@ class FastBoard(object):
         self.player = slow_board.player
         # Opponent
         self.opponent = ~self.player & 3
-        # Current placer
-        self.cur_player = 1
-        # Column heights
-        self.col_heights = [-1] * self.w
-        # Board data
-        self.board = np.zeros((self.h, self.w), dtype=np.int16)
-        for c in range(self.w):
-            for r in range(self.h):
-                if slow_board.board[r][c] == self.player:
-                    self.col_heights[c] += 1
-                    self.board[r, c] = 1
-                if slow_board.board[r][c] == self.opponent:
-                    self.col_heights[c] += 1
-                    self.board[r, c] = -1
-        # Create kernels
-        self.kernels = [np.ones((self.n, 1), dtype=np.int8),
-                   np.ones((1, self.n), dtype=np.int8),
-                   np.identity(self.n, dtype=np.int8),
-                   np.rot90(np.identity(self.n, dtype=np.int8))]
+        # Handle duplication
+        if duplicate:
+            # Current placer
+            self.cur_player = slow_board.cur_player
+            # Copy column heights
+            self.col_heights = copy.deepcopy(slow_board.col_heights)
+            # Copy board
+            self.board = slow_board.board.copy()
+            # Use same kernels
+            self.kernels = slow_board.kernels
+        else:
+            # Current placer
+            self.cur_player = 1
+            # Column heights
+            self.col_heights = [-1] * self.w
+            # Board data
+            self.board = np.zeros((self.h, self.w), dtype=np.int16)
+            for c in range(self.w):
+                for r in range(self.h):
+                    if slow_board.board[r][c] == self.player:
+                        self.col_heights[c] += 1
+                        self.board[r, c] = 1
+                    if slow_board.board[r][c] == self.opponent:
+                        self.col_heights[c] += 1
+                        self.board[r, c] = -1
+            # Create kernels
+            self.kernels = [np.ones((self.n, 1), dtype=np.int8),
+                       np.ones((1, self.n), dtype=np.int8),
+                       np.identity(self.n, dtype=np.int8),
+                       np.rot90(np.identity(self.n, dtype=np.int8))]
+
+    def get_possible_boards(self):
+        """Duplicates itself"""
+        opts = []
+        for col in self.free_cols():
+            opt = FastBoard(self, True)
+            opt.add_token(col)
+            opts.append(opt)
+        return opts
 
     def get_outcome_convolution(self):
         """Scores the board using convolutions"""
