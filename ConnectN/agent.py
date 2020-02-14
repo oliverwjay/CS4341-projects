@@ -41,7 +41,7 @@ class Agent(object):
 class OneColumnAgent(Agent):
     """Agent to always pick the third available column"""
     def go(self, brd):
-        return brd.free_cols()[3]
+        return brd.free_cols()[min(3, len(brd.free_cols())-1)]
 
 
 class OutsourcedAgent(Agent):
@@ -55,7 +55,7 @@ class OutsourcedAgent(Agent):
         super().__init__(name)
         self.difficulty = difficulty
 
-    def go(self, brd):
+    def get_scores(self, brd):
         history = ''.join([str(x + 1) for x in brd.history])
         r = requests.get("http://connect4.gamesolver.org/solve", params={'pos': history}, headers={'User-Agent': 'not-python-requests'})
         scores = r.json()['score']
@@ -63,8 +63,10 @@ class OutsourcedAgent(Agent):
         scores = [(score - min(scores) + 1)*(score != 100) for score in scores]
         scores = [score**self.difficulty for score in scores]
         scores = [score / sum(scores) for score in scores]
+        return scores
 
-        choice = random.choices(range(7), weights=scores)[0]
+    def go(self, brd):
+        choice = random.choices(range(7), weights=self.get_scores(brd))[0]
         # brd.print_it()
         # print(history, scores, choice)
         return choice

@@ -42,20 +42,22 @@ class AlphaBetaAgent(agent.Agent):
         if threads > 1:  # Create thread pool
             self.pool = Pool(threads)
 
+        self.reference_agent = agent.OutsourcedAgent("Fake agent", 2)
+
     # Pick a column.
     #
     # PARAM [board.Board] brd: the current board state
     # RETURN [int]: the column where the token must be added
     #
     # NOTE: make sure the column is legal, or you'll lose the game.
-    def go(self, brd):
+    def go(self, old_brd):
         """Search for the best move (choice of column for the token)"""
         # Start timer
         self.start_time = time.time()
         self.nodes_visited = 0
 
         # Build faster board
-        brd = fast_board.FastBoard(brd)
+        brd = fast_board.FastBoard(old_brd)
 
         # Run CPU test
         if self.nodes_per_second is None and sum(brd.col_heights) <= 1 - brd.w:
@@ -68,6 +70,14 @@ class AlphaBetaAgent(agent.Agent):
         # Print results
         if self.debug:
             print(f"Evaluated {self.nodes_visited} in {self.get_time(False)} with {self.threads} threads")
+
+        key = self.reference_agent.get_scores(old_brd)
+        key = [v/max(key) for v in key]
+        move_quality = key[move]
+        if self.debug:
+            print(move_quality)
+            if move_quality < .75:
+                move2 = self.alpha_beta_pruning(brd)
 
         return move
 

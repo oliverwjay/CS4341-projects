@@ -116,12 +116,12 @@ agents = [
     aba.AlphaBetaAgent("aba7", 7, debug=True),
     agent.RandomAgent("random1"),
     agent.OneColumnAgent("One Column Agent"),
-    agent.OutsourcedAgent("Outsourced Agent", 1)
+    agent.OutsourcedAgent("Outsourced Agent", 4)
 ]
 
 # Run!
 play_tournament(7,  # board width
                 6,  # board height
                 4,  # tokens in a row to win
-                15,  # time limit in seconds
+                60,  # time limit in seconds
                 agents)  # player list
