@@ -29,10 +29,11 @@ class AlphaBetaAgent(agent.Agent):
         self.loss_case = -1500  # Return for a loss (May decrease for different results)
         self.tie_case = 0  # Return for tie case (Adjust as needed)
 
-        self.time_limit = 15  # How long to restrict to
+        self.time_limit = time_limit  # How long to restrict to
         self.est_prune = est_prune  # Fractions of nodes estimated to be pruned
         self.nodes_per_second = None  # Estimated number of nodes that can be evaluated per second
         self.nodes_visited = 0  # Number of nodes visited
+        self.time_cutoff = .875
 
         self.start_time = time.time()  # Time of evaluation start
 
@@ -113,15 +114,23 @@ class AlphaBetaAgent(agent.Agent):
             # Find heuristics
             scored_opts = []
             for opt in opts:
+                # Add token
                 brd.add_token(opt)
+                # Score
                 scored_opts.append((brd.get_outcome_convolution(), opt))
+                # Remove token
                 brd.remove_token(opt)
         else:
+            # Build boards
             opts = []
             for col in brd.free_cols():
+                # Clone board
                 opt = fast_board.FastBoard(brd, True)
+                # Add token
                 opt.add_token(col)
+                # Add to list
                 opts.append((opt, col))
+            # Score in threads
             scored_opts = self.pool.map(fast_board.eval_brd, opts)
 
         # Sore options by heuristic
@@ -142,12 +151,14 @@ class AlphaBetaAgent(agent.Agent):
         # Get options sorted by heuristic
         scored_opts = self.get_sorted_options(brd)[::-1]
 
+        # Check clock
+        time_pressure = self.get_time()
         # Check for tie
         if not scored_opts:
             return 0, -1
 
         # If end of recursion, pick the best heuristic
-        if depth_lim <= 0:
+        if depth_lim <= 0 or (depth_lim == 2 and time_pressure > self.time_cutoff):
             return scored_opts[0]
 
         # Set default v
@@ -181,12 +192,15 @@ class AlphaBetaAgent(agent.Agent):
         # Get options sorted by heuristic
         scored_opts = self.get_sorted_options(brd)
 
+        # Check clock
+        time_pressure = self.get_time()
+
         # Check for tie
         if not scored_opts:
             return 0, -1
 
         # If end of recursion, pick the best heuristic
-        if depth_lim <= 0:
+        if depth_lim <= 0 or (depth_lim == 2 and time_pressure > self.time_cutoff):
             return scored_opts[0]
 
         # Set default v
