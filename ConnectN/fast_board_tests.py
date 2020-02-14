@@ -61,6 +61,5 @@ class FastBoardTests(unittest.TestCase):
         self.time_outcome(10, 8, 5, starting)
 
 
-
 if __name__ == '__main__':
     unittest.main()

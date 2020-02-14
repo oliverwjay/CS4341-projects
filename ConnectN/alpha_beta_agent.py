@@ -1,6 +1,6 @@
 import math
 import random
-
+import time
 import agent
 import board
 import fast_board
@@ -17,7 +17,7 @@ class AlphaBetaAgent(agent.Agent):
     #
     # PARAM [string] name:      the name of this player
     # PARAM [int]    max_depth: the maximum search depth
-    def __init__(self, name, max_depth):
+    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
@@ -28,6 +28,15 @@ class AlphaBetaAgent(agent.Agent):
         self.loss_case = -1500  # Return for a loss (May decrease for different results)
         self.tie_case = 0  # Return for tie case (Adjust as needed)
 
+        self.time_limit = 15  # How long to restrict to
+        self.est_prune = est_prune  # Fractions of nodes estimated to be pruned
+        self.nodes_per_second = None  # Estimated number of nodes that can be evaluated per second
+        self.nodes_visited = 0  # Number of nodes visited
+
+        self.start_time = time.time()  # Time of evaluation start
+
+        self.debug = debug  # Whether to print output
+
     # Pick a column.
     #
     # PARAM [board.Board] brd: the current board state
@@ -36,8 +45,39 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
+        # Start timer
+        self.start_time = time.time()
+        self.nodes_visited = 0
+
+        # Build faster board
         brd = fast_board.FastBoard(brd)
-        return self.alpha_beta_pruning(brd)
+
+        # Run CPU test
+        if self.nodes_per_second is None and sum(brd.col_heights) <= 1 - brd.w:
+            if self.debug:
+                print("First turn")
+
+        # Calculate move
+        move = self.alpha_beta_pruning(brd)
+
+        # Print results
+        if self.debug:
+            print(f"Evaluated {self.nodes_visited} in {self.get_time(False)}")
+
+        return move
+
+    def get_time(self, proportional=True):
+        """
+        Returns the time elapsed
+        :param proportional: True returns time from 0-1, False returns 0 - time limit
+        :return: Time elapsed
+        """
+        # Calculate time
+        cur_time = time.time() - self.start_time
+        if proportional:
+            return cur_time / self.time_limit
+        else:
+            return cur_time
 
     def alpha_beta_pruning(self, brd):
         """
@@ -59,6 +99,9 @@ class AlphaBetaAgent(agent.Agent):
         :param brd: Game board
         :return: Max sorted list of tuples in form (heuristic, move)
         """
+        # Increment node visit count
+        self.nodes_visited += 1
+
         # Find options
         opts = brd.free_cols()
 
@@ -135,7 +178,7 @@ class AlphaBetaAgent(agent.Agent):
             return scored_opts[0]
 
         # Set default v
-        v = self.up_bound - 1
+        v = self.up_bound + 1
         best_opt = scored_opts[0][1]
 
         # Evaluate each
