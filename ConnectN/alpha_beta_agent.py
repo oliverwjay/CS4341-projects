@@ -18,7 +18,7 @@ class AlphaBetaAgent(agent.Agent):
     #
     # PARAM [string] name:      the name of this player
     # PARAM [int]    max_depth: the maximum search depth
-    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False, threads=1):
+    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False, threads=1, auto_depth=False):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
@@ -33,7 +33,8 @@ class AlphaBetaAgent(agent.Agent):
         self.est_prune = est_prune  # Fractions of nodes estimated to be pruned
         self.nodes_per_second = None  # Estimated number of nodes that can be evaluated per second
         self.nodes_visited = 0  # Number of nodes visited
-        self.time_cutoff = .875
+        self.time_cutoff = .875  # Fraction of time before skipping nodes
+        self.forced_cutoff = False  # If the program has had to end early
 
         self.start_time = time.time()  # Time of evaluation start
 
@@ -41,6 +42,8 @@ class AlphaBetaAgent(agent.Agent):
         self.threads = threads  # Whether to use multithreading
         if threads > 1:  # Create thread pool
             self.pool = Pool(threads)
+
+        self.auto_depth = auto_depth  # Automatically run at higher depth if there is time
 
     # Pick a column.
     #
@@ -53,6 +56,7 @@ class AlphaBetaAgent(agent.Agent):
         # Start timer
         self.start_time = time.time()
         self.nodes_visited = 0
+        self.forced_cutoff = False
 
         # Build faster board
         brd = fast_board.FastBoard(brd)
@@ -63,7 +67,14 @@ class AlphaBetaAgent(agent.Agent):
                 print("First turn")
 
         # Calculate move
-        move = self.alpha_beta_pruning(brd)
+        score, move = self.alpha_beta_pruning(brd, self.max_depth)
+
+        if self.auto_depth and self.get_time() < .1 and self.down_bound < score < self.up_bound:
+            score2, move2 = self.alpha_beta_pruning(brd, self.max_depth + 2)
+            if not self.forced_cutoff:
+                move = move2
+                if self.debug:
+                    print("Improved depth!")
 
         # Print results
         if self.debug:
@@ -84,19 +95,16 @@ class AlphaBetaAgent(agent.Agent):
         else:
             return cur_time
 
-    def alpha_beta_pruning(self, brd):
+    def alpha_beta_pruning(self, brd, depth):
         """
         Alpha Beta Pruning Function
         :param brd: brd
         :return: An Action
         """
-        brd.print_it()
-        print("Evaluating:")
         # Get the max_value from our tree
-        moveVal = self.max_value(brd, self.down_bound, self.up_bound, self.max_depth)
+        moveVal = self.max_value(brd, self.down_bound, self.up_bound, depth)
         # Return the column in which the token must be added
-        print(moveVal, self.get_sorted_options(brd))
-        return moveVal[1]
+        return moveVal
 
     def get_sorted_options(self, brd):
         """
@@ -158,7 +166,9 @@ class AlphaBetaAgent(agent.Agent):
             return 0, -1
 
         # If end of recursion, pick the best heuristic
-        if depth_lim <= 0 or (depth_lim == 2 and time_pressure > self.time_cutoff):
+        if depth_lim <= 0 or (depth_lim == 2 and time_pressure > self.time_cutoff) or time_pressure > .95:
+            if depth_lim > 0:
+                self.forced_cutoff = True
             return scored_opts[0]
 
         # Set default v

@@ -110,9 +110,10 @@ random.seed(3)
 # Construct list of agents in the tournament
 agents = [
     aba.AlphaBetaAgent("aba6", 6, debug=True),
-    aba.AlphaBetaAgent("aba4", 4, debug=True),
-    aba.AlphaBetaAgent("aba5", 5, debug=True),
-    aba.AlphaBetaAgent("aba7", 7, debug=True),
+    aba.AlphaBetaAgent("aba6 ad", 6, debug=True, auto_depth=True),
+    # aba.AlphaBetaAgent("aba4", 4, debug=True),
+    # aba.AlphaBetaAgent("aba5", 5, debug=True),
+    # aba.AlphaBetaAgent("aba7", 7, debug=True),
     aba.AlphaBetaAgent("aba8", 8, debug=True),
     agent.RandomAgent("random1"),
     # agent.RandomAgent("random2")
