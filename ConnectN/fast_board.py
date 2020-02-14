@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 import board
-from scipy.signal import convolve2d, fftconvolve, correlate2d, oaconvolve
+from scipy.signal import convolve2d
 
 
 def eval_brd(brd):

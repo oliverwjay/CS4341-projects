@@ -67,14 +67,17 @@ class AlphaBetaAgent(agent.Agent):
                 print("First turn")
 
         # Calculate move
-        score, move = self.alpha_beta_pruning(brd, self.max_depth)
+        depth = self.max_depth
+        score, move = self.alpha_beta_pruning(brd, depth)
 
-        if self.auto_depth and self.get_time() < .1 and self.down_bound < score < self.up_bound:
-            score2, move2 = self.alpha_beta_pruning(brd, self.max_depth + 2)
+        while self.auto_depth and self.get_time() < .5 and self.down_bound < score < self.up_bound and score:
+            depth += 2
+            score2, move2 = self.alpha_beta_pruning(brd, depth)
             if not self.forced_cutoff:
-                move = move2
                 if self.debug:
-                    print("Improved depth!")
+                    print(f"Improved depth! old:{(score, move)} new:{(score2, move2)}")
+                move = move2
+                score = score2
 
         # Print results
         if self.debug:

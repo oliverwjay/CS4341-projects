@@ -109,19 +109,20 @@ random.seed(3)
 
 # Construct list of agents in the tournament
 agents = [
-    aba.AlphaBetaAgent("aba6", 6, debug=True),
-    aba.AlphaBetaAgent("aba6 ad", 6, debug=True, auto_depth=True),
+    aba.AlphaBetaAgent("aba5", 5, debug=True),
+    aba.AlphaBetaAgent("aba5 ad", 5, debug=True, auto_depth=True),
+    aba.AlphaBetaAgent("aba6 ad", 6, debug=True, auto_depth=True)
     # aba.AlphaBetaAgent("aba4", 4, debug=True),
     # aba.AlphaBetaAgent("aba5", 5, debug=True),
     # aba.AlphaBetaAgent("aba7", 7, debug=True),
-    aba.AlphaBetaAgent("aba8", 8, debug=True),
-    agent.RandomAgent("random1"),
+    # aba.AlphaBetaAgent("aba8", 4, debug=True),
+    # agent.RandomAgent("random1")
     # agent.RandomAgent("random2")
 ]
 
 # Run!
-play_tournament(7,  # board width
-                6,  # board height
-                4,  # tokens in a row to win
+play_tournament(10,  # board width
+                8,  # board height
+                5,  # tokens in a row to win
                 15,  # time limit in seconds
                 agents)  # player list
