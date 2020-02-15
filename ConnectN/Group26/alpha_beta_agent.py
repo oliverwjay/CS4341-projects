@@ -105,8 +105,7 @@ class AlphaBetaAgent(agent.Agent):
         # Return the column in which the token must be added
         return moveVal
 
-    @staticmethod
-    def get_sorted_options(brd):
+    def get_sorted_options(self, brd):
         """
         Finds the options
         :param brd: Game board
@@ -220,5 +219,8 @@ class AlphaBetaAgent(agent.Agent):
         return v, best_opt
 
 
-THE_AGENT = AlphaBetaAgent("Group26", 6)
+# 7x6 Agent
+# THE_AGENT = AlphaBetaAgent("Group26", 6, auto_depth=True)
 
+# 10x8 Agent
+THE_AGENT = AlphaBetaAgent("Group26", 5, auto_depth=True)
