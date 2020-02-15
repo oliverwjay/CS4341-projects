@@ -4,7 +4,6 @@ import time
 import agent
 import board
 import fast_board
-from multiprocessing import Pool
 
 ###########################
 # Alpha-Beta Search Agent #
@@ -18,7 +17,7 @@ class AlphaBetaAgent(agent.Agent):
     #
     # PARAM [string] name:      the name of this player
     # PARAM [int]    max_depth: the maximum search depth
-    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False, threads=1, auto_depth=False):
+    def __init__(self, name, max_depth, time_limit=15, est_prune=0, debug=False, auto_depth=False):
         super().__init__(name)
         # Max search depth
         self.max_depth = max_depth
@@ -39,9 +38,6 @@ class AlphaBetaAgent(agent.Agent):
         self.start_time = time.time()  # Time of evaluation start
 
         self.debug = debug  # Whether to print output
-        self.threads = threads  # Whether to use multithreading
-        if threads > 1:  # Create thread pool
-            self.pool = Pool(threads)
 
         self.auto_depth = auto_depth  # Automatically run at higher depth if there is time
 
@@ -81,7 +77,7 @@ class AlphaBetaAgent(agent.Agent):
 
         # Print results
         if self.debug:
-            print(f"Evaluated {self.nodes_visited} in {self.get_time(False)} with {self.threads} threads")
+            print(f"Evaluated {self.nodes_visited} in {self.get_time(False)}")
 
         return move
 
@@ -118,31 +114,18 @@ class AlphaBetaAgent(agent.Agent):
         # Increment node visit count
         self.nodes_visited += 1
 
-        if self.threads == 1:
-            # Find options
-            opts = brd.free_cols()
+        # Find options
+        opts = brd.free_cols()
 
-            # Find heuristics
-            scored_opts = []
-            for opt in opts:
-                # Add token
-                brd.add_token(opt)
-                # Score
-                scored_opts.append((brd.get_outcome_convolution(), opt))
-                # Remove token
-                brd.remove_token(opt)
-        else:
-            # Build boards
-            opts = []
-            for col in brd.free_cols():
-                # Clone board
-                opt = fast_board.FastBoard(brd, True)
-                # Add token
-                opt.add_token(col)
-                # Add to list
-                opts.append((opt, col))
-            # Score in threads
-            scored_opts = self.pool.map(fast_board.eval_brd, opts)
+        # Find heuristics
+        scored_opts = []
+        for opt in opts:
+            # Add token
+            brd.add_token(opt)
+            # Score
+            scored_opts.append((brd.get_outcome_convolution(), opt))
+            # Remove token
+            brd.remove_token(opt)
 
         # Sore options by heuristic
         scored_opts.sort()
