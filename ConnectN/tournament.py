@@ -1,7 +1,7 @@
 import random
 import game
 import agent
-import alpha_beta_agent as aba
+from Group26 import alpha_beta_agent as aba
 
 
 ######################
@@ -98,6 +98,8 @@ def play_tournament(w, h, n, l, ps):
     print("\nSCORES:")
     for v, k in sscores:
         print(v, k)
+        if k == "aba":
+            return v, k
 
 
 #######################
@@ -109,20 +111,30 @@ random.seed(3)
 
 # Construct list of agents in the tournament
 agents = [
-    aba.AlphaBetaAgent("aba5", 5, debug=True),
-    aba.AlphaBetaAgent("aba5 ad", 5, debug=True, auto_depth=True),
-    aba.AlphaBetaAgent("aba6 ad", 6, debug=True, auto_depth=True)
-    # aba.AlphaBetaAgent("aba4", 4, debug=True),
-    # aba.AlphaBetaAgent("aba5", 5, debug=True),
-    # aba.AlphaBetaAgent("aba7", 7, debug=True),
-    # aba.AlphaBetaAgent("aba8", 4, debug=True),
-    # agent.RandomAgent("random1")
-    # agent.RandomAgent("random2")
+    aba.AlphaBetaAgent("aba", 3),
+    agent.RandomAgent("random1"),
+    agent.RandomAgent("random2"),
+    agent.RandomAgent("random3"),
+    agent.RandomAgent("random4")
 ]
 
 # Run!
-play_tournament(5,  # board width
-                5,  # board height
-                4,  # tokens in a row to win
-                15,  # time limit in seconds
-                agents)  # player list
+# play_tournament(7,  # board width
+#                 6,  # board height
+#                 4,  # tokens in a row to win
+#                 15,  # time limit in seconds
+#                 agents)  # player list
+
+# Multiple Tournaments
+total = 0
+num_tor = 8
+for i in range(0, num_tor):
+    score = (play_tournament(7,  # board width
+                             6,  # board height
+                             4,  # tokens in a row to win
+                             15,  # time limit in seconds
+                             agents))  # player list
+    total = total + score[0]
+
+# Returns the percentage of games in the total tournament that we won
+print(total / (num_tor * 8))
