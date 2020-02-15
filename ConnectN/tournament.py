@@ -1,7 +1,7 @@
 import random
 import game
 import agent
-from Group26 import alpha_beta_agent as aba
+from Group26.alpha_beta_agent import THE_AGENT as Group26
 
 
 ######################
@@ -111,7 +111,7 @@ random.seed(3)
 
 # Construct list of agents in the tournament
 agents = [
-    aba.AlphaBetaAgent("Group26", 5, auto_depth=True),
+    Group26,
     agent.RandomAgent("random1"),
     agent.RandomAgent("random2"),
     agent.RandomAgent("random3"),

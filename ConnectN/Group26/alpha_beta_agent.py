@@ -64,6 +64,13 @@ class AlphaBetaAgent(agent.Agent):
 
         # Calculate move
         depth = self.max_depth
+        if depth == -1:
+            n_opts = len(brd.free_cols())
+            if n_opts >= 8:
+                depth = 5
+            else:
+                depth = 6
+
         score, move = self.alpha_beta_pruning(brd, depth)
 
         while self.auto_depth and self.get_time() < .5 and self.down_bound < score < self.up_bound and score:
@@ -219,8 +226,4 @@ class AlphaBetaAgent(agent.Agent):
         return v, best_opt
 
 
-# 7x6 Agent
-# THE_AGENT = AlphaBetaAgent("Group26", 6, auto_depth=True)
-
-# 10x8 Agent
-THE_AGENT = AlphaBetaAgent("Group26", 5, auto_depth=True)
+THE_AGENT = AlphaBetaAgent("Group26", -1, auto_depth=True)
