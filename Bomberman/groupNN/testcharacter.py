@@ -21,19 +21,20 @@ class TestCharacter(CharacterEntity):
         """
         Our Code
         """
-        # Save world height and width
+        # Save world height and width (done once)
         if self.w is None or self.h is None or self.expl_range is None:
             self.w = wrld.width()
             self.h = wrld.height()
             self.expl_range = wrld.expl_range
 
-        # Find Exit location
+        # Find Exit location (done once)
         if self.exit_x is None or self.exit_y is None:
             self.find_exit(wrld)
 
-        # print(self.x, self.y)
-        # print(self.euclidean_distance(self.exit_x, self.exit_y, self.x, self.y))
-        # print(self.manhattan_distance(self.exit_x, self.exit_y, self.x, self.y))
+        # Find where the monsters are
+
+        # Find where other characters are
+
         print("WE ARE HERE:")
         print(self.x, self.y)
         print("Is there a bomb above or below us:")
