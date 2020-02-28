@@ -35,6 +35,9 @@ class TestCharacter(CharacterEntity):
 
         # Find where other characters are
 
+        print("Have we placed a bomb")
+        print(self.have_placed_our_bomb(wrld))
+
         print("WE ARE HERE:")
         print(self.x, self.y)
         print("Is there a bomb above or below us:")
@@ -59,8 +62,20 @@ class TestCharacter(CharacterEntity):
         if bomb:
             self.place_bomb()
 
-
         pass
+
+    def have_placed_our_bomb(self, wrld):
+        """
+        This function checks if we have placed our bomb
+        """
+        arr = wrld.bombs.values()
+        lis = list(arr)
+        if len(lis) > 0:
+            for i in range(0, len(lis)):
+                if self.name == lis[i].owner.name:
+                    return True
+        else:
+            return False
 
     def find_exit(self, wrld):
         """
