@@ -1,6 +1,7 @@
 # This is necessary to find the main code
 import math
 import sys
+import PriorityQueue as pri
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
@@ -35,13 +36,16 @@ class TestCharacter(CharacterEntity):
 
         # Find where other characters are
 
-        print("Have we placed a bomb")
-        print(self.have_placed_our_bomb(wrld))
+        # print("Have we placed a bomb")
+        # print(self.have_placed_our_bomb(wrld))
+        #
+        # print("WE ARE HERE:")
+        # print(self.x, self.y)
+        # print("Is there a bomb above or below us:")
+        # print(self.isBombHorOrVert(wrld))
 
-        print("WE ARE HERE:")
-        print(self.x, self.y)
-        print("Is there a bomb above or below us:")
-        print(self.isBombHorOrVert(wrld))
+        print(self.a_star(wrld))
+
         # Commands
         dx, dy = 0, 0
         bomb = False
@@ -152,3 +156,157 @@ class TestCharacter(CharacterEntity):
         """
         dist = abs((x2 - x1) + (y2 - y1))
         return dist
+
+    def get_neighbors(self, loc, wrld):
+        """
+        returns the legal neighbors of the point given
+        :param loc: location (tuple)
+        :param wrld: the world
+        :return: all valid neighbors (List of Tuples)
+        """
+        #  tl t tr
+        #  l  X  r
+        #  bl b br
+
+        # Get all neighbors
+        top_left = (loc[0] - 1, loc[1] - 1)
+        top = (loc[0], loc[1] - 1)
+        top_right = (loc[0] + 1, loc[1] - 1)
+        left = (loc[0] - 1, loc[1])
+        right = (loc[0] + 1, loc[1])
+        bottom_left = (loc[0] - 1, loc[1] + 1)
+        bottom = (loc[0], loc[1] + 1)
+        bottom_right = (loc[0] + 1, loc[1] + 1)
+
+        ans = list()
+
+        if self.is_valid_loc(top_left, wrld):
+            ans.append(top_left)
+        if self.is_valid_loc(top, wrld):
+            ans.append(top)
+        if self.is_valid_loc(top_right, wrld):
+            ans.append(top_right)
+        if self.is_valid_loc(left, wrld):
+            ans.append(left)
+        if self.is_valid_loc(right, wrld):
+            ans.append(right)
+        if self.is_valid_loc(bottom_left, wrld):
+            ans.append(bottom_left)
+        if self.is_valid_loc(bottom, wrld):
+            ans.append(bottom)
+        if self.is_valid_loc(bottom_right, wrld):
+            ans.append(bottom_right)
+
+        return ans
+
+    def is_valid_loc(self, loc, wrld):
+        """
+        Takes a point and checks if it is a valid location
+        """
+        if 0 <= loc[0] < self.w and 0 <= loc[1] < self.h:
+            if wrld.empty_at(loc[0], loc[1]):
+                return True
+        else:
+            return False
+
+    @staticmethod
+    def euclidean_heuristic(point1, point2):
+        """
+        calculate the dist between two points
+        :param point1: tuple of location
+        :param point2: tuple of location
+        :return: dist between two points
+        """
+        # Distance Formula
+        euclid = math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+        # return value
+        return euclid
+
+    @staticmethod
+    def move_cost(current, next_point):
+        """
+        calculate the dist between two points
+        :param current: tuple of location
+        :param next_point: tuple of location
+        :return: dist between two points
+        """
+        # parse x and y positions from the tuples
+        current_x = current[0]
+        current_y = current[1]
+        next_x = next_point[0]
+        next_y = next_point[1]
+
+        # calculate the distance between point in x and y direction
+        x_dist = abs(next_x - current_x)
+        y_dist = abs(next_y - current_y)
+
+        # add the differences in x and y for the total cost
+        move_cost = x_dist + y_dist
+
+        # return move cost
+        return move_cost
+
+    def AStarSearch(self, start, end, wrld):
+
+        G = {}  # Actual movement cost to each position from the start position
+        F = {}  # Estimated movement cost of start to end going via this position
+
+        # Initialize starting values
+        G[start] = 0
+        F[start] = self.euclidean_heuristic(start, end)
+
+        closedVertices = set()
+        openVertices = set([start])
+        cameFrom = {}
+
+        while len(openVertices) > 0:
+            # Get the vertex in the open list with the lowest F score
+            current = None
+            currentFscore = None
+            for pos in openVertices:
+                if current is None or F[pos] < currentFscore:
+                    currentFscore = F[pos]
+                    current = pos
+
+            # Check if we have reached the goal
+            if current == end:
+                # Retrace our route backward
+                path = [current]
+                while current in cameFrom:
+                    current = cameFrom[current]
+                    path.append(current)
+                path.reverse()
+                return path, F[end]  # Done!
+
+            # Mark the current vertex as closed
+            openVertices.remove(current)
+            closedVertices.add(current)
+
+            # Update scores for vertices near the current position
+            for neighbour in self.get_neighbors(current, wrld):
+                if neighbour in closedVertices:
+                    continue  # We have already processed this node exhaustively
+                candidateG = G[current] + self.move_cost(current, neighbour)
+
+                if neighbour not in openVertices:
+                    openVertices.add(neighbour)  # Discovered a new vertex
+                elif candidateG >= G[neighbour]:
+                    continue  # This G score is worse than previously found
+
+                # Adopt this G score
+                cameFrom[neighbour] = current
+                G[neighbour] = candidateG
+                H = self.euclidean_heuristic(neighbour, end)
+                F[neighbour] = G[neighbour] + H
+
+        raise RuntimeError("A* failed to find a solution")
+
+    def a_star(self, wrld):
+        """
+        Handles A* search
+        """
+        path, cost = self.AStarSearch((self.x, self.y), (self.exit_x - 1, self.exit_y - 1), wrld)
+        path.append((self.exit_x, self.exit_y))
+        cost = cost + 1
+        return path, cost
