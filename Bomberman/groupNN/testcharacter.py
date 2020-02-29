@@ -44,7 +44,8 @@ class TestCharacter(CharacterEntity):
         # print("Is there a bomb above or below us:")
         # print(self.isBombHorOrVert(wrld))
 
-        print(self.a_star(wrld))
+        # print(self.a_star(wrld))
+        print(self.locate_characters(wrld))
 
         # Commands
         dx, dy = 0, 0
@@ -80,6 +81,36 @@ class TestCharacter(CharacterEntity):
                     return True
         else:
             return False
+
+    def locate_monsters(self, wrld):
+        """
+        This function will find where the monsters are and how many there are
+        """
+        count = 0
+        location = []
+        arr = wrld.monsters.values()
+        lis = list(arr)
+        if len(lis) > 0:
+            for i in range(0, len(lis)):
+                location.append((lis[i][i].x, lis[i][i].y))
+                count = count + 1
+
+        return location, count
+
+    def locate_characters(self, wrld):
+        """
+        Locates all characters in the world and how many there are
+        """
+        count = 0
+        location = []
+        arr = wrld.characters.values()
+        lis = list(arr)
+        if len(lis) > 0:
+            for i in range(0, len(lis)):
+                location.append((lis[i][i].x, lis[i][i].y))
+                count = count + 1
+
+        return location, count
 
     def find_exit(self, wrld):
         """
@@ -300,7 +331,7 @@ class TestCharacter(CharacterEntity):
                 H = self.euclidean_heuristic(neighbour, end)
                 F[neighbour] = G[neighbour] + H
 
-        raise RuntimeError("A* failed to find a solution")
+        return None, None
 
     def a_star(self, wrld):
         """
@@ -310,3 +341,17 @@ class TestCharacter(CharacterEntity):
         path.append((self.exit_x, self.exit_y))
         cost = cost + 1
         return path, cost
+
+    def a_star_dist_to_exit(self, wrld):
+        """
+        Distance to exit by path
+        """
+        path, cost = self.a_star(wrld)
+        return cost
+
+    def can_a_star_complete(self, wrld):
+        """
+        Checks if A star can get to goal
+        """
+        path, cost = self.a_star(wrld)
+        return path is None and cost is None
