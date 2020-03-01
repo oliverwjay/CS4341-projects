@@ -27,9 +27,9 @@ g.add_character(TestCharacter("me", # name
                               0, 0  # position
 ))
 
-g.add_character(DummyCharacter("me2", # name
-                              "C",  # avatar
-                              1, 1 ))
+# g.add_character(DummyCharacter("me2", # name
+#                               "C",  # avatar
+#                               1, 1 ))
 
 # Uncomment this if you want the interactive character
 # g.add_character(InteractiveCharacter("me", # name

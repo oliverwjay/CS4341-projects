@@ -1,7 +1,6 @@
 # This is necessary to find the main code
 import math
 import sys
-import PriorityQueue as pri
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
@@ -36,32 +35,24 @@ class TestCharacter(CharacterEntity):
 
         # Find where other characters are
 
-        # print("Have we placed a bomb")
-        # print(self.have_placed_our_bomb(wrld))
-        #
-        # print("WE ARE HERE:")
-        # print(self.x, self.y)
-        # print("Is there a bomb above or below us:")
-        # print(self.isBombHorOrVert(wrld))
-
         # print(self.a_star(wrld))
-        print(self.locate_characters(wrld))
+        # print(self.locate_characters(wrld))
 
         # Commands
-        dx, dy = 0, 0
+        dx, dy = self.next_a_star_move(wrld)
         bomb = False
         # Handle input
-        for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
-            if 'w' == c:
-                dy -= 1
-            if 'a' == c:
-                dx -= 1
-            if 's' == c:
-                dy += 1
-            if 'd' == c:
-                dx += 1
-            if 'b' == c:
-                bomb = True
+        # for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
+        #     if 'w' == c:
+        #         dy -= 1
+        #     if 'a' == c:
+        #         dx -= 1
+        #     if 's' == c:
+        #         dy += 1
+        #     if 'd' == c:
+        #         dx += 1
+        #     if 'b' == c:
+        #         bomb = True
         # Execute commands
         self.move(dx, dy)
         if bomb:
@@ -116,13 +107,9 @@ class TestCharacter(CharacterEntity):
         """
         This function will find where the exit is on the board and store it
         """
-        for x in range(0, self.w):
-            for y in range(0, self.h):
-                if wrld.exit_at(x, y):
-                    self.exit_x = x
-                    self.exit_y = y
-                    print("Found Exit at")
-                    print(x, y)
+        arr = wrld.exitcell
+        self.exit_x = arr[0]
+        self.exit_y = arr[1]
 
     def isBombHorOrVert(self, wrld):
         """
@@ -354,4 +341,19 @@ class TestCharacter(CharacterEntity):
         Checks if A star can get to goal
         """
         path, cost = self.a_star(wrld)
-        return path is None and cost is None
+        return path is not None and cost is not None
+
+    def next_a_star_move(self, wrld):
+        """
+        Gets the next A Star move: in a tuple of dx, dy
+        """
+        nxt_move = self.x, self.y
+        if self.can_a_star_complete(wrld):
+            path, cost = self.a_star(wrld)
+            nxt_move = path[1]
+
+        dx = nxt_move[0] - self.x
+        dy = nxt_move[1] - self.y
+
+        return dx, dy
+
