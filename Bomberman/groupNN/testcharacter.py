@@ -266,7 +266,9 @@ class TestCharacter(CharacterEntity):
         return move_cost
 
     def AStarSearch(self, start, end, wrld):
-
+        """
+        https://rosettacode.org/wiki/A*_search_algorithm#Python
+        """
         G = {}  # Actual movement cost to each position from the start position
         F = {}  # Estimated movement cost of start to end going via this position
 
