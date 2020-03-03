@@ -33,7 +33,7 @@ class TestCharacter(CharacterEntity):
             self.find_exit(wrld)
 
         # Find where the monsters are
-
+        closest_mon = self.dist_to_closest_monster(wrld)
         # Find where other characters are
 
         # Run A Star
@@ -372,4 +372,40 @@ class TestCharacter(CharacterEntity):
         # normalized = (values - min(values)) / (max(values) - min(values))
         normalized = value / max_dist
         return normalized
+
+    def layer_dist(self, x1, y1, x2, y2):
+        """
+        Gets the distance between to points in a propagating wave away from the first point
+        :param x1:
+        :param y1:
+        :param x2:
+        :param y2:
+        :return:
+        """
+        # e_dist = self.euclidean_distance(x1, y1, x2, y2)
+        # layer_dist = math.floor(e_dist)
+        x_dist = abs(x1 - x2)
+        y_dist = abs(y1 - y2)
+        layer_dist = 0
+        if y_dist > x_dist:
+            layer_dist = y_dist
+        elif x_dist > y_dist:
+            layer_dist = x_dist
+        elif x_dist == y_dist:
+            layer_dist = y_dist
+        return layer_dist
+
+    def dist_to_closest_monster(self, wrld):
+        # Find all the monsters in the world
+        location, count = self.locate_monsters(wrld)
+        smallest_dist = self.h * self.w
+        for monster_loc in location:
+            dist_to_mon = self.layer_dist(self.x, self.y, monster_loc[0], monster_loc[1])
+            if dist_to_mon < smallest_dist:
+                smallest_dist = dist_to_mon
+        if smallest_dist > 4:
+            smallest_dist = 4  # If the monster is too far away, consider the distance as the character's max vision
+        return smallest_dist
+
+    
 
