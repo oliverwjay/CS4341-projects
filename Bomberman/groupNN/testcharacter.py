@@ -34,7 +34,7 @@ class TestCharacter(CharacterEntity):
         # Find where the monsters are
 
         # Find where other characters are
-
+        # arr = self.is_valid_loc((self.exit_x, self.exit_y), wrld)
         # print(self.a_star(wrld))
         # print(self.locate_characters(wrld))
 
@@ -221,8 +221,8 @@ class TestCharacter(CharacterEntity):
         """
         Takes a point and checks if it is a valid location
         """
-        if 0 <= loc[0] < self.w and 0 <= loc[1] < self.h:
-            if wrld.empty_at(loc[0], loc[1]):
+        if (0 <= loc[0] < self.w) and (0 <= loc[1] < self.h):
+            if wrld.empty_at(loc[0], loc[1]) or wrld.exit_at(loc[0], loc[1]):
                 return True
         else:
             return False
@@ -322,27 +322,27 @@ class TestCharacter(CharacterEntity):
 
         return None, None
 
-    def a_star(self, wrld):
-        """
-        Handles A* search
-        """
-        path, cost = self.AStarSearch((self.x, self.y), (self.exit_x - 1, self.exit_y - 1), wrld)
-        path.append((self.exit_x, self.exit_y))
-        cost = cost + 1
-        return path, cost
+    # def a_star(self, wrld):
+    #     """
+    #     Handles A* search
+    #     """
+    #     path, cost = self.AStarSearch((self.x, self.y), (self.exit_x - 1, self.exit_y - 1), wrld)
+    #     path.append((self.exit_x, self.exit_y))
+    #     cost = cost + 1
+    #     return path, cost
 
-    def a_star_dist_to_exit(self, wrld):
-        """
-        Distance to exit by path
-        """
-        path, cost = self.a_star(wrld)
-        return cost
+    # def a_star_dist_to_exit(self, wrld):
+    #     """
+    #     Distance to exit by path
+    #     """
+    #     path, cost = self.a_star(wrld)
+    #     return cost
 
     def can_a_star_complete(self, wrld):
         """
         Checks if A star can get to goal
         """
-        path, cost = self.a_star(wrld)
+        path, cost = self.AStarSearch((self.x, self.y), (self.exit_x, self.exit_y), wrld)
         return path is not None and cost is not None
 
     def next_a_star_move(self, wrld):
@@ -351,7 +351,7 @@ class TestCharacter(CharacterEntity):
         """
         nxt_move = self.x, self.y
         if self.can_a_star_complete(wrld):
-            path, cost = self.a_star(wrld)
+            path, cost = self.AStarSearch((self.x, self.y), (self.exit_x, self.exit_y), wrld)
             nxt_move = path[1]
 
         dx = nxt_move[0] - self.x
