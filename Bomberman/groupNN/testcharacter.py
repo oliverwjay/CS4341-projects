@@ -17,6 +17,7 @@ class TestCharacter(CharacterEntity):
         self.h = None
         self.expl_range = None
 
+
     def do(self, wrld):
         """
         Our Code
@@ -34,7 +35,12 @@ class TestCharacter(CharacterEntity):
         # Find where the monsters are
 
         # Find where other characters are
-        # arr = self.is_valid_loc((self.exit_x, self.exit_y), wrld)
+
+        # Run A Star
+
+        #
+
+
         # print(self.a_star(wrld))
         # print(self.locate_characters(wrld))
 
