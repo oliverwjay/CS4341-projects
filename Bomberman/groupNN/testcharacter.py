@@ -1,11 +1,13 @@
 # This is necessary to find the main code
 import math
 import sys
+from state import State
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
 from colorama import Fore, Back
+
 
 
 class TestCharacter(CharacterEntity):
@@ -37,28 +39,24 @@ class TestCharacter(CharacterEntity):
         monster_dir = closest_mon[1]  # 1-8
         # Find where other characters are
 
-        # Run A Star
-
-        #
-
-        # print(self.a_star(wrld))
-        # print(self.locate_characters(wrld))
+        # Creation of State
+        state = State(wrld)
 
         # Commands
-        dx, dy = self.next_a_star_move(wrld)
+        dx, dy = 0, 0  # self.next_a_star_move(wrld)
         bomb = False
         # Handle input
-        # for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
-        #     if 'w' == c:
-        #         dy -= 1
-        #     if 'a' == c:
-        #         dx -= 1
-        #     if 's' == c:
-        #         dy += 1
-        #     if 'd' == c:
-        #         dx += 1
-        #     if 'b' == c:
-        #         bomb = True
+        for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
+            if 'w' == c:
+                dy -= 1
+            if 'a' == c:
+                dx -= 1
+            if 's' == c:
+                dy += 1
+            if 'd' == c:
+                dx += 1
+            if 'b' == c:
+                bomb = True
         # Execute commands
         self.move(dx, dy)
         if bomb:
@@ -78,6 +76,17 @@ class TestCharacter(CharacterEntity):
                     return True
         else:
             return False
+
+    def find_bomb_time_at_location(self, loc, wrld):
+        """
+        Finds a bomb at the given location
+        """
+        arr = wrld.bombs.values()
+        lis = list(arr)
+        if len(lis) > 0:
+            for i in range(0, len(lis)):
+                if loc[0] == lis[i].x and loc[1] == lis[i].y:
+                    return lis[i].timer
 
     def locate_monsters(self, wrld):
         """
@@ -165,6 +174,54 @@ class TestCharacter(CharacterEntity):
                     return True
         return False
 
+    def isBombHorOrVertFromLoc(self, loc, wrld):
+        """
+        Determines if a bomb is horizontal or vertical to our character with the explosion range
+        value that was initialized
+        """
+
+        # Check above the player
+        if (loc[1] - self.expl_range + 1) >= 0:
+            for y in range(loc[1], loc[1] - self.expl_range + 1):
+                if wrld.bomb_at(loc[0], y) is not None:
+                    return True, (loc[0], y)
+        else:
+            for y in range(0, loc[1]):
+                if wrld.bomb_at(loc[0], y) is not None:
+                    return True, (loc[0], y)
+
+        # Check below the player
+        if (loc[1] + self.expl_range + 1) <= self.h:
+            for y in range(loc[1], loc[1] + self.expl_range + 1):
+                if wrld.bomb_at(loc[0], y) is not None:
+                    return True, (loc[0], y)
+        else:
+            for y in range(loc[1], self.h):
+                if wrld.bomb_at(loc[0], y) is not None:
+                    return True, (loc[0], y)
+
+        # Check to the right of the player
+        if (loc[0] + self.expl_range + 1) <= self.w:
+            for x in range(loc[0], loc[0] + self.expl_range + 1):
+                if wrld.bomb_at(x, loc[1]) is not None:
+                    return True, (x, loc[1])
+        else:
+            for x in range(loc[0], self.w):
+                if wrld.bomb_at(x, loc[1]) is not None:
+                    return True, (x, loc[1])
+
+        # Check to the left of the player
+        if (loc[0] - self.expl_range + 1) >= 0:
+            print("Not near left wall")
+            for x in range(loc[0] - self.expl_range, loc[0]):
+                if wrld.bomb_at(x, loc[1]) is not None:
+                    return True, (x, loc[1])
+        else:
+            for x in range(0, loc[0]):
+                if wrld.bomb_at(x, loc[1]) is not None:
+                    return True, (x, loc[1])
+        return False, None
+
     @staticmethod
     def euclidean_distance(x1, y1, x2, y2):
         """
@@ -232,6 +289,103 @@ class TestCharacter(CharacterEntity):
                 return True
         else:
             return False
+
+    def is_in_bounds(self, loc, wrld):
+        """
+        Checks if a location is in bounds
+        """
+
+        return (0 <= loc[0] < self.w) and (0 <= loc[1] < self.h)
+
+    def valid_moves(self, loc, wrld):
+        """
+        Returns all of the valid moves our character can make
+        """
+        top_left = (loc[0] - 1, loc[1] - 1)
+        top = (loc[0], loc[1] - 1)
+        top_right = (loc[0] + 1, loc[1] - 1)
+        left = (loc[0] - 1, loc[1])
+        right = (loc[0] + 1, loc[1])
+        bottom_left = (loc[0] - 1, loc[1] + 1)
+        bottom = (loc[0], loc[1] + 1)
+        bottom_right = (loc[0] + 1, loc[1] + 1)
+
+        arr = []
+
+        if wrld.empty_at(top_left[0], top_left[1]) and self.is_in_bounds(top_left, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(top_left, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(top_left)
+            else:
+                arr.append(top_left)
+        if wrld.empty_at(top[0], top[1]) and self.is_in_bounds(top, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(top, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(top)
+            else:
+                arr.append(top)
+        if wrld.empty_at(top_right[0], top_right[1]) and self.is_in_bounds(top_right, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(top_right, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(top_right)
+            else:
+                arr.append(top_right)
+        if wrld.empty_at(right[0], right[1]) and self.is_in_bounds(right, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(right, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(right)
+            else:
+                arr.append(right)
+        if wrld.empty_at(left[0], left[1]) and self.is_in_bounds(left, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(left, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(left)
+            else:
+                arr.append(left)
+        if wrld.empty_at(bottom_left[0], bottom_left[1]) and self.is_in_bounds(bottom_left, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(bottom_left, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(bottom_left)
+            else:
+                arr.append(bottom_left)
+        if wrld.empty_at(bottom[0], bottom[1]) and self.is_in_bounds(bottom, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(bottom, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(bottom)
+            else:
+                arr.append(bottom)
+        if wrld.empty_at(bottom_right[0], bottom_right[1]) and self.is_in_bounds(bottom_right, wrld):
+            is_bomb, loc = self.isBombHorOrVertFromLoc(bottom_right, wrld)
+            # Get Bomb Time
+            if loc is not None:
+                time = self.find_bomb_time_at_location(loc, wrld)
+                if is_bomb and time is not 0:
+                    arr.append(bottom_right)
+            else:
+                arr.append(bottom_right)
+
+        return arr
 
     @staticmethod
     def euclidean_heuristic(point1, point2):
@@ -448,3 +602,4 @@ class TestCharacter(CharacterEntity):
         else:
             direction = -1
         return direction
+
