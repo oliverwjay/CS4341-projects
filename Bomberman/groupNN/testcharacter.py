@@ -1,11 +1,13 @@
 # This is necessary to find the main code
 import math
 import sys
+from state import State
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
 from colorama import Fore, Back
+
 
 
 class TestCharacter(CharacterEntity):
@@ -16,7 +18,6 @@ class TestCharacter(CharacterEntity):
         self.w = None
         self.h = None
         self.expl_range = None
-
 
     def do(self, wrld):
         """
@@ -36,16 +37,11 @@ class TestCharacter(CharacterEntity):
 
         # Find where other characters are
 
-        # Run A Star
-
-        #
-        # print(self.a_star(wrld))
-        # print(self.locate_characters(wrld))
-
-        print(self.valid_moves((self.x, self.y), wrld))
+        # Creation of State
+        state = State(wrld)
 
         # Commands
-        dx, dy = 0, 0 # self.next_a_star_move(wrld)
+        dx, dy = 0, 0  # self.next_a_star_move(wrld)
         bomb = False
         # Handle input
         for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
@@ -528,4 +524,3 @@ class TestCharacter(CharacterEntity):
         # normalized = (values - min(values)) / (max(values) - min(values))
         normalized = value / max_dist
         return normalized
-
