@@ -359,3 +359,11 @@ class TestCharacter(CharacterEntity):
 
         return dx, dy
 
+    def normalize_dist(self, value, wrld):
+        height = wrld.height()
+        width = wrld.width()
+        max_dist = math.sqrt(math.pow(height, 2) + math.pow(width, 2))
+        # normalized = (values - min(values)) / (max(values) - min(values))
+        normalized = value / max_dist
+        return normalized
+
