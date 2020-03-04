@@ -3,7 +3,6 @@ import math
 
 class State:
     def __init__(self, world, loc, name):
-        # TODO: Compute these
         self.x, self.y = loc
         self.name = name
         self.world = world
