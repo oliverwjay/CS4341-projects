@@ -104,7 +104,6 @@ class State:
 
         # Check to the left of the player
         if (self.x - self.world.expl_range + 1) >= 0:
-            print("Not near left wall")
             for x in range(self.x - self.world.expl_range, self.x):
                 if self.world.bomb_at(x, self.y) is not None:
                     return True
@@ -374,6 +373,9 @@ class State:
         return layer_dist
 
     def dist_and_dir_to_closest_monster(self):
+        """
+        Distance and Direction to Closest monster
+        """
         # Find all the monsters in the world
         location, count = self.locate_monsters()
         smallest_dist = self.world.height() * self.world.width()
@@ -385,12 +387,13 @@ class State:
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
         if smallest_dist > 4:
             smallest_dist = 4  # If the monster is too far away, consider the distance as the character's max vision
-        print(smallest_dist)
-        print(direction)
         return smallest_dist, direction
 
     @staticmethod
     def dir_between_cells(x1, y1, x2, y2):
+        """
+        Direction between cells
+        """
         x_diff = x1 - x2
         y_diff = y1 - y2
         direction = (2, 2)
