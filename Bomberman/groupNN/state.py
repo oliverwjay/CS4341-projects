@@ -392,38 +392,36 @@ class State:
     def dir_between_cells(x1, y1, x2, y2):
         x_diff = x1 - x2
         y_diff = y1 - y2
-        direction = -1
+        direction = (2, 2)
         # Cells are in the same column
         if x_diff == 0:
             if y_diff > 0:
-                direction = 2  # Cell 2 is above Cell 1
+                direction = (0, -1)  # Cell 2 is above Cell 1
             elif y_diff < 0:
-                direction = 7  # Cell 2 is below Cell 1
+                direction = (0, 1)  # Cell 2 is below Cell 1
             else:
-                direction = 0  # Cells are on top of each other
+                direction = (0, 0)  # Cells are on top of each other
         #  Cells are in the same row
         elif y_diff == 0:
             if x_diff > 0:
-                direction = 4  # Cell 2 is to the left of Cell 1
+                direction = (-1, 0)  # Cell 2 is to the left of Cell 1
             elif x_diff < 0:
-                direction = 5  # Cell 2 is to the right of Cell 1
-            else:
-                direction = 0  # Cells are on top of each other
+                direction = (1, 0)  # Cell 2 is to the right of Cell 1
         #  Cell 2 is to the upper left diagonal of Cell 1
         elif y_diff > 0 and x_diff > 0:
-            direction = 1
+            direction = (-1, -1)
         #  Cell 2 is to the upper right diagonal of Cell 1
         elif x_diff < 0 < y_diff:
-            direction = 3
+            direction = (1, -1)
         # Cell 2 is to the lower left diagonal of Cell 1
         elif y_diff < 0 < x_diff:
-            direction = 6
+            direction = (-1, 1)
         # Cell 2 is to the lower right diagonal of Cell 1
         elif y_diff < 0 and x_diff < 0:
-            direction = 8
+            direction = (1, 1)
         # Something blew up cause this should never happen
         else:
-            direction = -1
+            print("Direction Unknown")
         return direction
 
     def as_tuple(self):
