@@ -16,10 +16,21 @@ class Qlearning():
         self.total_reward = total_reward
         self.character = character
 
-
     def step(self, Q, eps=0.5):
 
         if np.random.uniform() < eps:
             act = self.character.sample()
         else:
-            act =
+            act = self.max_dict()
+
+    @staticmethod
+    def max_dict(d):
+        """
+        Gets the maximum dictionary
+        """
+        max_v = float('-inf')
+        for key, val in d.items():
+            if val > max_v:
+                max_v = val
+                max_key = key
+        return max_key, max_v
