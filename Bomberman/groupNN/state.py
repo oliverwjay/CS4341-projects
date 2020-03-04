@@ -438,6 +438,9 @@ class State:
         )
         return state_hash
 
+    def __eq__(self, other):
+        return self.as_tuple() == other.as_tuple()
+
     def __hash__(self):
         # TODO: Hash object
         print(str(self.as_tuple()))
