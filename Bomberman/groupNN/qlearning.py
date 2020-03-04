@@ -18,11 +18,17 @@ class Qlearning():
         self.Q = {}
         self.alpha = 0.01
         self.gamma = 0.9
+        self.default_reward = 0
 
     def step(self, state, eps=0.5):
+        """
+        Steps through one state
+        """
+        if state not in self.Q:
+            self.Q[state] = {action: self.default_reward for action in self.possible_actions(state)}
 
         if np.random.uniform() < eps:
-            act = self.sample()
+            act = self.sample(state)
         else:
             act = self.max_dict(self.Q[state])[0]
 
@@ -35,20 +41,23 @@ class Qlearning():
         a1, max_q_s1a1 = self.max_dict(self.Q[state])
         self.Q[state][action] += self.alpha * (reward + self.gamma * max_q_s1a1 - self.Q[state][action])
 
-    @staticmethod
-    def sample():
+    def sample(self, state):
         """
         Gets random move
         """
-        connected = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2) if
-                     (x, y) != (0, 0)]
+        return random.choice(self.possible_actions(state))
 
-        move_act = random.choice(connected)
-
-        random_bit = random.getrandbits(1)
-        random_boolean = bool(random_bit)
-
-        return move_act, random_boolean
+    @staticmethod
+    def possible_actions(state):
+        """
+        gets all possible actions
+        """
+        moves = state.valid_moves
+        arr = []
+        for move in moves:
+            arr.append((move, True))
+            arr.append((move, False))
+        return arr
 
     @staticmethod
     def max_dict(d):
