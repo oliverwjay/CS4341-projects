@@ -11,14 +11,14 @@ from entity import CharacterEntity
 from colorama import Fore, Back
 
 
-class Qlearning():
+class Qlearning:
 
     def __init__(self, total_reward):
         self.total_reward = total_reward
         self.Q = {}
         self.alpha = 0.01
         self.gamma = 0.9
-        self.default_reward = 0
+        self.default_reward = -10
 
     def step(self, state, eps=0.5):
         """
@@ -55,7 +55,8 @@ class Qlearning():
         moves = state.valid_moves
         arr = []
         for move in moves:
-            arr.append((move, True))
+            if not state.bomb_placed:
+                arr.append((move, True))
             arr.append((move, False))
         return arr
 
