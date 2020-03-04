@@ -2,6 +2,7 @@
 import math
 import sys
 from state import State
+import random
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
@@ -45,3 +46,27 @@ class TestCharacter(CharacterEntity):
 
         pass
 
+    def sample(self):
+        """
+        Gets random move
+        """
+        connected = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2) if
+                     (x, y) != (0, 0)]
+
+        move_act = random.choice(connected)
+
+        random_bit = random.getrandbits(1)
+        random_boolean = bool(random_bit)
+
+        return move_act, random_boolean
+
+    def act(self, action, world):
+        """
+        Action: ((dx, dy), Boolean)
+        The action we need to make
+        """
+        self.move(action[0][0], action[0][1])
+        if action[1]:
+            self.place_bomb()
+
+        return world.scores[self.name], State(world, (self.x, self.y), self.name)
