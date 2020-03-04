@@ -3,25 +3,52 @@ import math
 import sys
 from state import State
 import numpy as np
+import random
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
 from colorama import Fore, Back
 
+
 class Qlearning():
 
-    def __init__(self, state, total_reward, character, csv):
-        self.state = state
+    def __init__(self, total_reward):
         self.total_reward = total_reward
-        self.character = character
+        self.Q = {}
+        self.alpha = 0.01
+        self.gamma = 0.9
 
-    def step(self, Q, eps=0.5):
+    def step(self, state, eps=0.5):
 
         if np.random.uniform() < eps:
-            act = self.character.sample()
+            act = self.sample()
         else:
-            act = self.max_dict()
+            act = self.max_dict(self.Q[state])[0]
+
+        return act
+
+    def save_outcome(self, action, state, reward):
+        """
+        Saves the action
+        """
+        a1, max_q_s1a1 = self.max_dict(self.Q[state])
+        self.Q[state][action] += self.alpha * (reward + self.gamma * max_q_s1a1 - self.Q[state][action])
+
+    @staticmethod
+    def sample():
+        """
+        Gets random move
+        """
+        connected = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2) if
+                     (x, y) != (0, 0)]
+
+        move_act = random.choice(connected)
+
+        random_bit = random.getrandbits(1)
+        random_boolean = bool(random_bit)
+
+        return move_act, random_boolean
 
     @staticmethod
     def max_dict(d):

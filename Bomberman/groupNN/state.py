@@ -442,6 +442,4 @@ class State:
         return self.as_tuple() == other.as_tuple()
 
     def __hash__(self):
-        # TODO: Hash object
-        print(str(self.as_tuple()))
         return hash(str(self.as_tuple()))
