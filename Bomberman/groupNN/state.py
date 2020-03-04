@@ -215,14 +215,15 @@ class State:
 
         for neighbor in connected:
             if self.is_in_bounds(neighbor) and self.world.empty_at(neighbor[0], neighbor[1]):
-                is_bomb, loc = self.isBombHorOrVertFromLoc(neighbor)
+                is_bomb, bomb_loc = self.isBombHorOrVertFromLoc(neighbor)
+                dx, dy = neighbor[0] - loc[0], neighbor[1] - loc[1]
                 # Get Bomb Time
-                if loc is not None:
-                    time = self.find_bomb_time_at_location(loc)
+                if bomb_loc is not None:
+                    time = self.find_bomb_time_at_location(bomb_loc)
                     if is_bomb and time is not 0:
-                        arr.append(neighbor)
+                        arr.append((dx, dy))
                 else:
-                    arr.append(neighbor)
+                    arr.append((dx, dy))
 
         return arr
 
