@@ -184,7 +184,8 @@ class State:
         :param loc: location (tuple)
         :return: all valid neighbors (List of Tuples)
         """
-        connected = [(x, y) for x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0)]
+        connected = [(x, y) for x in range(loc[0] - 1, loc[0] + 2) for y in range(loc[1] - 1, loc[1] + 2) if
+                     (x, y) != (0, 0)]
         return [neighbor for neighbor in connected if self.is_valid_loc(neighbor)]
 
     def is_valid_loc(self, loc):
@@ -208,8 +209,8 @@ class State:
         """
         Returns all of the valid moves our character can make
         """
-        connected = [(x, y) for x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0)]
-
+        connected = [(x, y) for x in range(loc[0] - 1, loc[0] + 2) for y in range(loc[1] - 1, loc[1] + 2) if
+                     (x, y) != (0, 0)]
         arr = []
 
         for neighbor in connected:

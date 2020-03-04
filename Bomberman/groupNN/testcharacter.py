@@ -24,7 +24,7 @@ class TestCharacter(CharacterEntity):
         print(state.as_tuple(), hash(state))
 
         # Commands
-        dx, dy = 0, 0  
+        dx, dy = 0, 0
         bomb = False
         # Handle input
         for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
