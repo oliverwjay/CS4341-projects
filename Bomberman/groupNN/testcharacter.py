@@ -2,6 +2,7 @@
 import math
 import sys
 from state import State
+import random
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
@@ -18,24 +19,13 @@ class TestCharacter(CharacterEntity):
         """
         Our Code
         """
-        # Save world height and width (done once)
-        # if self.w is None or self.h is None or self.expl_range is None:
-        #     self.w = wrld.width()
-        #     self.h = wrld.height()
-        #     self.expl_range = wrld.expl_range
-        #
-        # # Find where the monsters are
-        # closest_mon = self.dist_and_dir_to_closest_monster(wrld)
-        # monster_dist = closest_mon[0]  # 1-4
-        # monster_dir = closest_mon[1]  # 1-8
-        # # Find where other characters are
 
         # Creation of State
         state = State(wrld, (self.x, self.y), self.name)
         print(state.as_tuple(), hash(state))
 
         # Commands
-        dx, dy = 0, 0  # self.next_a_star_move(wrld)
+        dx, dy = 0, 0
         bomb = False
         # Handle input
         for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
@@ -56,19 +46,27 @@ class TestCharacter(CharacterEntity):
 
         pass
 
-    # def a_star(self, wrld):
-    #     """
-    #     Handles A* search
-    #     """
-    #     path, cost = self.AStarSearch((self.x, self.y), (self.exit_x - 1, self.exit_y - 1), wrld)
-    #     path.append((self.exit_x, self.exit_y))
-    #     cost = cost + 1
-    #     return path, cost
+    def sample(self):
+        """
+        Gets random move
+        """
+        connected = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2) if
+                     (x, y) != (0, 0)]
 
-    # def a_star_dist_to_exit(self, wrld):
-    #     """
-    #     Distance to exit by path
-    #     """
-    #     path, cost = self.a_star(wrld)
-    #     return cost
+        move_act = random.choice(connected)
 
+        random_bit = random.getrandbits(1)
+        random_boolean = bool(random_bit)
+
+        return move_act, random_boolean
+
+    def act(self, action, world):
+        """
+        Action: ((dx, dy), Boolean)
+        The action we need to make
+        """
+        self.move(action[0][0], action[0][1])
+        if action[1]:
+            self.place_bomb()
+
+        return world.scores[self.name], State(world, (self.x, self.y), self.name)
