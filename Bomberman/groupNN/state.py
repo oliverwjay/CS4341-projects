@@ -51,7 +51,7 @@ class State:
         lis = list(arr)
         if len(lis) > 0:
             for i in range(0, len(lis)):
-                location.append((lis[i][i].x, lis[i][i].y))
+                location.append((lis[i][0].x, lis[i][0].y))
                 count = count + 1
         return location, count
 
@@ -65,7 +65,7 @@ class State:
         lis = list(arr)
         if len(lis) > 0:
             for i in range(0, len(lis)):
-                location.append((lis[i][i].x, lis[i][i].y))
+                location.append((lis[i][0].x, lis[i][0].y))
                 count = count + 1
 
         return location, count
