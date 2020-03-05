@@ -17,7 +17,7 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.01
+        self.alpha = 0.05
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
@@ -29,7 +29,7 @@ class Qlearning:
         else:
             self.Q = {}
 
-    def step(self, state, eps=0.5):
+    def step(self, state, eps=0.25):
         """
         Steps through one state
         """
