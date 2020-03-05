@@ -208,8 +208,7 @@ class State:
         """
         Returns all of the valid moves our character can make
         """
-        connected = [(x, y) for x in range(loc[0] - 1, loc[0] + 2) for y in range(loc[1] - 1, loc[1] + 2) if
-                     (x, y) != loc]
+        connected = [(x, y) for x in range(loc[0] - 1, loc[0] + 2) for y in range(loc[1] - 1, loc[1] + 2)]
         arr = []
 
         for neighbor in connected:
@@ -219,7 +218,7 @@ class State:
                 # Get Bomb Time
                 if bomb_loc is not None:
                     time = self.find_bomb_time_at_location(bomb_loc)
-                    if is_bomb and time is not 0:
+                    if is_bomb and time > 10:
                         arr.append((dx, dy))
                 else:
                     arr.append((dx, dy))
