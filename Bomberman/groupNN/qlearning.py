@@ -39,7 +39,7 @@ class Qlearning:
         Saves the action
         """
         a1, max_q_s1a1 = self.max_for_state(new_state)
-        self.Q[old_state][action] += self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
+        self.Q[old_state][action] = self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
 
     def sample(self, state):
         """

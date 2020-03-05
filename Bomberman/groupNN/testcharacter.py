@@ -8,6 +8,7 @@ from state import State
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
+from events import Event
 from colorama import Fore, Back
 
 
@@ -16,26 +17,39 @@ class TestCharacter(CharacterEntity):
         CharacterEntity.__init__(self, name, avatar, x, y)
         self.reward = 0
         self.q_learn = Qlearning(0)
-        self.prev_act = None
-        self.prev_state = None
 
     def do(self, wrld):
         """
         Our Code
         """
-        new_reward = wrld.scores[self.name] - self.reward
-        self.reward = wrld.scores[self.name]
 
         # Creation of State
         state = State(wrld, (self.x, self.y), self.name)
 
-        if self.prev_act is not None:
-            self.q_learn.save_outcome(self.prev_act, state, self.prev_state, new_reward)
-
         act = self.q_learn.step(state)
-        self.prev_act = act
-        self.prev_state = state
         self.act(act)
+
+        sort_of_me = wrld.me(self)
+        TestCharacter.act(sort_of_me, act)
+        new_wrld, events = wrld.next()
+        new_me = new_wrld.me(self)
+        reward = new_wrld.scores[self.name] - wrld.scores[self.name]
+        if new_me is not None:
+            res_state = State(new_wrld, (new_me.x, new_me.y), self.name)
+            event_scores = {Event.BOMB_HIT_CHARACTER: -100,
+                            Event.CHARACTER_KILLED_BY_MONSTER: -100,
+                            Event.CHARACTER_FOUND_EXIT: 100}
+
+            for event in events:
+                if event in event_scores:
+                    reward += event_scores[event]
+
+            reward += (state.len_a_star - res_state.len_a_star) * 3
+        else:
+            res_state = state
+        print("reward: ", reward)
+
+        self.q_learn.save_outcome(act, res_state, state, reward)
 
         pass
 

@@ -9,7 +9,7 @@ class State:
         mo_dist, mo_dir = self.dist_and_dir_to_closest_monster()
         self.dir_closest_monster = mo_dir
         self.dist_closest_monster = min(4, mo_dist)
-        self.dir_a_star = self.next_a_star_move()
+        self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
         self.valid_moves = self.valid_moves((self.x, self.y))
 
@@ -184,7 +184,8 @@ class State:
         arr = []
 
         for neighbor in connected:
-            if self.is_in_bounds(neighbor) and self.world.empty_at(neighbor[0], neighbor[1]):
+            if self.is_in_bounds(neighbor) and \
+                    (self.world.empty_at(neighbor[0], neighbor[1]) or self.world.exit_at(neighbor[0], neighbor[1])):
                 is_bomb, bomb_loc = self.isBombHorOrVertFromLoc(neighbor)
                 dx, dy = neighbor[0] - loc[0], neighbor[1] - loc[1]
                 # Get Bomb Time
@@ -308,6 +309,7 @@ class State:
         Gets the next A Star move: in a tuple of dx, dy
         """
         nxt_move = self.x, self.y
+        path = []
         if self.can_a_star_complete():
             path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
             nxt_move = path[1]
@@ -315,7 +317,7 @@ class State:
         dx = nxt_move[0] - self.x
         dy = nxt_move[1] - self.y
 
-        return dx, dy
+        return (dx, dy), len(path)
 
     def normalize_dist(self, value, wrld):
         height = wrld.height()
