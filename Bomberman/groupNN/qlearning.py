@@ -29,18 +29,19 @@ class Qlearning:
         else:
             self.Q = {}
 
-    def step(self, state, eps=0.25):
+    def step(self, state, eps=0.15):
         """
         Steps through one state
         """
         if state not in self.Q:
-            self.Q[state] = {action: self.default_reward for action in self.possible_actions(state)}
+            self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
 
         if np.random.uniform() < eps:
             act = self.sample(state)
         else:
             act = self.max_for_state(state)[0]
-        print("act: ", act)
+        print(f"State: {state} Act: {act} Score: {self.Q[state][act]}")
+        opts = self.Q[state]
         return act
 
     def save_outcome(self, action, new_state, old_state, reward):
@@ -73,18 +74,32 @@ class Qlearning:
             arr.append((move, False))
         return arr
 
+    @staticmethod
+    def all_actions(state):
+        """
+        gets all possible actions
+        """
+        moves = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2)]
+        arr = []
+        for move in moves:
+            if not state.bomb_placed:
+                arr.append((move, True))
+            arr.append((move, False))
+        return arr
+
     def max_for_state(self, state):
         """
         Gets the maximum dictionary
         """
         if state not in self.Q:
-            self.Q[state] = {action: self.default_reward for action in self.possible_actions(state)}
+            self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
 
         d = self.Q[state]
+        options = self.possible_actions(state)
 
         max_v = float('-inf')
         for key, val in d.items():
-            if val > max_v:
+            if key in options and val > max_v:
                 max_v = val
                 max_key = key
         return max_key, max_v

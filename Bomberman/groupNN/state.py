@@ -7,8 +7,12 @@ class State:
         self.name = name
         self.world = world
         mo_dist, mo_dir = self.dist_and_dir_to_closest_monster()
-        self.dir_closest_monster = mo_dir
-        self.dist_closest_monster = min(4, mo_dist)
+        if mo_dist <= 4:
+            self.dir_closest_monster = mo_dir
+            self.dist_closest_monster = mo_dist
+        else:
+            self.dir_closest_monster = 0
+            self.dist_closest_monster = 5
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
         self.valid_moves = self.valid_moves((self.x, self.y))
@@ -417,8 +421,7 @@ class State:
             self.dir_closest_monster,
             self.dist_closest_monster,
             self.dir_a_star,
-            self.bomb_placed,
-            self.valid_moves
+            self.bomb_placed
         )
         return state_hash
 
