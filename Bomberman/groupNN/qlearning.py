@@ -30,16 +30,16 @@ class Qlearning:
         if np.random.uniform() < eps:
             act = self.sample(state)
         else:
-            act = self.max_dict(self.Q[state])[0]
-
+            act = self.max_for_state(state)[0]
+        print("act: ", act)
         return act
 
-    def save_outcome(self, action, state, reward):
+    def save_outcome(self, action, new_state, old_state, reward):
         """
         Saves the action
         """
-        a1, max_q_s1a1 = self.max_dict(self.Q[state])
-        self.Q[state][action] += self.alpha * (reward + self.gamma * max_q_s1a1 - self.Q[state][action])
+        a1, max_q_s1a1 = self.max_for_state(new_state)
+        self.Q[old_state][action] += self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
 
     def sample(self, state):
         """
@@ -60,11 +60,15 @@ class Qlearning:
             arr.append((move, False))
         return arr
 
-    @staticmethod
-    def max_dict(d):
+    def max_for_state(self, state):
         """
         Gets the maximum dictionary
         """
+        if state not in self.Q:
+            self.Q[state] = {action: self.default_reward for action in self.possible_actions(state)}
+
+        d = self.Q[state]
+
         max_v = float('-inf')
         for key, val in d.items():
             if val > max_v:

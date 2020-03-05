@@ -118,47 +118,19 @@ class State:
         Determines if a bomb is horizontal or vertical to our character with the explosion range
         value that was initialized
         """
+        ho_range = range(max(0, loc[0] - self.world.expl_range),
+                         min(loc[0] + self.world.expl_range + 1, self.world.width()))
+        vt_range = range(max(0, loc[1] - self.world.expl_range),
+                         min(loc[1] + self.world.expl_range + 1, self.world.height()))
 
-        # Check above the player
-        if (loc[1] - self.world.expl_range + 1) >= 0:
-            for y in range(loc[1], loc[1] - self.world.expl_range + 1):
-                if self.world.bomb_at(loc[0], y) is not None:
-                    return True, (loc[0], y)
-        else:
-            for y in range(0, loc[1]):
-                if self.world.bomb_at(loc[0], y) is not None:
-                    return True, (loc[0], y)
+        for x in ho_range:
+            if self.world.bomb_at(x, loc[1]) is not None:
+                return True, (x, loc[1])
 
-        # Check below the player
-        if (loc[1] + self.world.expl_range + 1) <= self.world.height():
-            for y in range(loc[1], loc[1] + self.world.expl_range + 1):
-                if self.world.bomb_at(loc[0], y) is not None:
-                    return True, (loc[0], y)
-        else:
-            for y in range(loc[1], self.world.height()):
-                if self.world.bomb_at(loc[0], y) is not None:
-                    return True, (loc[0], y)
+        for y in vt_range:
+            if self.world.bomb_at(loc[0], y) is not None:
+                return True, (loc[0], y)
 
-        # Check to the right of the player
-        if (loc[0] + self.world.expl_range + 1) <= self.world.width():
-            for x in range(loc[0], loc[0] + self.world.expl_range + 1):
-                if self.world.bomb_at(x, loc[1]) is not None:
-                    return True, (x, loc[1])
-        else:
-            for x in range(loc[0], self.world.width()):
-                if self.world.bomb_at(x, loc[1]) is not None:
-                    return True, (x, loc[1])
-
-        # Check to the left of the player
-        if (loc[0] - self.world.expl_range + 1) >= 0:
-            print("Not near left wall")
-            for x in range(loc[0] - self.world.expl_range, loc[0]):
-                if self.world.bomb_at(x, loc[1]) is not None:
-                    return True, (x, loc[1])
-        else:
-            for x in range(0, loc[0]):
-                if self.world.bomb_at(x, loc[1]) is not None:
-                    return True, (x, loc[1])
         return False, None
 
     @staticmethod
@@ -218,11 +190,15 @@ class State:
                 # Get Bomb Time
                 if bomb_loc is not None:
                     time = self.find_bomb_time_at_location(bomb_loc)
-                    if is_bomb and time > 10:
+                    print("time: ", time)
+                    if is_bomb and time > 1:
                         arr.append((dx, dy))
                 else:
                     arr.append((dx, dy))
 
+        if not arr:
+            arr = [(0, 0)]
+        print(arr)
         return arr
 
     @staticmethod
@@ -440,8 +416,8 @@ class State:
     def __eq__(self, other):
         return self.as_tuple() == other.as_tuple()
 
-    def __repr__(self):
-        return str(self.as_tuple())
+    # def __repr__(self):
+    #     return str(self.as_tuple())
 
     def __str__(self):
         return f"Dir mo:{self.dir_closest_monster} " \

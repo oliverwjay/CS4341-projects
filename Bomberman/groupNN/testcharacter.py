@@ -30,7 +30,7 @@ class TestCharacter(CharacterEntity):
         state = State(wrld, (self.x, self.y), self.name)
 
         if self.prev_act is not None:
-            self.q_learn.save_outcome(self.prev_act, self.prev_state, new_reward)
+            self.q_learn.save_outcome(self.prev_act, state, self.prev_state, new_reward)
 
         act = self.q_learn.step(state)
         self.prev_act = act
