@@ -439,6 +439,16 @@ class State:
     def __eq__(self, other):
         return self.as_tuple() == other.as_tuple()
 
+    def __repr__(self):
+        return str(self.as_tuple())
+
+    def __str__(self):
+        return f"Dir mo:{self.dir_closest_monster} " \
+               f"dist mo:{self.dist_closest_monster} " \
+               f"dir a*:{self.dir_a_star} " \
+               f"bomb placed:{self.bomb_placed} " \
+               f"valid moves:{self.valid_moves}"
+
     def __hash__(self):
         # TODO: Hash object
         print(str(self.as_tuple()))
