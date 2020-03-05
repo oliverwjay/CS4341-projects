@@ -9,16 +9,25 @@ sys.path.insert(0, '../bomberman')
 # Import necessary stuff
 from entity import CharacterEntity
 from colorama import Fore, Back
+import pickle
+import os
 
 
 class Qlearning:
 
-    def __init__(self, total_reward):
+    def __init__(self, total_reward, filename="lessons.p"):
         self.total_reward = total_reward
-        self.Q = {}
         self.alpha = 0.01
         self.gamma = 0.9
-        self.default_reward = -10
+        self.default_reward = 0
+        self.filename = filename
+
+        if os.path.exists(filename):
+            file = open(filename, 'rb')
+            self.Q = pickle.load(file)
+            file.close()
+        else:
+            self.Q = {}
 
     def step(self, state, eps=0.5):
         """
@@ -40,6 +49,10 @@ class Qlearning:
         """
         a1, max_q_s1a1 = self.max_for_state(new_state)
         self.Q[old_state][action] = self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
+
+        file = open(self.filename, 'wb')
+        pickle.dump(self.Q, file)
+        file.close()
 
     def sample(self, state):
         """
