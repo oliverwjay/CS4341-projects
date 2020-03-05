@@ -133,6 +133,13 @@ class State:
 
         return False, None
 
+    def dis_to_exit(self):
+        """
+        Calculates euclidean_distance to exit
+        :return:
+        """
+        return self.euclidean_heuristic((self.x, self.y), self.world.exitcell)
+
     @staticmethod
     def euclidean_distance(x1, y1, x2, y2):
         """

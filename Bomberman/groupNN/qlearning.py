@@ -15,7 +15,7 @@ import os
 
 class Qlearning:
 
-    def __init__(self, total_reward, filename="lessons.p"):
+    def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
         self.alpha = 0.05
         self.gamma = 0.9
