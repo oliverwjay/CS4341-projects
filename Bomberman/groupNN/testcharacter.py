@@ -1,8 +1,9 @@
 # This is necessary to find the main code
 import math
 import sys
-from state import State
 import random
+from qlearning import Qlearning
+from state import State
 
 sys.path.insert(0, '../bomberman')
 # Import necessary stuff
@@ -10,57 +11,35 @@ from entity import CharacterEntity
 from colorama import Fore, Back
 
 
-
 class TestCharacter(CharacterEntity):
     def __init__(self, name, avatar, x, y):
         CharacterEntity.__init__(self, name, avatar, x, y)
+        self.reward = 0
+        self.q_learn = Qlearning(0)
+        self.prev_act = None
+        self.prev_state = None
 
     def do(self, wrld):
         """
         Our Code
         """
+        new_reward = wrld.scores[self.name] - self.reward
+        self.reward = wrld.scores[self.name]
 
         # Creation of State
         state = State(wrld, (self.x, self.y), self.name)
-        print(state.as_tuple(), hash(state))
 
-        # Commands
-        dx, dy = 0, 0
-        bomb = False
-        # Handle input
-        for c in input("How would you like to move (w=up,a=left,s=down,d=right,b=bomb)? "):
-            if 'w' == c:
-                dy -= 1
-            if 'a' == c:
-                dx -= 1
-            if 's' == c:
-                dy += 1
-            if 'd' == c:
-                dx += 1
-            if 'b' == c:
-                bomb = True
-        # Execute commands
-        self.move(dx, dy)
-        if bomb:
-            self.place_bomb()
+        if self.prev_act is not None:
+            self.q_learn.save_outcome(self.prev_act, self.prev_state, new_reward)
+
+        act = self.q_learn.step(state)
+        self.prev_act = act
+        self.prev_state = state
+        self.act(act)
 
         pass
 
-    def sample(self):
-        """
-        Gets random move
-        """
-        connected = [(x, y) for x in range(- 1, 2) for y in range(- 1, 2) if
-                     (x, y) != (0, 0)]
-
-        move_act = random.choice(connected)
-
-        random_bit = random.getrandbits(1)
-        random_boolean = bool(random_bit)
-
-        return move_act, random_boolean
-
-    def act(self, action, world):
+    def act(self, action):
         """
         Action: ((dx, dy), Boolean)
         The action we need to make
@@ -69,4 +48,4 @@ class TestCharacter(CharacterEntity):
         if action[1]:
             self.place_bomb()
 
-        return world.scores[self.name], State(world, (self.x, self.y), self.name)
+

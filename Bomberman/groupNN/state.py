@@ -104,7 +104,6 @@ class State:
 
         # Check to the left of the player
         if (self.x - self.world.expl_range + 1) >= 0:
-            print("Not near left wall")
             for x in range(self.x - self.world.expl_range, self.x):
                 if self.world.bomb_at(x, self.y) is not None:
                     return True
@@ -215,14 +214,15 @@ class State:
 
         for neighbor in connected:
             if self.is_in_bounds(neighbor) and self.world.empty_at(neighbor[0], neighbor[1]):
-                is_bomb, loc = self.isBombHorOrVertFromLoc(neighbor)
+                is_bomb, bomb_loc = self.isBombHorOrVertFromLoc(neighbor)
+                dx, dy = neighbor[0] - loc[0], neighbor[1] - loc[1]
                 # Get Bomb Time
-                if loc is not None:
-                    time = self.find_bomb_time_at_location(loc)
+                if bomb_loc is not None:
+                    time = self.find_bomb_time_at_location(bomb_loc)
                     if is_bomb and time is not 0:
-                        arr.append(neighbor)
+                        arr.append((dx, dy))
                 else:
-                    arr.append(neighbor)
+                    arr.append((dx, dy))
 
         return arr
 
@@ -373,6 +373,9 @@ class State:
         return layer_dist
 
     def dist_and_dir_to_closest_monster(self):
+        """
+        Distance and Direction to Closest monster
+        """
         # Find all the monsters in the world
         location, count = self.locate_monsters()
         smallest_dist = self.world.height() * self.world.width()
@@ -384,46 +387,45 @@ class State:
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
         if smallest_dist > 4:
             smallest_dist = 4  # If the monster is too far away, consider the distance as the character's max vision
-        print(smallest_dist)
-        print(direction)
         return smallest_dist, direction
 
     @staticmethod
     def dir_between_cells(x1, y1, x2, y2):
+        """
+        Direction between cells
+        """
         x_diff = x1 - x2
         y_diff = y1 - y2
-        direction = -1
+        direction = (2, 2)
         # Cells are in the same column
         if x_diff == 0:
             if y_diff > 0:
-                direction = 2  # Cell 2 is above Cell 1
+                direction = (0, -1)  # Cell 2 is above Cell 1
             elif y_diff < 0:
-                direction = 7  # Cell 2 is below Cell 1
+                direction = (0, 1)  # Cell 2 is below Cell 1
             else:
-                direction = 0  # Cells are on top of each other
+                direction = (0, 0)  # Cells are on top of each other
         #  Cells are in the same row
         elif y_diff == 0:
             if x_diff > 0:
-                direction = 4  # Cell 2 is to the left of Cell 1
+                direction = (-1, 0)  # Cell 2 is to the left of Cell 1
             elif x_diff < 0:
-                direction = 5  # Cell 2 is to the right of Cell 1
-            else:
-                direction = 0  # Cells are on top of each other
+                direction = (1, 0)  # Cell 2 is to the right of Cell 1
         #  Cell 2 is to the upper left diagonal of Cell 1
         elif y_diff > 0 and x_diff > 0:
-            direction = 1
+            direction = (-1, -1)
         #  Cell 2 is to the upper right diagonal of Cell 1
         elif x_diff < 0 < y_diff:
-            direction = 3
+            direction = (1, -1)
         # Cell 2 is to the lower left diagonal of Cell 1
         elif y_diff < 0 < x_diff:
-            direction = 6
+            direction = (-1, 1)
         # Cell 2 is to the lower right diagonal of Cell 1
         elif y_diff < 0 and x_diff < 0:
-            direction = 8
+            direction = (1, 1)
         # Something blew up cause this should never happen
         else:
-            direction = -1
+            print("Direction Unknown")
         return direction
 
     def as_tuple(self):
@@ -450,6 +452,4 @@ class State:
                f"valid moves:{self.valid_moves}"
 
     def __hash__(self):
-        # TODO: Hash object
-        print(str(self.as_tuple()))
         return hash(str(self.as_tuple()))
