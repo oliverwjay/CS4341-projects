@@ -17,7 +17,7 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-run_num = 100
+run_num = 10
 
 
 #############
@@ -55,7 +55,7 @@ for i in range(0, run_num):
                                  3, 9  # position
                                  ))
 
-    g2.go(1)
+    g2.go(100)
 
 #############
 # VARIANT 3 #

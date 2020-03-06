@@ -19,7 +19,7 @@ class State:
         self.valid_moves = self.valid_moves((self.x, self.y))
         self.result = None
 
-    def get_vaild_actions(self):
+    def get_valid_actions(self):
         actions = []
         for m in self.valid_moves:
             actions.append((m, False))
@@ -29,7 +29,7 @@ class State:
 
     def get_scored_actions(self):
         return [(State(self.world, (self.x + a[0][0], self.y + a[0][1]), self.name).get_f(), a)
-                for a in self.get_vaild_actions()]
+                for a in self.get_valid_actions()]
 
     def get_f(self):
         mo_dist = 1/(1 + self.dist_closest_monster)
@@ -341,6 +341,8 @@ class State:
         """
         nxt_move = self.x, self.y
         path = []
+        if (self.x, self.y) == self.world.exitcell:
+            return (0, 0), 0
         if self.can_a_star_complete():
             path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
             nxt_move = path[1]

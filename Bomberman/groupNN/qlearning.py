@@ -21,6 +21,7 @@ class Qlearning:
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
+        self.weights = np.array([-5, 1, 0])
 
         if os.path.exists(filename):
             file = open(filename, 'rb')
@@ -29,7 +30,7 @@ class Qlearning:
         else:
             self.Q = {}
 
-    def step(self, state, eps=0.5):
+    def step(self, state, eps=0.0):
         """
         Steps through one state
         """
@@ -39,10 +40,9 @@ class Qlearning:
         if np.random.uniform() < eps:
             act = self.sample(state)
         else:
-            act = self.max_for_state(state)[0]
+            act = self.best_action(state)
 
-        print(f"State: {state} Act: {act} Score: {self.Q[state][act]}")
-        opts = self.Q[state]
+        print(f"State: {state} Act: {act}")  # Score: {self.Q[state][act]}")
         return act
 
     def save_outcome(self, action, new_state, old_state, reward):
@@ -56,24 +56,12 @@ class Qlearning:
         pickle.dump(self.Q, file)
         file.close()
 
-    def sample(self, state):
+    @staticmethod
+    def sample(state):
         """
         Gets random move
         """
-        return random.choice(self.possible_actions(state))
-
-    @staticmethod
-    def possible_actions(state):
-        """
-        gets all possible actions
-        """
-        moves = state.valid_moves
-        arr = []
-        for move in moves:
-            if not state.bomb_placed:
-                arr.append((move, True))
-            arr.append((move, False))
-        return arr
+        return random.choice(state.get_valid_actions())
 
     @staticmethod
     def all_actions(state):
@@ -88,15 +76,12 @@ class Qlearning:
             arr.append((move, False))
         return arr
 
-    def best_action(self, state, weights):
+    def best_action(self, state):
         """
         Gets the best action for approximate Q-Learning
         """
-        data = state.get_scored_moves()
-
-        for f, a in data:
-            for i in f:
-                    
+        data = state.get_scored_actions()
+        return max([(np.dot(f, self.weights), a) for f, a in data])[1]
 
     def max_for_state(self, state, ignore_zeros=False):
         """
