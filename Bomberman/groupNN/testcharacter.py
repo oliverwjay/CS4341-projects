@@ -36,7 +36,7 @@ class TestCharacter(CharacterEntity):
         reward = new_wrld.scores[self.name] - wrld.scores[self.name]
         if new_me is not None:
             res_state = State(new_wrld, (new_me.x, new_me.y), self.name)
-            # reward += 2
+            reward += 2
             # reward += (state.len_a_star - res_state.len_a_star) * 3
             # reward -= (state.dist_closest_monster - res_state.dist_closest_monster) * 6
             # reward -= act[1] * 20
@@ -46,8 +46,8 @@ class TestCharacter(CharacterEntity):
             res_state.result = "End"
 
         event_scores = {Event.BOMB_HIT_CHARACTER: -100,
-                        Event.CHARACTER_KILLED_BY_MONSTER: -100,
-                        Event.CHARACTER_FOUND_EXIT: 100,
+                        Event.CHARACTER_KILLED_BY_MONSTER: -1000,
+                        Event.CHARACTER_FOUND_EXIT: 1000,
                         Event.BOMB_HIT_MONSTER: 20,
                         Event.BOMB_HIT_WALL: 5}
 

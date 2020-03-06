@@ -8,12 +8,8 @@ class State:
         self.name = name
         self.world = world
         mo_dist, mo_dir = self.dist_and_dir_to_closest_monster()
-        if mo_dist <= 3:
-            self.dir_closest_monster = mo_dir
-            self.dist_closest_monster = mo_dist
-        else:
-            self.dir_closest_monster = 0
-            self.dist_closest_monster = 5
+        self.dir_closest_monster = mo_dir
+        self.dist_closest_monster = mo_dist
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
         self.valid_moves = self.valid_moves((self.x, self.y))
@@ -33,7 +29,7 @@ class State:
 
     def get_f(self):
         mo_dist = 1/(1 + self.dist_closest_monster)
-        ex_dist = 1/(1 + self.len_a_star)
+        ex_dist = (max(self.world.height(), self.world.width()) - self.len_a_star) / max(self.world.height(), self.world.width())
         f = [mo_dist, ex_dist, self.bomb_placed]
         return np.array(f)
 
@@ -391,13 +387,13 @@ class State:
         location, count = self.locate_monsters()
         smallest_dist = self.world.height() * self.world.width()
         direction = -1
+        if count == 0:
+            return smallest_dist, direction
         for monster_loc in location:
             dist_to_mon = self.layer_dist(self.x, self.y, monster_loc[0], monster_loc[1])
             if dist_to_mon < smallest_dist:
                 smallest_dist = dist_to_mon
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
-        if smallest_dist > 4:
-            smallest_dist = 4  # If the monster is too far away, consider the distance as the character's max vision
         return smallest_dist, direction
 
     @staticmethod
