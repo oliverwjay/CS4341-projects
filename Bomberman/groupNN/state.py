@@ -1,5 +1,5 @@
 import math
-import numpy
+import numpy as np
 
 
 class State:
@@ -35,7 +35,7 @@ class State:
         mo_dist = 1/(1 + self.dist_closest_monster)
         ex_dist = 1/(1 + self.len_a_star)
         f = [mo_dist, ex_dist, self.bomb_placed]
-        return numpy.array(f)
+        return np.array(f)
 
     def have_placed_our_bomb(self):
         """
