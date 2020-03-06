@@ -17,7 +17,7 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.05
+        self.alpha = 0.2
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
@@ -48,7 +48,7 @@ class Qlearning:
         """
         Saves the action
         """
-        a1, max_q_s1a1 = self.max_for_state(new_state)
+        a1, max_q_s1a1 = self.max_for_state(new_state, True)
         self.Q[old_state][action] = self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
 
         file = open(self.filename, 'wb')
@@ -87,10 +87,13 @@ class Qlearning:
             arr.append((move, False))
         return arr
 
-    def max_for_state(self, state):
+    def max_for_state(self, state, ignore_zeros=False):
         """
         Gets the maximum dictionary
         """
+        if state.result is not None:
+            return ((0, 0), False), 0
+
         if state not in self.Q:
             self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
 
@@ -99,7 +102,11 @@ class Qlearning:
 
         max_v = float('-inf')
         for key, val in d.items():
-            if key in options and val > max_v:
+            if key in options and val > max_v and (not ignore_zeros or val != 0):
                 max_v = val
                 max_key = key
+
+        if max_v == float('-inf'):
+            return self.sample(state)
+
         return max_key, max_v

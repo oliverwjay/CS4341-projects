@@ -16,6 +16,7 @@ class State:
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
         self.valid_moves = self.valid_moves((self.x, self.y))
+        self.result = None
 
     def have_placed_our_bomb(self):
         """
@@ -417,12 +418,15 @@ class State:
         return direction
 
     def as_tuple(self):
-        state_hash = (
-            self.dir_closest_monster,
-            self.dist_closest_monster,
-            self.dir_a_star,
-            self.bomb_placed
-        )
+        if self.result is None:
+            state_hash = (
+                self.dir_closest_monster,
+                self.dist_closest_monster,
+                self.dir_a_star,
+                self.bomb_placed
+            )
+        else:
+            state_hash = (self.result, 0)
         return state_hash
 
     def __eq__(self, other):
