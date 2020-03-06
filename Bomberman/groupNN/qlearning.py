@@ -19,7 +19,7 @@ class Qlearning:
         self.total_reward = total_reward
         self.alpha = 0.02
         self.gamma = 0.9
-        self.default_weights = np.array([5., -1, 0])
+        self.default_weights = np.array([1.5, -1, 0])
         self.filename = filename
         self.Q = {}
 
@@ -50,9 +50,9 @@ class Qlearning:
 
         delta = [reward + self.gamma * self.best_action(new_state)[0]] - self.best_action(state)[0]
 
-        f = new_state.get_f()
+        f = state.get_rel_f(new_state)
         self.Q[state] += self.alpha * delta * f
-        print(self.Q[state])
+        print(self.Q[state], f)
         file = open(self.filename, "wb")
         pickle.dump(self.Q, file)
         file.close()

@@ -36,14 +36,19 @@ class State:
                 return [(self.get_f() - self.get_f(), None)]
             self.act_fun(new_me, a)
             res_world, e = new_world.next()
-            new_f = State(res_world, (self.x + a[0][0], self.y + a[0][1]), self.name, self.act_fun).get_f()
-            scored_acts.append((new_f - cur_f, a))
+            res_state = State(res_world, (self.x + a[0][0], self.y + a[0][1]), self.name, self.act_fun)
+            scored_acts.append((self.get_rel_f(res_state), a))
 
         return scored_acts
 
     def get_f(self):
-        f = [self.dist_closest_monster, self.len_a_star, self.dist_bomb]
+        f = [self.dist_closest_monster,
+             self.len_a_star,
+             self.dist_bomb]
         return np.array(f)
+
+    def get_rel_f(self, new_state):
+        return np.clip(new_state.get_f() - self.get_f(), -1, 1)
 
     def get_bomb_time(self):
         for bomb in self.world.bombs.values():
@@ -369,9 +374,9 @@ class State:
 
         return (dx, dy), dist
 
-    def normalize_dist(self, value, wrld):
-        height = wrld.height()
-        width = wrld.width()
+    def normalize_dist(self, value):
+        height = self.world.height()
+        width = self.world.width()
         max_dist = math.sqrt(math.pow(height, 2) + math.pow(width, 2))
         # normalized = (values - min(values)) / (max(values) - min(values))
         normalized = value / max_dist
