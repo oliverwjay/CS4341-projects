@@ -16,6 +16,19 @@ class State:
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
         self.valid_moves = self.valid_moves((self.x, self.y))
+        self.result = None
+
+    def get_poss_state(self):
+        return [State(self.world, (self.x + m[0], self.y + m[1]), self.name) for m in self.valid_moves]
+
+    def get_scored_moves(self):
+        return [(State(self.world, (self.x + m[0], self.y + m[1]), self.name).get_f(), m) for m in self.valid_moves]
+
+    def get_f(self):
+        mo_dist = 1/(1 + self.dist_closest_monster)
+        ex_dist = 1/(1 + self.len_a_star)
+        f = [mo_dist, ex_dist, self.bomb_placed]
+        return f
 
     def have_placed_our_bomb(self):
         """
@@ -417,12 +430,15 @@ class State:
         return direction
 
     def as_tuple(self):
-        state_hash = (
-            self.dir_closest_monster,
-            self.dist_closest_monster,
-            self.dir_a_star,
-            self.bomb_placed
-        )
+        if self.result is None:
+            state_hash = (
+                self.dir_closest_monster,
+                self.dist_closest_monster,
+                self.dir_a_star,
+                self.bomb_placed
+            )
+        else:
+            state_hash = (self.result, 0)
         return state_hash
 
     def __eq__(self, other):
