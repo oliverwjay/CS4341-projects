@@ -222,7 +222,6 @@ class State:
                 # Get Bomb Time
                 if bomb_loc is not None:
                     time = self.find_bomb_time_at_location(bomb_loc)
-                    print("time: ", time)
                     if is_bomb and time > 1:
                         arr.append((dx, dy))
                 else:
@@ -230,7 +229,6 @@ class State:
 
         if not arr:
             arr = [(0, 0)]
-        print(arr)
         return arr
 
     @staticmethod

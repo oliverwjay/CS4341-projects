@@ -33,20 +33,20 @@ class TestCharacter(CharacterEntity):
         TestCharacter.act(sort_of_me, act)
         new_wrld, events = wrld.next()
         new_me = new_wrld.me(self)
-        reward = -1  # new_wrld.scores[self.name] - wrld.scores[self.name]
+        reward = new_wrld.scores[self.name] - wrld.scores[self.name]
         if new_me is not None:
             res_state = State(new_wrld, (new_me.x, new_me.y), self.name)
-
-            reward += (state.len_a_star - res_state.len_a_star) * 3
-            reward -= (state.dist_closest_monster - res_state.dist_closest_monster) * 6
-            reward -= act[1] * 20
-            reward += (state.dis_to_exit() - res_state.dis_to_exit())
+            # reward += 2
+            # reward += (state.len_a_star - res_state.len_a_star) * 3
+            # reward -= (state.dist_closest_monster - res_state.dist_closest_monster) * 6
+            # reward -= act[1] * 20
+            # reward += (state.dis_to_exit() - res_state.dis_to_exit())
         else:
             res_state = State(new_wrld, (self.x, self.y), self.name)
             res_state.result = "End"
 
         event_scores = {Event.BOMB_HIT_CHARACTER: -100,
-                        Event.CHARACTER_KILLED_BY_MONSTER: -1000,
+                        Event.CHARACTER_KILLED_BY_MONSTER: -100,
                         Event.CHARACTER_FOUND_EXIT: 100,
                         Event.BOMB_HIT_MONSTER: 20,
                         Event.BOMB_HIT_WALL: 5}
@@ -54,10 +54,10 @@ class TestCharacter(CharacterEntity):
         for event in events:
             if event.tpe in event_scores:
                 reward += event_scores[event.tpe]
-        print("reward: ", reward)
-        print(state.get_scored_actions())
+        # print("reward: ", reward)
+        # print(state.get_scored_actions())
 
-        # self.q_learn.save_outcome(act, res_state, state, reward)
+        self.q_learn.save_outcome(state, res_state, reward)
 
         pass
 

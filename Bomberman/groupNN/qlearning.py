@@ -17,20 +17,18 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.2
+        self.alpha = 0.05
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
-        self.weights = np.array([-5, 1, 0])
+        self.weights = np.array([-5.1, 1, 0])
 
         if os.path.exists(filename):
             file = open(filename, 'rb')
-            self.Q = pickle.load(file)
+            self.weights = pickle.load(file)
             file.close()
-        else:
-            self.Q = {}
 
-    def step(self, state, eps=0.0):
+    def step(self, state, eps=0.15):
         """
         Steps through one state
         """
@@ -40,20 +38,22 @@ class Qlearning:
         if np.random.uniform() < eps:
             act = self.sample(state)
         else:
-            act = self.best_action(state)
+            act = self.best_action(state)[1]
 
-        print(f"State: {state} Act: {act}")  # Score: {self.Q[state][act]}")
+        # print(f"State: {state} Act: {act}")
         return act
 
-    def save_outcome(self, action, new_state, old_state, reward):
+    def save_outcome(self, state, new_state, reward):
         """
         Saves the action
         """
-        a1, max_q_s1a1 = self.max_for_state(new_state, True)
-        self.Q[old_state][action] = self.alpha * (reward + self.gamma * max_q_s1a1) + (1 - self.alpha) * self.Q[old_state][action]
 
-        file = open(self.filename, 'wb')
-        pickle.dump(self.Q, file)
+        delta = [reward + self.gamma * self.best_action(new_state)[0]] - self.best_action(state)[0]
+
+        self.weights += self.alpha * delta * new_state.get_f()
+        print(self.weights)
+        file = open(self.filename, "wb")
+        pickle.dump(self.weights, file)
         file.close()
 
     @staticmethod
@@ -81,28 +81,4 @@ class Qlearning:
         Gets the best action for approximate Q-Learning
         """
         data = state.get_scored_actions()
-        return max([(np.dot(f, self.weights), a) for f, a in data])[1]
-
-    def max_for_state(self, state, ignore_zeros=False):
-        """
-        Gets the maximum dictionary
-        """
-        if state.result is not None:
-            return ((0, 0), False), 0
-
-        if state not in self.Q:
-            self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
-
-        d = self.Q[state]
-        options = self.possible_actions(state)
-
-        max_v = float('-inf')
-        for key, val in d.items():
-            if key in options and val > max_v and (not ignore_zeros or val != 0):
-                max_v = val
-                max_key = key
-
-        if max_v == float('-inf'):
-            return self.sample(state)
-
-        return max_key, max_v
+        return max([(np.dot(f, self.weights), a) for f, a in data])

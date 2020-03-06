@@ -55,7 +55,7 @@ for i in range(0, run_num):
                                  3, 9  # position
                                  ))
 
-    g2.go(100)
+    g2.go(1)
 
 #############
 # VARIANT 3 #
