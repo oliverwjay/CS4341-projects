@@ -24,7 +24,7 @@ class TestCharacter(CharacterEntity):
         """
 
         # Creation of State
-        state = State(wrld, (self.x, self.y), self.name)
+        state = State(wrld, (self.x, self.y), self.name, TestCharacter.act)
 
         act = self.q_learn.step(state)
         self.act(act)
@@ -35,14 +35,14 @@ class TestCharacter(CharacterEntity):
         new_me = new_wrld.me(self)
         reward = -1  # new_wrld.scores[self.name] - wrld.scores[self.name]
         if new_me is not None:
-            res_state = State(new_wrld, (new_me.x, new_me.y), self.name)
+            res_state = State(new_wrld, (new_me.x, new_me.y), self.name, TestCharacter.act)
             # reward -= 2
             reward += (state.len_a_star - res_state.len_a_star)
             reward -= (state.dist_closest_monster - res_state.dist_closest_monster)
             # reward -= act[1] * 20
             # reward += (state.dis_to_exit() - res_state.dis_to_exit())
         else:
-            res_state = State(new_wrld, (self.x, self.y), self.name)
+            res_state = State(new_wrld, (self.x, self.y), self.name, TestCharacter.act)
             res_state.result = "End"
 
         event_scores = {Event.BOMB_HIT_CHARACTER: -100,

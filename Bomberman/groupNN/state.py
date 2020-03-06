@@ -1,9 +1,10 @@
 import math
 import numpy as np
+from sensed_world import SensedWorld
 
 
 class State:
-    def __init__(self, world, loc, name):
+    def __init__(self, world, loc, name, act_fun):
         self.x, self.y = loc
         self.name = name
         self.world = world
@@ -12,8 +13,10 @@ class State:
         self.dist_closest_monster = mo_dist
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.bomb_placed = self.have_placed_our_bomb()
+        self.dist_bomb = 0
         self.valid_moves = self.valid_moves((self.x, self.y))
         self.result = None
+        self.act_fun = act_fun
 
     def get_valid_actions(self):
         actions = []
@@ -24,14 +27,31 @@ class State:
         return actions
 
     def get_scored_actions(self):
-        return [(State(self.world, (self.x + a[0][0], self.y + a[0][1]), self.name).get_f(), a)
-                for a in self.get_valid_actions()]
+        scored_acts = []
+        cur_f = self.get_f()
+        for a in self.get_valid_actions():
+            new_world = SensedWorld.from_world(self.world)
+            new_me = new_world.me(self)
+            if new_me is None:
+                return [(self.get_f() - self.get_f(), None)]
+            self.act_fun(new_me, a)
+            res_world, e = new_world.next()
+            new_f = State(res_world, (self.x + a[0][0], self.y + a[0][1]), self.name, self.act_fun).get_f()
+            scored_acts.append((new_f - cur_f, a))
+
+        return scored_acts
 
     def get_f(self):
-        mo_dist = 1/(1 + self.dist_closest_monster)
-        ex_dist = (max(self.world.height(), self.world.width()) - self.len_a_star) / max(self.world.height(), self.world.width())
-        f = [mo_dist, ex_dist, len(self.valid_moves)/9]
+        f = [self.dist_closest_monster, self.len_a_star, self.dist_bomb]
         return np.array(f)
+
+    def get_bomb_time(self):
+        for bomb in self.world.bombs.values():
+            if self.name == bomb.owner.name:
+                self.dist_bomb = self.euclidean_distance(self.x, self.y, bomb.x, bomb.y)
+                return bomb.timer
+        self.dist_bomb = 0
+        return -100
 
     def have_placed_our_bomb(self):
         """
@@ -438,11 +458,11 @@ class State:
     def approx_state(self):
         return (self.make_discrete(self.dist_closest_monster),
                 self.make_discrete(self.len_a_star),
-                self.bomb_placed)
+                self.make_discrete(self.get_bomb_time()))
 
     @staticmethod
     def make_discrete(var, n=10):
-        return n - n / (var + 1)
+        return np.round(n - n / (var + 1))
 
     def as_tuple(self):
         if self.result is None:

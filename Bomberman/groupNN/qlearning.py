@@ -19,7 +19,7 @@ class Qlearning:
         self.total_reward = total_reward
         self.alpha = 0.02
         self.gamma = 0.9
-        self.default_reward = 0
+        self.default_weights = np.array([5., -1, 0])
         self.filename = filename
         self.Q = {}
 
@@ -33,7 +33,7 @@ class Qlearning:
         Steps through one state
         """
         if state not in self.Q:
-            self.Q[state] = np.array([-5., 1, 0])
+            self.Q[state] = self.default_weights
 
         if np.random.uniform() < eps:
             act = self.sample(state)
@@ -82,6 +82,6 @@ class Qlearning:
         Gets the best action for approximate Q-Learning
         """
         if state not in self.Q:
-            self.Q[state] = np.array([-5., 1, 0])
+            self.Q[state] = self.default_weights
         data = state.get_scored_actions()
         return max([(np.dot(f, self.Q[state]), a) for f, a in data])
