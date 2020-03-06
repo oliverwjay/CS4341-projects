@@ -55,6 +55,7 @@ class TestCharacter(CharacterEntity):
             if event.tpe in event_scores:
                 reward += event_scores[event.tpe]
         print("reward: ", reward)
+        print(state.get_scored_moves())
 
         self.q_learn.save_outcome(act, res_state, state, reward)
 

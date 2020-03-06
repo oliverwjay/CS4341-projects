@@ -18,6 +18,18 @@ class State:
         self.valid_moves = self.valid_moves((self.x, self.y))
         self.result = None
 
+    def get_poss_state(self):
+        return [State(self.world, (self.x + m[0], self.y + m[1]), self.name) for m in self.valid_moves]
+
+    def get_scored_moves(self):
+        return [(State(self.world, (self.x + m[0], self.y + m[1]), self.name).get_f(), m) for m in self.valid_moves]
+
+    def get_f(self):
+        mo_dist = 1/(1 + self.dist_closest_monster)
+        ex_dist = 1/(1 + self.len_a_star)
+        f = [mo_dist, ex_dist, self.bomb_placed]
+        return f
+
     def have_placed_our_bomb(self):
         """
         This function checks if we have placed our bomb
