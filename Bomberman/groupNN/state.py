@@ -475,7 +475,7 @@ class State:
         return state_hash
 
     def __eq__(self, other):
-        return self.as_tuple() == other.as_tuple()
+        return self.approx_state() == other.approx_state()
 
     # def __repr__(self):
     #     return str(self.as_tuple())

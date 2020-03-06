@@ -28,7 +28,7 @@ class Qlearning:
             self.Q = pickle.load(file)
             file.close()
 
-    def step(self, state, eps=0.1):
+    def step(self, state, eps=0.05):
         """
         Steps through one state
         """

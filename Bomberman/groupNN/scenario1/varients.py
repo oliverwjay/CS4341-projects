@@ -17,7 +17,7 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-n_runs = 10
+n_runs = 3
 
 
 def run_variant(variant, scenario=1, t=1):
