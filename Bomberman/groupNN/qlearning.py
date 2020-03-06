@@ -33,13 +33,14 @@ class Qlearning:
         """
         Steps through one state
         """
-        if state not in self.Q:
-            self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
+        # if state not in self.Q:
+        #     self.Q[state] = {action: self.default_reward for action in self.all_actions(state)}
 
         if np.random.uniform() < eps:
             act = self.sample(state)
         else:
             act = self.max_for_state(state)[0]
+
         print(f"State: {state} Act: {act} Score: {self.Q[state][act]}")
         opts = self.Q[state]
         return act

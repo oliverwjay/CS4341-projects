@@ -17,7 +17,7 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-run_num = 10
+run_num = 100
 
 
 #############
