@@ -237,7 +237,8 @@ class State:
 
         for neighbor in connected:
             if self.is_in_bounds(neighbor) and \
-                    (self.world.empty_at(neighbor[0], neighbor[1]) or self.world.exit_at(neighbor[0], neighbor[1])):
+                    (self.world.empty_at(neighbor[0], neighbor[1]) or self.world.exit_at(neighbor[0], neighbor[
+                        1]) or self.world.bomb_at(neighbor[0], neighbor[1])):
                 is_bomb, bomb_loc = self.isBombHorOrVertFromLoc(neighbor)
                 dx, dy = neighbor[0] - loc[0], neighbor[1] - loc[1]
                 # Get Bomb Time
