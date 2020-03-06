@@ -17,18 +17,18 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.05
+        self.alpha = 0.02
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
-        self.weights = np.array([-5.1, 1, 0])
+        self.weights = np.array([-10.0, 1, 0])
 
         if os.path.exists(filename):
             file = open(filename, 'rb')
             self.weights = pickle.load(file)
             file.close()
 
-    def step(self, state, eps=0.0):
+    def step(self, state, eps=0.):
         """
         Steps through one state
         """
@@ -50,7 +50,8 @@ class Qlearning:
 
         delta = [reward + self.gamma * self.best_action(new_state)[0]] - self.best_action(state)[0]
 
-        self.weights += self.alpha * delta * new_state.get_f()
+        f = new_state.get_f()
+        self.weights += self.alpha * delta * f
         print(self.weights)
         file = open(self.filename, "wb")
         pickle.dump(self.weights, file)
