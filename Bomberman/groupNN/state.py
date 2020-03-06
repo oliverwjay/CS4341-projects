@@ -347,13 +347,6 @@ class State:
 
         return None, None
 
-    def can_a_star_complete(self):
-        """
-        Checks if A star can get to goal
-        """
-        path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
-        return path is not None and cost is not None
-
     def next_a_star_move(self):
         """
         Gets the next A Star move: in a tuple of dx, dy
@@ -362,8 +355,8 @@ class State:
         path = []
         if (self.x, self.y) == self.world.exitcell:
             return (0, 0), 0
-        if self.can_a_star_complete():
-            path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
+        path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
+        if path is not None and cost is not None:
             nxt_move = path[1]
             dist = len(path)
         else:

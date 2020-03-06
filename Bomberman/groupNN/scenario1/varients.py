@@ -57,11 +57,14 @@ def run_variant(variant, scenario=1, t=1):
                                          2  # detection range
                                          ))
     g.go(t)
+    return g.world.scores['me']
 
 
-enabled_variants = [1, 2, 3, 4, 5]
+enabled_variants = [4, 5]
 enabled_scenarios = [1]
+scores = []
 for i in range(n_runs):
     for variant in enabled_variants:
         for scenario in enabled_scenarios:
-            run_variant(variant, scenario)
+            scores.append(run_variant(variant, scenario))
+print(scores)
