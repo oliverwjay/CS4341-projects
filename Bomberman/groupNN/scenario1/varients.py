@@ -17,6 +17,9 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
+run_num = 10
+
+
 #############
 # VARIANT 1 #
 #############
@@ -36,7 +39,7 @@ g1.go(1)
 # VARIANT 2 #
 #############
 
-for i in range(0, 4):
+for i in range(0, run_num):
     # Create the game
     g2 = Game.fromfile('map.txt')
 
@@ -58,7 +61,7 @@ for i in range(0, 4):
 # VARIANT 3 #
 #############
 
-for i in range(0, 4):
+for i in range(0, run_num):
     # Create the game
     random.seed(time.time())
     g3 = Game.fromfile('map.txt')
@@ -80,7 +83,7 @@ for i in range(0, 4):
 # VARIANT 4 #
 #############
 
-for i in range(0, 4):
+for i in range(0, run_num):
     # Create the game
     random.seed(time.time())
     g4 = Game.fromfile('map.txt')
@@ -102,7 +105,7 @@ for i in range(0, 4):
 # VARIANT 5 #
 #############
 
-for i in range(0, 4):
+for i in range(0, run_num):
     # Create the game
     random.seed(time.time())
     g5 = Game.fromfile('map.txt')
