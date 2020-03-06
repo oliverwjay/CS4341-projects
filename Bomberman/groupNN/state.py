@@ -337,11 +337,14 @@ class State:
         if self.can_a_star_complete():
             path, cost = self.AStarSearch((self.x, self.y), self.world.exitcell)
             nxt_move = path[1]
+            dist = len(path)
+        else:
+            dist = self.euclidean_distance(self.x, self.y, self.world.exitcell[0], self.world.exitcell[1])
 
         dx = nxt_move[0] - self.x
         dy = nxt_move[1] - self.y
 
-        return (dx, dy), len(path)
+        return (dx, dy), dist
 
     def normalize_dist(self, value, wrld):
         height = wrld.height()

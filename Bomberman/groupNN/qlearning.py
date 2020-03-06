@@ -29,7 +29,7 @@ class Qlearning:
         else:
             self.Q = {}
 
-    def step(self, state, eps=0.15):
+    def step(self, state, eps=0.5):
         """
         Steps through one state
         """
@@ -87,6 +87,16 @@ class Qlearning:
                 arr.append((move, True))
             arr.append((move, False))
         return arr
+
+    def best_action(self, state, weights):
+        """
+        Gets the best action for approximate Q-Learning
+        """
+        data = state.get_scored_moves()
+
+        for f, a in data:
+            for i in f:
+                    
 
     def max_for_state(self, state, ignore_zeros=False):
         """
