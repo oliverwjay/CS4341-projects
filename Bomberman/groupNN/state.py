@@ -435,6 +435,15 @@ class State:
             print("Direction Unknown")
         return direction
 
+    def approx_state(self):
+        return (self.make_discrete(self.dist_closest_monster),
+                self.make_discrete(self.len_a_star),
+                self.bomb_placed)
+
+    @staticmethod
+    def make_discrete(var, n=10):
+        return n - n / (var + 1)
+
     def as_tuple(self):
         if self.result is None:
             state_hash = (
@@ -461,4 +470,4 @@ class State:
                f"valid moves:{self.valid_moves}"
 
     def __hash__(self):
-        return hash(str(self.as_tuple()))
+        return hash(self.approx_state())
