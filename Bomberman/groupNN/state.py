@@ -7,7 +7,7 @@ class State:
         self.name = name
         self.world = world
         mo_dist, mo_dir = self.dist_and_dir_to_closest_monster()
-        if mo_dist <= 4:
+        if mo_dist <= 3:
             self.dir_closest_monster = mo_dir
             self.dist_closest_monster = mo_dist
         else:
@@ -18,11 +18,17 @@ class State:
         self.valid_moves = self.valid_moves((self.x, self.y))
         self.result = None
 
-    def get_poss_state(self):
-        return [State(self.world, (self.x + m[0], self.y + m[1]), self.name) for m in self.valid_moves]
+    def get_vaild_actions(self):
+        actions = []
+        for m in self.valid_moves:
+            actions.append((m, False))
+            if not self.bomb_placed:
+                actions.append((m, True))
+        return actions
 
-    def get_scored_moves(self):
-        return [(State(self.world, (self.x + m[0], self.y + m[1]), self.name).get_f(), m) for m in self.valid_moves]
+    def get_scored_actions(self):
+        return [(State(self.world, (self.x + a[0][0], self.y + a[0][1]), self.name).get_f(), a)
+                for a in self.get_vaild_actions()]
 
     def get_f(self):
         mo_dist = 1/(1 + self.dist_closest_monster)
