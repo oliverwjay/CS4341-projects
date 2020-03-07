@@ -72,5 +72,6 @@ cnt = 0
 for i in scores:
     if i >= 0:
         cnt += 1
+
 print("Win Percentage: ")
 print(round(cnt/len(scores), 2))
