@@ -53,7 +53,7 @@ class State:
     def get_f(self):
         f = [(1/(1+self.dist_closest_monster)),
              (1/(1+self.len_a_star)),
-             (1/(1+self.exit_dist)),
+             # (1/(1+self.exit_dist)),
              (1/(1+self.dist_bomb)),
              self.close_mon,
              self.mon_count,
