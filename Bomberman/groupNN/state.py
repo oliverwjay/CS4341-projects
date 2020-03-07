@@ -15,12 +15,27 @@ class State:
         # else:
         self.mon_count = mo_dir
         self.dist_closest_monster = mo_dist
+        self.mon_diagonal_lr = 0
+        self.mon_diagonal_rl = 0
         if mo_dist <= 3:
             self.close_mon = 1
         else:
             self.close_mon = 0
+        if mo_dir == 1 or mo_dir == 4 or mo_dir == 6:
+            self.mon_to_left = 1
+        else:
+            self.mon_to_left = 0
+        if mo_dir == 3 or mo_dir == 5 or mo_dir == 8:
+            self.mon_to_right = 1
+        else:
+            self.mon_to_right = 0
+        if mo_dir == 1 or mo_dir == 8:
+            self.mon_diagonal_lr = 1
+        if mo_dir == 3 or mo_dir == 6:
+            self.mon_diagonal_rl = 1
         self.bomb_placed = self.have_placed_our_bomb()
         self.dist_bomb = self.dist_to_our_bomb()
+        self.my_bomb_time = self.get_bomb_time()
         self.exit_dist = self.dis_to_exit()
         self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.valid_moves = self.valid_moves((self.x, self.y))
@@ -57,6 +72,11 @@ class State:
              (1/(1+self.dist_bomb)),
              self.close_mon,
              self.mon_count,
+             self.mon_diagonal_rl,
+             self.mon_diagonal_lr,
+             self.mon_to_right,
+             self.mon_to_left,
+             (1/(1 + self.my_bomb_time)),
              self.bomb_placed]
         return np.array(f)
 
@@ -422,7 +442,7 @@ class State:
         if count == 0:
             return smallest_dist, direction
         for monster_loc in location:
-            dist_to_mon = self.layer_dist(self.x, self.y, monster_loc[0], monster_loc[1])
+            dist_to_mon = self.manhattan_distance(self.x, self.y, monster_loc[0], monster_loc[1])
             if dist_to_mon < smallest_dist:
                 smallest_dist = dist_to_mon
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
@@ -435,33 +455,33 @@ class State:
         """
         x_diff = x1 - x2
         y_diff = y1 - y2
-        direction = (2, 2)
+        direction = -1
         # Cells are in the same column
         if x_diff == 0:
             if y_diff > 0:
-                direction = (0, -1)  # Cell 2 is above Cell 1
+                direction = 2  # Cell 2 is above Cell 1
             elif y_diff < 0:
-                direction = (0, 1)  # Cell 2 is below Cell 1
+                direction = 7  # Cell 2 is below Cell 1
             else:
-                direction = (0, 0)  # Cells are on top of each other
+                direction = 0  # Cells are on top of each other
         #  Cells are in the same row
         elif y_diff == 0:
             if x_diff > 0:
-                direction = (-1, 0)  # Cell 2 is to the left of Cell 1
+                direction = 4  # Cell 2 is to the left of Cell 1
             elif x_diff < 0:
-                direction = (1, 0)  # Cell 2 is to the right of Cell 1
+                direction = 5  # Cell 2 is to the right of Cell 1
         #  Cell 2 is to the upper left diagonal of Cell 1
         elif y_diff > 0 and x_diff > 0:
-            direction = (-1, -1)
+            direction = 1
         #  Cell 2 is to the upper right diagonal of Cell 1
         elif x_diff < 0 < y_diff:
-            direction = (1, -1)
+            direction = 3
         # Cell 2 is to the lower left diagonal of Cell 1
         elif y_diff < 0 < x_diff:
-            direction = (-1, 1)
+            direction = 6
         # Cell 2 is to the lower right diagonal of Cell 1
         elif y_diff < 0 and x_diff < 0:
-            direction = (1, 1)
+            direction = 8
         # Something blew up cause this should never happen
         else:
             print("Direction Unknown")

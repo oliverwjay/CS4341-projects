@@ -17,7 +17,7 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-n_runs = 10
+n_runs = 3
 
 
 def run_variant(variant, scenario=1, t=1):
@@ -68,3 +68,11 @@ for i in range(n_runs):
         for scenario in enabled_scenarios:
             scores.append(run_variant(variant, scenario))
 print(scores)
+count = 0
+win_count = 0
+for score in scores:
+    count += 1
+    if score > 0:
+        win_count += 1
+print("Win Percent", (win_count/count))
+
