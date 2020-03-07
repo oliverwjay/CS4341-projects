@@ -30,7 +30,7 @@ class State:
     def get_f(self):
         mo_dist = 1/(1 + self.dist_closest_monster)
         ex_dist = (max(self.world.height(), self.world.width()) - self.len_a_star) / max(self.world.height(), self.world.width())
-        f = [mo_dist, ex_dist, len(self.valid_moves)/9]
+        f = [1, mo_dist, ex_dist, len(self.valid_moves)/9]
         return np.array(f)
 
     def have_placed_our_bomb(self):

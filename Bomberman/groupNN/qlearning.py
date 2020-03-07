@@ -21,7 +21,7 @@ class Qlearning:
         self.gamma = 0.9
         self.default_reward = 0
         self.filename = filename
-        self.weights = np.array([-10.0, 1, 0])
+        self.weights = np.array([0, -10.0, 1, 0])
 
         if os.path.exists(filename):
             file = open(filename, 'rb')

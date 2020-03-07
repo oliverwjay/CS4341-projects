@@ -17,112 +17,52 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-run_num = 10
 
+def run_variant(variant, scenario=1, t=1):
+    # Find map
+    scene = 'map.txt'
+    if scenario == 2:
+        scene = '../scenario2/map.txt'
 
-#############
-# VARIANT 1 #
-#############
+    # Build game
+    g = Game.fromfile(scene)
 
-# Create the game
-g1 = Game.fromfile('map.txt')
+    # Randomize seed
+    random.seed(time.time())
 
-# Uncomment this if you want the test character
-g1.add_character(TestCharacter("me",  # name
-                               "C",  # avatar
-                               0, 0  # position
-                               ))
-
-g1.go(1)
-
-#############
-# VARIANT 2 #
-#############
-
-for i in range(0, run_num):
-    # Create the game
-    g2 = Game.fromfile('map.txt')
-
-    g2.add_character(TestCharacter("me",  # name
+    # Randomize character
+    g.add_character(TestCharacter("me",  # name
                                    "C",  # avatar
                                    0, 0  # position
                                    ))
 
-    random.seed(time.time())
-    g2 = Game.fromfile('map.txt')
-    g2.add_monster(StupidMonster("stupid",  # name
-                                 "S",  # avatar
-                                 3, 9  # position
-                                 ))
-
-    g2.go(1)
-
-#############
-# VARIANT 3 #
-#############
-
-for i in range(0, run_num):
-    # Create the game
-    random.seed(time.time())
-    g3 = Game.fromfile('map.txt')
-    g3.add_monster(SelfPreservingMonster("selfpreserving",  # name
-                                         "S",  # avatar
-                                         3, 9,  # position
-                                         1  # detection range
-                                         ))
-
-    g3.add_character(TestCharacter("me",  # name
-                                   "C",  # avatar
-                                   0, 0  # position
-                                   ))
-
-    # Run!
-    g3.go(1)
-
-#############
-# VARIANT 4 #
-#############
-
-for i in range(0, run_num):
-    # Create the game
-    random.seed(time.time())
-    g4 = Game.fromfile('map.txt')
-    g4.add_monster(SelfPreservingMonster("aggressive",  # name
+    # Add monsters
+    if variant == 2 or variant == 5:
+        g.add_monster(StupidMonster("stupid",  # name
+                                     "S",  # avatar
+                                     3, 9  # position
+                                     ))
+    elif variant == 3:
+        g.add_monster(SelfPreservingMonster("selfpreserving",  # name
+                                             "S",  # avatar
+                                             3, 9,  # position
+                                             1  # detection range
+                                             ))
+    if variant >= 4:
+        g.add_monster(SelfPreservingMonster("aggressive",  # name
                                          "A",  # avatar
                                          3, 13,  # position
                                          2  # detection range
                                          ))
+    g.go(t)
+    return g.world.scores['me']
 
-    g4.add_character(TestCharacter("me",  # name
-                                   "C",  # avatar
-                                   0, 0  # position
-                                   ))
 
-    # Run!
-    g4.go(1)
-
-#############
-# VARIANT 5 #
-#############
-
-for i in range(0, run_num):
-    # Create the game
-    random.seed(time.time())
-    g5 = Game.fromfile('map.txt')
-    g5.add_monster(StupidMonster("stupid",  # name
-                                 "S",  # avatar
-                                 3, 5,  # position
-                                 ))
-    g5.add_monster(SelfPreservingMonster("aggressive",  # name
-                                         "A",  # avatar
-                                         3, 13,  # position
-                                         2  # detection range
-                                         ))
-
-    g5.add_character(TestCharacter("me",  # name
-                                   "C",  # avatar
-                                   0, 0  # position
-                                   ))
-
-    # Run!
-    g5.go(1)
+n_runs = 10
+enabled_variants = [4]
+enabled_scenarios = [1]
+scores = []
+for i in range(n_runs):
+    for variant in enabled_variants:
+        for scenario in enabled_scenarios:
+            scores.append(run_variant(variant, scenario, 0))
