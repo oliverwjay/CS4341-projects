@@ -33,20 +33,20 @@ class TestCharacter(CharacterEntity):
         TestCharacter.act(sort_of_me, act)
         new_wrld, events = wrld.next()
         new_me = new_wrld.me(self)
-        reward = -1  # new_wrld.scores[self.name] - wrld.scores[self.name]
+        reward = new_wrld.scores[self.name] - wrld.scores[self.name]
         if new_me is not None:
             res_state = State(new_wrld, (new_me.x, new_me.y), self.name, TestCharacter.act)
-            # reward -= 2
-            reward += (state.len_a_star - res_state.len_a_star)
-            reward -= (state.dist_closest_monster - res_state.dist_closest_monster)
-            # reward -= act[1] * 20
-            # reward += (state.dis_to_exit() - res_state.dis_to_exit())
+            reward -= 2
+            # reward += (state.len_a_star - res_state.len_a_star)
+            # reward -= (state.dist_closest_monster - res_state.dist_closest_monster)
+        #     # reward -= act[1] * 20
+        #    reward += (state.dis_to_exit() - res_state.dis_to_exit())
         else:
             res_state = State(new_wrld, (self.x, self.y), self.name, TestCharacter.act)
-            res_state.result = "End"
-
+        #     res_state.result = "End"
+        #
         event_scores = {Event.BOMB_HIT_CHARACTER: -100,
-                        Event.CHARACTER_KILLED_BY_MONSTER: -100,
+                        Event.CHARACTER_KILLED_BY_MONSTER: -500,
                         Event.CHARACTER_FOUND_EXIT: 100,
                         Event.BOMB_HIT_MONSTER: 20,
                         Event.BOMB_HIT_WALL: 5}

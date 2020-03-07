@@ -9,11 +9,19 @@ class State:
         self.name = name
         self.world = world
         mo_dist, mo_dir = self.dist_and_dir_to_closest_monster()
-        self.dir_closest_monster = mo_dir
+        # self.dir_closest_monster = mo_dir
+        # if mo_dist > 6:
+        #     self.dist_closest_monster = 6
+        # else:
         self.dist_closest_monster = mo_dist
-        self.dir_a_star, self.len_a_star = self.next_a_star_move()
+        if mo_dist <= 3:
+            self.close_mon = 1
+        else:
+            self.close_mon = 0
         self.bomb_placed = self.have_placed_our_bomb()
-        self.dist_bomb = 0
+        self.dist_bomb = self.dist_to_our_bomb()
+        self.exit_dist = self.dis_to_exit()
+        self.dir_a_star, self.len_a_star = self.next_a_star_move()
         self.valid_moves = self.valid_moves((self.x, self.y))
         self.result = None
         self.act_fun = act_fun
@@ -44,7 +52,10 @@ class State:
     def get_f(self):
         f = [self.dist_closest_monster,
              self.len_a_star,
-             self.dist_bomb]
+             self.exit_dist,
+             self.dist_bomb,
+             self.close_mon,
+             self.bomb_placed]
         return np.array(f)
 
     def get_rel_f(self, new_state):
@@ -453,6 +464,13 @@ class State:
         else:
             print("Direction Unknown")
         return direction
+
+    def dist_to_our_bomb(self):
+        dist_bomb = self.world.width() * self.world.height()
+        for bomb in self.world.bombs.values():
+            if self.name == bomb.owner.name:
+                dist_bomb = self.euclidean_distance(self.x, self.y, bomb.x, bomb.y)
+        return dist_bomb
 
     def approx_state(self):
         return (self.make_discrete(self.dist_closest_monster),
