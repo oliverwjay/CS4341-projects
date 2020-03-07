@@ -34,28 +34,28 @@ def run_variant(variant, scenario=1, t=1):
 
     # Randomize character
     g.add_character(TestCharacter("me",  # name
-                                   "C",  # avatar
-                                   0, 0  # position
-                                   ))
+                                  "C",  # avatar
+                                  0, 0  # position
+                                  ))
 
     # Add monsters
     if variant == 2 or variant == 5:
         g.add_monster(StupidMonster("stupid",  # name
-                                     "S",  # avatar
-                                     3, 9  # position
-                                     ))
+                                    "S",  # avatar
+                                    3, 9  # position
+                                    ))
     elif variant == 3:
         g.add_monster(SelfPreservingMonster("selfpreserving",  # name
-                                             "S",  # avatar
-                                             3, 9,  # position
-                                             1  # detection range
-                                             ))
+                                            "S",  # avatar
+                                            3, 9,  # position
+                                            1  # detection range
+                                            ))
     if variant >= 4:
         g.add_monster(SelfPreservingMonster("aggressive",  # name
-                                         "A",  # avatar
-                                         3, 13,  # position
-                                         2  # detection range
-                                         ))
+                                            "A",  # avatar
+                                            3, 13,  # position
+                                            2  # detection range
+                                            ))
     g.go(t)
     return g.world.scores['me']
 
@@ -68,3 +68,9 @@ for i in range(n_runs):
         for scenario in enabled_scenarios:
             scores.append(run_variant(variant, scenario))
 print(scores)
+cnt = 0
+for i in scores:
+    if i >= 0:
+        cnt += 1
+print("Win Percentage: ")
+print(round(cnt/len(scores), 2))
