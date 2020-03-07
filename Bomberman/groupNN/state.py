@@ -42,14 +42,19 @@ class State:
         return scored_acts
 
     def get_f(self):
-        f = [self.dist_closest_monster,
-             self.len_a_star,
-             self.dist_bomb,
-             len(self.valid_moves)/5]
+        f = [self.invert(self.dist_closest_monster),
+             self.invert(self.len_a_star),
+             self.invert(self.dist_bomb),
+             self.invert(len(self.valid_moves)/5)]
         return np.array(f)
 
     def get_rel_f(self, new_state):
+        return new_state.get_f()
         return np.clip(new_state.get_f() - self.get_f(), -1, 1)
+
+    @staticmethod
+    def invert(val):
+        return 1/(1 + val)
 
     def get_bomb_time(self):
         for bomb in self.world.bombs.values():
@@ -456,6 +461,7 @@ class State:
         return direction
 
     def approx_state(self):
+        return 1
         return (self.make_discrete(self.dist_closest_monster),
                 self.make_discrete(self.len_a_star),
                 self.make_discrete(self.get_bomb_time()))
