@@ -60,7 +60,7 @@ def run_variant(variant, scenario=1, t=1):
 
 n_runs = 10
 enabled_variants = [4, 5]
-enabled_scenarios = [1]
+enabled_scenarios = [1, 2]
 scores = []
 result = ''
 for i in range(n_runs):
