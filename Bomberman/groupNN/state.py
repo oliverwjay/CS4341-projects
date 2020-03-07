@@ -42,16 +42,30 @@ class State:
 
         return scored_acts
 
+    def dist_to_obstacle(self, dx, dy, max_d=3):
+        c_x = self.x
+        c_y = self.y
+        for d in range(max_d):
+            c_x += dx
+            c_y += dy
+            if not self.is_in_bounds((c_x, c_y)) or self.world.wall_at(c_x, c_y):
+                return d
+        return max_d
+
+    def get_confinement(self):
+        return sum([self.dist_to_obstacle(dx, dy) for dx in range(-1, 2) for dy in range(-1, 2)])
+
     def get_f(self):
         f = [self.invert(self.dist_closest_monster),
              self.invert(self.len_a_star),
              self.invert(self.dist_bomb),
              self.invert(len(self.valid_moves)/5),
-             0,
+             self.invert(self.get_confinement()),
              1]
         return np.array(f)
 
     def get_rel_f(self, new_state):
+        print(self.get_confinement())
         return new_state.get_f()
         return np.clip(new_state.get_f() - self.get_f(), -1, 1)
 
