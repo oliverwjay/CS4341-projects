@@ -17,7 +17,7 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.02
+        self.alpha = 0.2
         self.gamma = 0.9
         self.default_weights = np.array([1.5, -1, 0, 0])
         self.filename = filename
@@ -28,12 +28,12 @@ class Qlearning:
             self.Q = pickle.load(file)
             file.close()
 
-    def step(self, state, eps=0.0):
+    def step(self, state, eps=0.05):
         """
         Steps through one state
         """
         if state not in self.Q:
-            self.Q[state] = self.default_weights
+            self.Q[state] = self.default_weights.copy()
 
         if np.random.uniform() < eps:
             act = self.sample(state)
@@ -51,7 +51,7 @@ class Qlearning:
         delta = [reward + self.gamma * self.best_action(new_state)[0]] - self.best_action(state)[0]
 
         f = state.get_rel_f(new_state)
-        self.Q[state] += self.alpha * delta * f
+        self.Q[state][2] += self.alpha * delta * f[2]
         print(self.Q[state], f)
         file = open(self.filename, "wb")
         pickle.dump(self.Q, file)
@@ -82,6 +82,13 @@ class Qlearning:
         Gets the best action for approximate Q-Learning
         """
         if state not in self.Q:
-            self.Q[state] = self.default_weights
+            self.Q[state] = self.default_weights.copy()
         data = state.get_scored_actions()
-        return max([(np.dot(f, self.Q[state]), a) for f, a in data])
+        scored = [(np.dot(f, self.Q[state]), a) for f, a in data]
+        best_s = [(float('-inf'), None)]
+        for s, a in scored:
+            if s == best_s[0][0]:
+                best_s.append((s, a))
+            if s > best_s[0][0]:
+                best_s = [(s, a)]
+        return random.choice(best_s)

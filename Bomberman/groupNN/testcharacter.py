@@ -45,9 +45,9 @@ class TestCharacter(CharacterEntity):
             res_state = State(new_wrld, (self.x, self.y), self.name, TestCharacter.act)
             res_state.result = "End"
 
-        event_scores = {Event.BOMB_HIT_CHARACTER: -1000,
-                        Event.CHARACTER_KILLED_BY_MONSTER: -1000,
-                        Event.CHARACTER_FOUND_EXIT: 100,
+        event_scores = {Event.BOMB_HIT_CHARACTER: -200,
+                        Event.CHARACTER_KILLED_BY_MONSTER: -200,
+                        Event.CHARACTER_FOUND_EXIT: 200,
                         Event.BOMB_HIT_MONSTER: 20,
                         Event.BOMB_HIT_WALL: 5}
 

@@ -44,12 +44,13 @@ class State:
     def get_f(self):
         f = [self.dist_closest_monster,
              self.len_a_star,
-             0,
+             1,
              len(self.valid_moves)/5]
         return np.array(f)
 
     def get_rel_f(self, new_state):
-        return np.clip(new_state.get_f() - self.get_f(), -1, 1)
+        bias = np.array([0, 0, 1, 0])
+        return np.clip(new_state.get_f() - self.get_f(), -1, 1) + bias
 
     def get_bomb_time(self):
         for bomb in self.world.bombs.values():
@@ -456,9 +457,10 @@ class State:
         return direction
 
     def approx_state(self):
+        a = self.dist_closest_monster
+        b = self.make_discrete(a)
         return (self.make_discrete(self.dist_closest_monster),
-                self.make_discrete(self.len_a_star),
-                self.make_discrete(self.get_bomb_time()))
+                self.make_discrete(self.len_a_star, 5))
 
     @staticmethod
     def make_discrete(var, n=10):
@@ -483,6 +485,7 @@ class State:
     #     return str(self.as_tuple())
 
     def __str__(self):
+        return f"a:{self.approx_state()}"
         return f"Dir mo:{self.dir_closest_monster} " \
                f"dist mo:{self.dist_closest_monster} " \
                f"dir a*:{self.dir_a_star} " \
