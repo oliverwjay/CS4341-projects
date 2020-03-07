@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from sensed_world import SensedWorld
+import random
 
 
 class State:
@@ -45,7 +46,9 @@ class State:
         f = [self.invert(self.dist_closest_monster),
              self.invert(self.len_a_star),
              self.invert(self.dist_bomb),
-             self.invert(len(self.valid_moves)/5)]
+             self.invert(len(self.valid_moves)/5),
+             0,
+             1]
         return np.array(f)
 
     def get_rel_f(self, new_state):
@@ -419,6 +422,8 @@ class State:
             if dist_to_mon < smallest_dist:
                 smallest_dist = dist_to_mon
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
+        if smallest_dist >= 6:
+            smallest_dist = self.world.height() * self.world.width()
         return smallest_dist, direction
 
     @staticmethod
@@ -461,7 +466,7 @@ class State:
         return direction
 
     def approx_state(self):
-        return 1
+        return self.get_bomb_time()
         return (self.make_discrete(self.dist_closest_monster),
                 self.make_discrete(self.len_a_star),
                 self.make_discrete(self.get_bomb_time()))

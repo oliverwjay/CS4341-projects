@@ -59,11 +59,14 @@ def run_variant(variant, scenario=1, t=1):
 
 
 n_runs = 10
-enabled_variants = [1, 4]
+enabled_variants = [4, 5]
 enabled_scenarios = [1]
 scores = []
+result = ''
 for i in range(n_runs):
     for variant in enabled_variants:
         for scenario in enabled_scenarios:
             scores.append(run_variant(variant, scenario))
+            result += f"s{scenario} v{variant}: {scores[-1]}\n"
 print(scores)
+print(result)
