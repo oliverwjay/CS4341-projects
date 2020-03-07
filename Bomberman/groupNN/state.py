@@ -44,7 +44,8 @@ class State:
     def get_f(self):
         f = [self.dist_closest_monster,
              self.len_a_star,
-             self.dist_bomb]
+             self.dist_bomb,
+             len(self.valid_moves)/5]
         return np.array(f)
 
     def get_rel_f(self, new_state):

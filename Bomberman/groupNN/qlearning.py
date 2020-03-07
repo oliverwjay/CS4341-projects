@@ -19,7 +19,7 @@ class Qlearning:
         self.total_reward = total_reward
         self.alpha = 0.02
         self.gamma = 0.9
-        self.default_weights = np.array([1.5, -1, 0])
+        self.default_weights = np.array([1.5, -1, 0, 0])
         self.filename = filename
         self.Q = {}
 

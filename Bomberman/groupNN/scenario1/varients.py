@@ -17,8 +17,6 @@ sys.path.insert(1, '../groupNN')
 # Uncomment this if you want the empty test character
 from testcharacter import TestCharacter
 
-n_runs = 3
-
 
 def run_variant(variant, scenario=1, t=1):
     # Find map
@@ -60,7 +58,8 @@ def run_variant(variant, scenario=1, t=1):
     return g.world.scores['me']
 
 
-enabled_variants = [4, 5]
+n_runs = 10
+enabled_variants = [4]
 enabled_scenarios = [1]
 scores = []
 for i in range(n_runs):
