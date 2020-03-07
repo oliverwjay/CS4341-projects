@@ -13,6 +13,7 @@ class State:
         # if mo_dist > 6:
         #     self.dist_closest_monster = 6
         # else:
+        self.mon_count = mo_dir
         self.dist_closest_monster = mo_dist
         if mo_dist <= 3:
             self.close_mon = 1
@@ -50,11 +51,12 @@ class State:
         return scored_acts
 
     def get_f(self):
-        f = [self.dist_closest_monster,
-             self.len_a_star,
-             self.exit_dist,
-             self.dist_bomb,
+        f = [(1/(1+self.dist_closest_monster)),
+             (1/(1+self.len_a_star)),
+             (1/(1+self.exit_dist)),
+             (1/(1+self.dist_bomb)),
              self.close_mon,
+             self.mon_count,
              self.bomb_placed]
         return np.array(f)
 
@@ -424,7 +426,7 @@ class State:
             if dist_to_mon < smallest_dist:
                 smallest_dist = dist_to_mon
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
-        return smallest_dist, direction
+        return smallest_dist, count
 
     @staticmethod
     def dir_between_cells(x1, y1, x2, y2):
