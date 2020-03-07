@@ -65,4 +65,5 @@ scores = []
 for i in range(n_runs):
     for variant in enabled_variants:
         for scenario in enabled_scenarios:
-            scores.append(run_variant(variant, scenario, 0))
+            scores.append(run_variant(variant, scenario))
+print(scores)
