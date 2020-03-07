@@ -44,7 +44,7 @@ class State:
     def get_f(self):
         f = [self.dist_closest_monster,
              self.len_a_star,
-             0,
+             self.dist_bomb,
              len(self.valid_moves)/5]
         return np.array(f)
 

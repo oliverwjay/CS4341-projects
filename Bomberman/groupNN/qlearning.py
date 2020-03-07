@@ -17,9 +17,9 @@ class Qlearning:
 
     def __init__(self, total_reward, filename="../lessons.p"):
         self.total_reward = total_reward
-        self.alpha = 0.02
+        self.alpha = 0.05
         self.gamma = 0.9
-        self.default_weights = np.array([1.5, -1, 0, 0])
+        self.default_weights = np.array([15.0, -10, 0, 0])
         self.filename = filename
         self.Q = {}
 

@@ -47,7 +47,7 @@ class TestCharacter(CharacterEntity):
 
         event_scores = {Event.BOMB_HIT_CHARACTER: -1000,
                         Event.CHARACTER_KILLED_BY_MONSTER: -1000,
-                        Event.CHARACTER_FOUND_EXIT: 100,
+                        Event.CHARACTER_FOUND_EXIT: 200,
                         Event.BOMB_HIT_MONSTER: 20,
                         Event.BOMB_HIT_WALL: 5}
 
