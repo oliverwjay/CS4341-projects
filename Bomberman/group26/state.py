@@ -51,13 +51,10 @@ class State:
         return scored_acts
 
     def get_f(self):
-        f = [(1/(1+self.dist_closest_monster)),
-             (1/(1+self.len_a_star)),
-             # (1/(1+self.exit_dist)),
-             (1/(1+self.dist_bomb)),
-             self.close_mon,
-             self.mon_count,
-             self.bomb_placed]
+
+        mo_dist = 1/(1 + self.dist_closest_monster)
+        ex_dist = (max(self.world.height(), self.world.width()) - self.len_a_star) / max(self.world.height(), self.world.width())
+        f = [1, mo_dist, ex_dist, len(self.valid_moves)/9, self.bomb_placed]
         return np.array(f)
 
     def get_rel_f(self, new_state):
