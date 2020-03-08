@@ -89,7 +89,7 @@ class State:
              self.invert(self.len_a_star),
              self.invert(self.dist_bomb),
              self.invert(len(self.valid_moves)/5),
-             self.invert(self.get_confinement()),
+             self.invert(self.get_escape_score()),
              1]
         return np.array(f)
 
@@ -474,7 +474,7 @@ class State:
         # Find all the monsters in the world
         location, count = self.locate_monsters()
         smallest_dist = self.world.height() * self.world.width()
-        direction = -1
+        direction = (0, 0)
         if count == 0:
             return smallest_dist, direction
         for monster_loc in location:
@@ -486,44 +486,28 @@ class State:
             smallest_dist = self.world.height() * self.world.width()
         return smallest_dist, direction
 
+    def get_escape_score(self):
+        """
+        Returns a score representing the open paths away from monsters
+        :return: Score
+        """
+        mx, my = self.dir_closest_monster
+        scores = [self.dist_to_obstacle(dx, dy, 5) for dx in range(-1, 2) for dy in range(-1, 2)
+                  if dx * mx + dy * my < 0]
+        if len(scores) <= 0 and self.dist_closest_monster > 6:
+            return 5
+        elif len(scores) <= 0:
+            return 0
+        return max(scores)
+
     @staticmethod
     def dir_between_cells(x1, y1, x2, y2):
         """
-        Direction between cells
+        Direction between cell2
         """
-        x_diff = x1 - x2
-        y_diff = y1 - y2
-        direction = (2, 2)
-        # Cells are in the same column
-        if x_diff == 0:
-            if y_diff > 0:
-                direction = (0, -1)  # Cell 2 is above Cell 1
-            elif y_diff < 0:
-                direction = (0, 1)  # Cell 2 is below Cell 1
-            else:
-                direction = (0, 0)  # Cells are on top of each other
-        #  Cells are in the same row
-        elif y_diff == 0:
-            if x_diff > 0:
-                direction = (-1, 0)  # Cell 2 is to the left of Cell 1
-            elif x_diff < 0:
-                direction = (1, 0)  # Cell 2 is to the right of Cell 1
-        #  Cell 2 is to the upper left diagonal of Cell 1
-        elif y_diff > 0 and x_diff > 0:
-            direction = (-1, -1)
-        #  Cell 2 is to the upper right diagonal of Cell 1
-        elif x_diff < 0 < y_diff:
-            direction = (1, -1)
-        # Cell 2 is to the lower left diagonal of Cell 1
-        elif y_diff < 0 < x_diff:
-            direction = (-1, 1)
-        # Cell 2 is to the lower right diagonal of Cell 1
-        elif y_diff < 0 and x_diff < 0:
-            direction = (1, 1)
-        # Something blew up cause this should never happen
-        else:
-            print("Direction Unknown")
-        return direction
+        x_diff = x2 - x1
+        y_diff = y2 - y1
+        return x_diff, y_diff
 
     def approx_state(self):
         """
