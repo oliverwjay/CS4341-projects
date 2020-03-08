@@ -6,6 +6,13 @@ import random
 
 class State:
     def __init__(self, world, loc, name, act_fun):
+        """
+        Constructor for state
+        :param world: World object
+        :param loc: Location in world
+        :param name: My name
+        :param act_fun: Function to make agent move
+        """
         self.x, self.y = loc
         self.name = name
         self.world = world
@@ -20,6 +27,10 @@ class State:
         self.act_fun = act_fun
 
     def get_valid_actions(self):
+        """
+        Returns a list of valid move, placement actions
+        :return: (dx, dy), place_bomb
+        """
         actions = []
         for m in self.valid_moves:
             actions.append((m, False))
@@ -28,8 +39,11 @@ class State:
         return actions
 
     def get_scored_actions(self):
+        """
+        Returns a list of f, action pairs
+        :return: list of f, action pairs
+        """
         scored_acts = []
-        cur_f = self.get_f()
         for a in self.get_valid_actions():
             new_world = SensedWorld.from_world(self.world)
             new_me = new_world.me(self)
@@ -43,6 +57,13 @@ class State:
         return scored_acts
 
     def dist_to_obstacle(self, dx, dy, max_d=3):
+        """
+        Returns the distance to the next wall or barrier
+        :param dx:
+        :param dy:
+        :param max_d:
+        :return:
+        """
         c_x = self.x
         c_y = self.y
         for d in range(max_d):
@@ -53,9 +74,17 @@ class State:
         return max_d
 
     def get_confinement(self):
+        """
+        Scores how much space the agent has to move
+        :return:
+        """
         return sum([self.dist_to_obstacle(dx, dy) for dx in range(-1, 2) for dy in range(-1, 2)])
 
     def get_f(self):
+        """
+        Returns the f vector for the state
+        :return:
+        """
         f = [self.invert(self.dist_closest_monster),
              self.invert(self.len_a_star),
              self.invert(self.dist_bomb),
@@ -65,15 +94,27 @@ class State:
         return np.array(f)
 
     def get_rel_f(self, new_state):
-        print(self.get_confinement())
+        """
+        Returns the f for the given result state
+        :param new_state: Result state from a given action
+        :return:
+        """
         return new_state.get_f()
-        return np.clip(new_state.get_f() - self.get_f(), -1, 1)
 
     @staticmethod
     def invert(val):
+        """
+        Inverts a value for use to increase significance at short distances
+        :param val: Value to invert
+        :return: Inverted value
+        """
         return 1/(1 + val)
 
     def get_bomb_time(self):
+        """
+        Calculates the timer on the agent's bomb
+        :return: Time until explosion (-100 if there is no bomb)
+        """
         for bomb in self.world.bombs.values():
             if self.name == bomb.owner.name:
                 self.dist_bomb = self.euclidean_distance(self.x, self.y, bomb.x, bomb.y)
@@ -392,6 +433,11 @@ class State:
         return (dx, dy), dist
 
     def normalize_dist(self, value):
+        """
+        Normalizes a distance to the size of the world
+        :param value: Value to normalize
+        :return: normalized value
+        """
         height = self.world.height()
         width = self.world.width()
         max_dist = math.sqrt(math.pow(height, 2) + math.pow(width, 2))
@@ -480,16 +526,27 @@ class State:
         return direction
 
     def approx_state(self):
+        """
+        Approximates the state to hash
+        :return:
+        """
         return self.get_bomb_time()
-        return (self.make_discrete(self.dist_closest_monster),
-                self.make_discrete(self.len_a_star),
-                self.make_discrete(self.get_bomb_time()))
 
     @staticmethod
     def make_discrete(var, n=10):
+        """
+        Inverts and discretizes a value to build a hashable state
+        :param var: Value to discretize
+        :param n: Parameter to adjust seperation between values
+        :return: discretized value
+        """
         return np.round(n - n / (var + 1))
 
     def as_tuple(self):
+        """
+        Builds the tuple representation of the state
+        :return:
+        """
         if self.result is None:
             state_hash = (
                 self.dir_closest_monster,
@@ -502,17 +559,23 @@ class State:
         return state_hash
 
     def __eq__(self, other):
+        """
+        Check equivalency for use as dictionary key
+        :param other:
+        :return:
+        """
         return self.approx_state() == other.approx_state()
 
-    # def __repr__(self):
-    #     return str(self.as_tuple())
-
     def __str__(self):
-        return f"Dir mo:{self.dir_closest_monster} " \
-               f"dist mo:{self.dist_closest_monster} " \
-               f"dir a*:{self.dir_a_star} " \
-               f"bomb placed:{self.bomb_placed} " \
-               f"valid moves:{self.valid_moves}"
+        """
+        Builds string representation for printing and debugging
+        :return:
+        """
+        return f"Bomb time:{self.get_bomb_time()} "
 
     def __hash__(self):
+        """
+        Hashes the state for use as a dictionary key
+        :return:
+        """
         return hash(self.approx_state())

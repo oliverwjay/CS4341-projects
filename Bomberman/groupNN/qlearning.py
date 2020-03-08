@@ -16,8 +16,11 @@ import os
 
 class Qlearning:
 
-    def __init__(self, total_reward, filename="../lessons.p"):
-        self.total_reward = total_reward
+    def __init__(self, filename="../lessons.p"):
+        """
+        Constructor for Qlearning
+        :param filename: Name of file with learned data (generated empty if missing)
+        """
         self.alpha = 0.005
         self.gamma = 0.9
         self.default_weights = np.array([-15., 10, 0, 0, 0, 0])
