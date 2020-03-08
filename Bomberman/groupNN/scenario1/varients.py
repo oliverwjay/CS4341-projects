@@ -58,7 +58,7 @@ def run_variant(variant, scenario=1, t=1):
     return g.world.scores['me']
 
 
-n_runs = 1
+n_runs = 5
 enabled_variants = [4, 5]
 enabled_scenarios = [1, 2]
 scores = {(s, v): [] for s in enabled_scenarios for v in enabled_variants}

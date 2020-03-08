@@ -65,15 +65,13 @@ class TestCharacter(CharacterEntity):
         # Learn reward
         self.q_learn.save_outcome(state, res_state, reward)
 
-        pass
-
     def act(self, action):
         """
         Action: ((dx, dy), Boolean)
         The action we need to make
         """
         self.move(action[0][0], action[0][1])
-        if action[1] and random.uniform(0, 1) > .8:
+        if action[1] and random.uniform(0, 1) > .5:
             self.place_bomb()
 
 

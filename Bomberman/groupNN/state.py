@@ -483,7 +483,7 @@ class State:
                 smallest_dist = dist_to_mon
                 direction = self.dir_between_cells(self.x, self.y, monster_loc[0], monster_loc[1])
         if smallest_dist >= 6:
-            smallest_dist = self.world.height() * self.world.width()
+            smallest_dist = max(self.world.height(), self.world.width())
         return smallest_dist, direction
 
     def get_escape_score(self):
@@ -494,7 +494,7 @@ class State:
         mx, my = self.dir_closest_monster
         scores = [self.dist_to_obstacle(dx, dy, 5) for dx in range(-1, 2) for dy in range(-1, 2)
                   if dx * mx + dy * my < 0]
-        if len(scores) <= 0 and self.dist_closest_monster > 6:
+        if len(scores) <= 0 and self.dist_closest_monster > max(self.world.height(), self.world.width()):
             return 5
         elif len(scores) <= 0:
             return 0
