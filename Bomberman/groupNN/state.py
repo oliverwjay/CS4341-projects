@@ -71,6 +71,8 @@ class State:
             c_y += dy
             if not self.is_in_bounds((c_x, c_y)) or self.world.wall_at(c_x, c_y):
                 return d
+            if self.world.exit_at(c_x, c_y):
+                return max_d
         return max_d
 
     def get_confinement(self):
@@ -498,6 +500,8 @@ class State:
             return 5
         elif len(scores) <= 0:
             return 0
+        elif self.len_a_star < 4:
+            return 5
         return max(scores)
 
     @staticmethod

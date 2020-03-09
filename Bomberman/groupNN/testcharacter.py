@@ -13,7 +13,7 @@ from colorama import Fore, Back
 
 
 class TestCharacter(CharacterEntity):
-    def __init__(self, name, avatar, x, y):
+    def __init__(self, name, avatar, x, y, alpha=.005, filename="../lessons.p"):
         """
         Initialize character
         :param name: Name of character
@@ -23,12 +23,19 @@ class TestCharacter(CharacterEntity):
         """
         CharacterEntity.__init__(self, name, avatar, x, y)
         self.reward = 0
-        self.q_learn = Qlearning()
+        self.q_learn = Qlearning(alpha, filename)
+        self.est_var = None
 
     def do(self, wrld):
         """
         Make move, and learn result
         """
+        # Estimate variant
+        if self.est_var is None:
+            n_mo = len(wrld.monsters)
+            n_walls = sum([sum(col) for col in wrld.grid])
+            self.est_var = f"_{n_mo}m_{n_walls}w"
+            self.q_learn.change_file_suffix(self.est_var)
 
         # Creation of State
         state = State(wrld, (self.x, self.y), self.name, TestCharacter.act)
@@ -53,8 +60,8 @@ class TestCharacter(CharacterEntity):
 
         event_scores = {Event.BOMB_HIT_CHARACTER: -1000,
                         Event.CHARACTER_KILLED_BY_MONSTER: -1000,
-                        Event.CHARACTER_FOUND_EXIT: 200,
-                        Event.BOMB_HIT_MONSTER: 20,
+                        Event.CHARACTER_FOUND_EXIT: 300,
+                        Event.BOMB_HIT_MONSTER: 15,
                         Event.BOMB_HIT_WALL: 5}
 
         # Apply event reward
@@ -71,7 +78,7 @@ class TestCharacter(CharacterEntity):
         The action we need to make
         """
         self.move(action[0][0], action[0][1])
-        if action[1] and random.uniform(0, 1) > .5:
+        if action[1] and random.uniform(0, 1) < .9:
             self.place_bomb()
 
 

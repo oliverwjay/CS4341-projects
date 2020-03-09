@@ -16,12 +16,12 @@ import os
 
 class Qlearning:
 
-    def __init__(self, filename="../lessons.p"):
+    def __init__(self, alpha=.005, filename="../lessons.p"):
         """
         Constructor for Qlearning
         :param filename: Name of file with learned data (generated empty if missing)
         """
-        self.alpha = 0.005
+        self.alpha = alpha
         self.gamma = 0.9
         self.default_weights = np.array([-15., 10, 0, 0, 0, 0])
         self.filename = filename
@@ -29,6 +29,18 @@ class Qlearning:
 
         if os.path.exists(filename):
             file = open(filename, 'rb')
+            self.Q = pickle.load(file)
+            file.close()
+
+    def change_file_suffix(self, suffix=''):
+        """
+        Update the filename
+        :param filename: New filename
+        :return: None
+        """
+        self.filename = self.filename[:-2] + suffix + '.p'
+        if os.path.exists(self.filename):
+            file = open(self.filename, 'rb')
             self.Q = pickle.load(file)
             file.close()
 
